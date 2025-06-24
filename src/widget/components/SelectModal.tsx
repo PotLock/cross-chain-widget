@@ -340,7 +340,7 @@ const SelectionModal = ({ onProceed, onClose }) => {
   const fetchCampaign = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("http://localhost:3003/fetchcampaigns", {
+      const response = await fetch("https://us-central1-almond-1b205.cloudfunctions.net/potluck/fetchcampaigns", {
         method: "GET",
       });
 

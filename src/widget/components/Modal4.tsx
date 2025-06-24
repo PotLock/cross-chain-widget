@@ -338,7 +338,7 @@ const Modal4: React.FC<Modal4Props> = ({
         setFundDeposited(true);
         if (CampaignImg !== "Direct") {
           try {
-            const donateResponse = await fetch("http://localhost:3003/donate", {
+            const donateResponse = await fetch("https://us-central1-almond-1b205.cloudfunctions.net/potluck/donate", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
