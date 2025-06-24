@@ -7,45 +7,43 @@ import Modal4 from "./Modal4";
 import Modal5 from "./Modal5";
 
 interface WidgetProps {
-  referralID?: any;
+  DonationType: string;
+  walletID?: string;
+  color?: string;
+  AssetName?: string;
 }
 
-const Widget: React.FC<WidgetProps> = ({ referralID = null }) => {
-  const [amount, setAmount] = useState<any>(2.0);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isOpen2, setIsOpen2] = useState(false);
-  const [isOpen3, setIsOpen3] = useState(false);
-  const [isOpen4, setIsOpen4] = useState(false);
-  const [isOpen5, setIsOpen5] = useState(false);
+const Widget: React.FC<WidgetProps> = ({
+  DonationType = "POTLOCK Campaigns",
+  walletID = null,
+  color = "black",
+  AssetName = "nep141:wrap.near",
+}) => {
+  const [step, setStep] = useState<number>(0);
   const [selectedCampaign, setSelectedCampaign] = useState<number | null>(null);
   const [donationAmount, setDonationAmount] = useState<string>("");
-  const [selectedCampaignName, setSelectedCampaignName] = useState<any>(null);
+  const [selectedCampaignName, setSelectedCampaignName] = useState<
+    string | null
+  >(null);
   const [decimal, setDecimals] = useState<any>("");
-  const [tokenId, settokenId] = useState<any>("");
-  const [networkFee, setnetworkFee] = useState<any>("");
-  const [selectedCampaignImg, setSelectedCampaignImg] = useState<any>(null);
-  const [selectedCampaignDesc, setSelectedCampaignDesc] = useState<any>(null);
-  const [Blockchain, setBlockchain] = useState<string>("");
+  const [tokenId, setTokenId] = useState<string>("");
+  const [networkFee, setNetworkFee] = useState<string>("");
+  const [selectedCampaignImg, setSelectedCampaignImg] = useState<string | null>(
+    null
+  );
+  const [selectedCampaignDesc, setSelectedCampaignDesc] = useState<
+    string | null
+  >(null);
+  const [blockchain, setBlockchain] = useState<string>("");
   const [depositAddress, setDepositAddress] = useState<string>("");
-  const [depositAddress2, setDepositAddress2] = useState<any>(null);
-  const [senderAddress, setsenderAddress] = useState<any>("");
-  const [campaignName, setcampaignName] = useState<string>("");
-  const [txHash, settxHash] = useState<string>("");
-  const [usdAmount, setusdAmount] = useState<string>("");
+  const [depositAddress2, setDepositAddress2] = useState<string | null>(null);
+  const [senderAddress, setSenderAddress] = useState<string>("");
+  const [campaignName, setCampaignName] = useState<string>("");
+  const [txHash, setTxHash] = useState<string>("");
+  const [usdAmount, setUsdAmount] = useState<string>("");
 
-  console.log(referralID);
-  const handleOpenModal = () => {
-    setIsOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    console.log("handleCloseModal called");
-    setIsOpen(false);
-    setIsOpen2(false);
-    setIsOpen3(false);
-    setIsOpen4(false);
-    setIsOpen5(false);
-  };
+  const handleOpenModal = () => setStep(1);
+  const handleCloseModal = () => setStep(0);
 
   const handleProceedToDonate = (
     campaignID: number,
@@ -53,89 +51,74 @@ const Widget: React.FC<WidgetProps> = ({ referralID = null }) => {
     img: string,
     desc: string
   ) => {
-    console.log("handleProceedToDonate", { campaignID });
     setSelectedCampaign(campaignID);
     setSelectedCampaignName(campaignName);
     setSelectedCampaignImg(img);
     setSelectedCampaignDesc(desc);
-    setIsOpen(false);
-    setIsOpen2(true);
+    setStep(2);
   };
 
   const handleProceedToQR = (
     campaignID: number,
     amount: string,
-    networkFee: string,
-    blockchain: string,
-    decimal?: number,
+    fee: string,
+    chain: string,
+    decimals?: number,
     tokenID?: string,
-    senderaddress?: string
+    sender?: string
   ) => {
-    console.log(senderaddress);
     setDonationAmount(amount);
-    setBlockchain(blockchain);
-    setnetworkFee(networkFee);
-    settokenId(tokenID);
-    setsenderAddress(senderaddress);
-    setDecimals(decimal);
-    setIsOpen2(false);
-    setIsOpen3(true);
+    setBlockchain(chain);
+    setNetworkFee(fee);
+    setTokenId(tokenID || "");
+    setSenderAddress(sender || "");
+    setDecimals(decimals);
+    setStep(DonationType === "POTLOCK Campaigns" ? 3 : 2);
   };
 
   const handleGoBack = () => {
-    if (isOpen3) {
-      setIsOpen3(false);
-      setIsOpen2(true);
-      setDepositAddress2(null);
-    } else if (isOpen2) {
-      setIsOpen2(false);
-      setIsOpen(true);
-      setDepositAddress2(null);
+    if (DonationType === "POTLOCK Campaigns") {
+      if (step === 3) setStep(2);
+      else if (step === 2) setStep(1);
+    } else {
+      if (step === 2) setStep(1);
+      else if (step === 1) setStep(0);
     }
+    setDepositAddress2(null);
   };
 
   const handleBack = () => {
-    if (isOpen5) {
-      setIsOpen5(false);
-      setIsOpen4(true);
-      setDepositAddress2(null);
-    } else if (isOpen3) {
-      setIsOpen3(false);
-      setIsOpen2(true);
-      setDepositAddress2(null);
-    }
+    if (step === 5) setStep(4);
+    else if (step === 3) setStep(2);
+    setDepositAddress2(null);
   };
 
-  const handleBack4 = (depositAddress: string) => {
-    setIsOpen4(false);
-    setIsOpen3(true);
-    setDepositAddress2(depositAddress);
+  const handleBack4 = (address: string) => {
+    if (DonationType === "POTLOCK Campaigns") setStep(3);
+    else setStep(2);
+    setDepositAddress2(address);
   };
 
   const handleSentFunds = (
     amount: string,
-    depositAddress: string,
+    address: string,
     campaignID: number
   ) => {
-    console.log("handleSentFunds", { amount, depositAddress, campaignID });
-    setAmount(amount);
-    setDepositAddress(depositAddress);
+    setDepositAddress(address);
     setSelectedCampaign(campaignID);
-    setIsOpen3(false);
-    setIsOpen4(true);
+    setStep(4);
   };
 
   const handleProcced = (
-    txHash: string,
-    campaignName: string,
+    hash: string,
+    name: string,
     amount: string,
-    usdAmount: string
+    usd: string
   ) => {
-    setcampaignName(campaignName);
-    settxHash(txHash);
-    setIsOpen4(false);
-    setIsOpen5(true);
-    setusdAmount(usdAmount);
+    setCampaignName(name);
+    setTxHash(hash);
+    setUsdAmount(usd);
+    setStep(5);
   };
 
   return (
@@ -143,7 +126,7 @@ const Widget: React.FC<WidgetProps> = ({ referralID = null }) => {
       <button
         onClick={handleOpenModal}
         style={{
-          backgroundColor: "black",
+          backgroundColor: color,
           color: "white",
           border: "none",
           borderRadius: "8px",
@@ -169,78 +152,140 @@ const Widget: React.FC<WidgetProps> = ({ referralID = null }) => {
         ❤️ Donate
       </button>
 
-      {isOpen && (
+      {DonationType === "POTLOCK Campaigns" ? (
         <>
-          <SelectionModal
-            onProceed={handleProceedToDonate}
-            onClose={handleCloseModal}
-          />
+          {step === 1 && (
+            <SelectionModal
+              onProceed={handleProceedToDonate}
+              onClose={handleCloseModal}
+            />
+          )}
+          {step === 2 && (
+            <Modal2
+              onProceed={handleProceedToQR}
+              onClose={handleCloseModal}
+              onGoBack={handleGoBack}
+              campaignID={selectedCampaign || 0}
+              CampaignName={selectedCampaignName || ""}
+              CampaignImg={selectedCampaignImg || ""}
+              CampaignDesc={selectedCampaignDesc || ""}
+              walletID={walletID}
+            />
+          )}
+          {step === 3 && (
+            <Modal3
+              onClose={handleCloseModal}
+              onBack={handleGoBack}
+              onSentFunds={handleSentFunds}
+              campaignID={selectedCampaign || 0}
+              amount={donationAmount}
+              blockchain={blockchain}
+              decimal={decimal}
+              tokenID={tokenId}
+              networkFee={networkFee}
+              senderaddress={senderAddress}
+              isdeposit={depositAddress2}
+              CampaignName={selectedCampaignName || ""}
+              CampaignImg={selectedCampaignImg || ""}
+              CampaignDesc={selectedCampaignDesc || ""}
+            />
+          )}
+
+          {step === 4 && (
+            <Modal4
+              onClose={handleCloseModal}
+              onBack={handleBack4}
+              onProceed={handleProcced}
+              campaignID={selectedCampaign || 0}
+              amount={donationAmount}
+              depositAddress={depositAddress}
+              blockchain={blockchain}
+              CampaignName={selectedCampaignName || ""}
+              CampaignImg={selectedCampaignImg || ""}
+              CampaignDesc={selectedCampaignDesc || ""}
+              walletID={walletID}
+            />
+          )}
+
+          {step === 5 && (
+            <Modal5
+              onClose={handleCloseModal}
+              onBack={handleBack}
+              txHash={txHash}
+              campaignName={campaignName}
+              amount={donationAmount}
+              usdAmount={usdAmount}
+              CampaignName={selectedCampaignName || ""}
+              CampaignImg={selectedCampaignImg || ""}
+              CampaignDesc={selectedCampaignDesc || ""}
+              walletID={walletID}
+            />
+          )}
         </>
-      )}
-      {isOpen2 && (
+      ) : (
         <>
-          <Modal2
-            onProceed={handleProceedToQR}
-            onClose={handleCloseModal}
-            onGoBack={handleGoBack}
-            campaignID={selectedCampaign || 0}
-            CampaignName={selectedCampaignName || ""}
-            CampaignImg={selectedCampaignImg || ""}
-            CampaignDesc={selectedCampaignDesc || ""}
-            referralID={referralID}
-          />
+          {step === 1 && (
+            <Modal2
+              onProceed={handleProceedToQR}
+              onClose={handleCloseModal}
+              onGoBack={handleGoBack}
+              campaignID={selectedCampaign || 0}
+              CampaignName={walletID || ""}
+              CampaignImg={"Direct"}
+              CampaignDesc={selectedCampaignDesc || ""}
+              walletID={null}
+            />
+          )}
+          {step === 2 && (
+            <Modal3
+              onClose={handleCloseModal}
+              onBack={handleGoBack}
+              onSentFunds={handleSentFunds}
+              campaignID={selectedCampaign || 0}
+              amount={donationAmount}
+              blockchain={blockchain}
+              decimal={decimal}
+              tokenID={tokenId}
+              networkFee={networkFee}
+              senderaddress={senderAddress}
+              isdeposit={depositAddress2}
+              CampaignName={walletID || ""}
+              CampaignImg={"Direct"}
+              CampaignDesc={AssetName}
+            />
+          )}
+
+          {step === 4 && (
+            <Modal4
+              onClose={handleCloseModal}
+              onBack={handleBack4}
+              onProceed={handleProcced}
+              campaignID={selectedCampaign || 0}
+              amount={donationAmount}
+              depositAddress={depositAddress}
+              blockchain={blockchain}
+              CampaignName={walletID || ""}
+              CampaignImg={"Direct"}
+              CampaignDesc={AssetName}
+              walletID={null}
+            />
+          )}
+
+          {step === 5 && (
+            <Modal5
+              onClose={handleCloseModal}
+              onBack={handleBack}
+              txHash={txHash}
+              campaignName={campaignName}
+              amount={donationAmount}
+              usdAmount={usdAmount}
+              CampaignName={walletID || ""}
+              CampaignImg={"Direct"}
+              CampaignDesc={AssetName}
+              walletID={null}
+            />
+          )}
         </>
-      )}
-      {isOpen3 && (
-        <>
-          <Modal3
-            onClose={handleCloseModal}
-            onBack={handleGoBack}
-            onSentFunds={handleSentFunds}
-            campaignID={selectedCampaign || 0}
-            amount={donationAmount}
-            blockchain={Blockchain}
-            decimal={decimal}
-            tokenID={tokenId}
-            networkFee={networkFee}
-            senderaddress={senderAddress}
-            isdeposit={depositAddress2}
-            CampaignName={selectedCampaignName || ""}
-            CampaignImg={selectedCampaignImg || ""}
-            CampaignDesc={selectedCampaignDesc || ""}
-          />
-        </>
-      )}
-      {isOpen4 && (
-        <>
-          <Modal4
-            onClose={handleCloseModal}
-            onBack={handleBack4}
-            onProceed={handleProcced}
-            campaignID={selectedCampaign || 0}
-            amount={donationAmount}
-            depositAddress={depositAddress}
-            blockchain={Blockchain}
-            CampaignName={selectedCampaignName || ""}
-            CampaignImg={selectedCampaignImg || ""}
-            CampaignDesc={selectedCampaignDesc || ""}
-            referralID={referralID}
-          />
-        </>
-      )}
-      {isOpen5 && (
-        <Modal5
-          onClose={handleCloseModal}
-          onBack={handleBack}
-          txHash={txHash}
-          campaignName={campaignName}
-          amount={donationAmount}
-          usdAmount={usdAmount}
-          CampaignName={selectedCampaignName || ""}
-          CampaignImg={selectedCampaignImg || ""}
-          CampaignDesc={selectedCampaignDesc || ""}
-          referralID={referralID}
-        />
       )}
     </div>
   );

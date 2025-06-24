@@ -345,11 +345,13 @@ const Modal3: React.FC<Modal3Props> = ({
           slippageTolerance: 100,
           originAsset: tokenID,
           depositType: "ORIGIN_CHAIN",
-          destinationAsset: "nep141:wrap.near",
+          destinationAsset:
+            CampaignImg === "Direct" ? CampaignDesc : "nep141:wrap.near",
           amount: mainAmount,
           refundTo: senderaddress,
           refundType: "ORIGIN_CHAIN",
-          recipient: "potluck_intents.near",
+          recipient:
+            CampaignImg === "Direct" ? CampaignName : "potluck_intents.near",
           recipientType: "DESTINATION_CHAIN",
           deadline: deadline,
           referral: "referral",
@@ -364,7 +366,7 @@ const Modal3: React.FC<Modal3Props> = ({
       });
 
       const data = await response.json();
-      console.log(data);
+
       setPool(data);
     } catch (error) {
     } finally {

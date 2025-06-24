@@ -9,7 +9,7 @@ interface Modal4Props {
   CampaignName: string;
   CampaignImg: string;
   CampaignDesc: string;
-  referralID: any;
+  walletID: any;
   onClose: () => void;
   onBack: (depositAddress: string) => void;
   onProceed: (
@@ -275,7 +275,7 @@ const Modal4: React.FC<Modal4Props> = ({
   CampaignName = "",
   CampaignImg = "",
   CampaignDesc = "",
-  referralID = null,
+  walletID = null,
 }) => {
   const [FundReceived, setFundReceived] = useState<boolean | null>(false);
   const [FundReceivedFailed, setFundReceivedFailed] = useState<boolean | null>(
@@ -336,26 +336,34 @@ const Modal4: React.FC<Modal4Props> = ({
 
         await new Promise((resolve) => setTimeout(resolve, 1500));
         setFundDeposited(true);
+        if (CampaignImg !== "Direct") {
+          try {
+            const donateResponse = await fetch("http://localhost:3003/donate", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                username: donatorName,
+                deposit: statusData.swapDetails.amountOutFormatted,
+                campaign_id: String(campaignID),
+                walletID: walletID ?? null,
+              }),
+            });
 
-        const donateResponse = await fetch("http://localhost:3003/donate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: donatorName,
-            deposit: statusData.swapDetails.amountOutFormatted,
-            campaign_id: `${campaignID}`,
-            referralID: referralID ?? null,
-          }),
-        });
+            if (!donateResponse.ok) {
+              const errorText = await donateResponse.text();
+              throw new Error(
+                `Donation failed: ${donateResponse.status} - ${errorText}`
+              );
+            }
 
-        if (!donateResponse.ok) {
-          throw new Error(`Donation failed: ${donateResponse.statusText}`);
+            const donateData = await donateResponse.json();
+            console.log("Donation response:", donateData);
+          } catch (err) {
+            console.error("Error during donation:", err);
+          }
         }
-
-        const donateData = await donateResponse.json();
-        console.log("Donation successful:", donateData);
 
         setFundDonated(true);
 

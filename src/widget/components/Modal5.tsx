@@ -11,7 +11,7 @@ interface Modal5Props {
   CampaignName: string;
   CampaignImg: string;
   CampaignDesc: string;
-  referralID?: any;
+  walletID?: any;
 }
 
 const inlineStyles = {
@@ -252,7 +252,7 @@ const Modal5: React.FC<Modal5Props> = ({
   CampaignName = "",
   CampaignImg = "",
   CampaignDesc = "",
-  referralID = null,
+  walletID = null,
 }) => {
   const [isCloseButtonHovered, setIsCloseButtonHovered] = useState(false);
   const [isCopyButtonHovered, setIsCopyButtonHovered] = useState(false);
@@ -983,7 +983,7 @@ const Modal5: React.FC<Modal5Props> = ({
                   <span>Network Fee:</span>
                   <span>0.08 NEAR</span>
                 </div>
-                {referralID && (
+                {walletID && (
                   <div style={inlineStyles.feeBreakdownRow}>
                     <span>Referral Fee (5%):</span>
                     <span>{referralFee.toFixed(4)} NEAR</span>

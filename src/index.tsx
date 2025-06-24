@@ -1,55 +1,92 @@
-import { hydrateRoot } from 'react-dom/client';
-import  Widget  from './widget/components/Widget';
-// import './widget/components/style.css';
+import { hydrateRoot } from "react-dom/client";
+import Widget from "./widget/components/Widget";
 
 function initializeWidget() {
-  if (document.readyState !== 'loading') {
-    onReady();
+  if (document.readyState !== "loading") {
+    mountWidget();
   } else {
-    document.addEventListener('DOMContentLoaded', onReady);
+    document.addEventListener("DOMContentLoaded", mountWidget);
   }
 }
 
-function onReady() {
+function mountWidget() {
   try {
-    const element = document.createElement('div');
-    const shadow = element.attachShadow({ mode: 'open' });
-    const shadowRoot = document.createElement('div');
-    const referralID = getreferralID();
+    const userMount = document.getElementById("widget-root");
+    const container = userMount || document.body;
 
-    shadowRoot.id = 'widget-root';
+    if (!userMount) {
+      console.warn(
+        "No #widget-root found. Widget will be attached to document.body by default."
+      );
+    }
+
+    const oldShadowHost = container.querySelector(
+      "div[data-widget-shadow-host]"
+    );
+    if (oldShadowHost) {
+      oldShadowHost.remove();
+    }
+
+    const element = document.createElement("div");
+    element.setAttribute("data-widget-shadow-host", "true"); // helpful for cleanup
+    const shadow = element.attachShadow({ mode: "open" });
+
+    const shadowRoot = document.createElement("div");
+    shadowRoot.id = "widget-shadow-root";
+
+    const [walletID, DonationType, color, AssetName] = getWidgetAttributes();
 
     const component = (
-      <Widget referralID={referralID} />
+      <Widget
+        walletID={walletID}
+        DonationType={DonationType}
+        color={color}
+        AssetName={AssetName}
+      />
     );
 
     shadow.appendChild(shadowRoot);
     injectStyle(shadowRoot);
     hydrateRoot(shadowRoot, component);
 
-    document.body.appendChild(element);
+    container.appendChild(element);
   } catch (error) {
-    console.warn('Widget initialization failed:', error);
+    console.warn("Widget initialization failed:", error);
   }
 }
 
 function injectStyle(shadowRoot: HTMLElement) {
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = 'https://cdn.jsdelivr.net/gh/hilary3211/cjnjs/widget.css';
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "https://cdn.jsdelivr.net/gh/hilary3211/cjnjs/widget.css";
   shadowRoot.appendChild(link);
 }
 
+function getWidgetAttributes(): [string, string, string, string] {
+  const script = Array.from(document.scripts).find((s) =>
+    s.src.includes("/widget.js")
+  ) as HTMLScriptElement;
 
-function getreferralID() {
-  const script = document.currentScript as HTMLScriptElement;
-  const referralID = script?.getAttribute('referralID');
-  
-  if (!referralID) {
-    throw new Error('Missing referralID attribute');
+  if (script) {
+    const data = script.getAttribute("data-config");
+    if (data) {
+      try {
+        const obj = JSON.parse(atob(data));
+        return [
+          obj.Address || "",
+          obj.donationTarget || "",
+          obj.buttonColor || "",
+          obj.Asset || "",
+        ];
+      } catch (e) {
+        console.warn("Config parse error", e);
+      }
+    }
   }
-  
-  return referralID;
+
+  return ["", "", "", ""];
 }
 
 initializeWidget();
+
+window.initDonationWidget = mountWidget;

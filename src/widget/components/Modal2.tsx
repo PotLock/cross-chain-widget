@@ -287,7 +287,7 @@ const Modal2 = ({
   CampaignName = "",
   CampaignImg = "",
   CampaignDesc = "",
-  referralID = null,
+  walletID = null,
 }) => {
   const [pool, setPool] = useState(null);
   const [selectedToken, setSelectedToken] = useState("wNEAR");
@@ -379,7 +379,7 @@ const Modal2 = ({
             ...(isMobile ? inlineStyles.modalHeaderMobile : {}),
           }}
         >
-          <h2 style={inlineStyles.modalTitle}>Donate to {CampaignName}</h2>
+          <h2 style={inlineStyles.modalTitle}>Make Donation</h2>
           <button
             style={{
               ...inlineStyles.closeButton,
@@ -412,13 +412,35 @@ const Modal2 = ({
                 boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
               }}
             >
-              <img
-                src={CampaignImg}
-                alt="icon"
-                width={60}
-                height={60}
-                style={{ borderRadius: "50%" }}
-              />
+              {/* {CampaignImg === `Direct` ? 
+             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAACYUlEQVR4nNWXS2/TUBCFvSo/gp9Hi1gkFRtgQ8USsWSJBKiLVgIhWmBRRIuSkpbQlEdaCE3Iw5DHTVQIUR72wvYdHxgnrZ0oNKDYsbB0pNiOfL57ZsbyVZTBgTzO6QKLmqA9TZCm1234KX4mP1sXiLKX4j30Cs7rdTrw2/TPojR7uiufqbkL4STBsc/efCCBiKIJSoUFoAl6wwC9EAF6SmjxD6T8FwDH+4TsfYm96yZ2LpuILxhIRAwkr5k4vG2h/EJCqwUEkF2WiM0biF04W6klE101AIBEdLL5iRq70n+AxmtC8qp5pvGrSwaKDy3oIqASdIr9PmCTo7vSqfvnOxa+rEjU4hLdbwE2YXzBwPZFA+9vWsgtS3x9JlHZlGgkybnfzhPqu4TKFkFsE5qH9E9JKJP+kBvThMkrJlo5Qi1OTgqjUp8QOiWfAL6/Ixy/JWTvSezfMJFYNJy+GDUXO4T8A/e89FhCq/hRgnkDH25ZKK1bTuw8ahy717z8nNCr2Pj5iaCuudcZdGqA1NLwBORXLKfmXgA2r8UI1c2RFNbk9ABdtT8J/AZkgPKGRPXlMACvvF200UwT8qvudf49NYDuUeuI0C70u32o8VYlSuvSKU15w71XfOQzgD5Q8+MwQHvQ8QxQ8JSguuVDD+jjJGyoT4chWhlyVuyNn4GCAajb6Ki2M2rj3gNs/uNgsvlUACyecx417nY25QQ49k7h78ynBvBDSugAWogfpbqgTvif5bpANLwEEDnZmqVnD0BpZDDn3ZzOEMKzOT3dnmcwx5FwXYJoTH6mVqcke5yu/LfxL5k/0kcLS0NwAAAAAElFTkSuQmCC" : 
+               <img
+               src={CampaignImg}
+               alt="icon"
+               width={60}
+               height={60}
+               style={{ borderRadius: "50%" }}
+             />
+              
+            } */}
+
+              {CampaignImg === "Direct" ? (
+                <img
+                  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFBUlEQVR4nO1ba28bRRTdP8EHICD+DhJU/IdCIaRNQAIJ+gGQ+IAoAgQSj6pQECIU0qqlqpI+ACchbZzSEBLS1Hk4Dz9mnYQ0TeKdVt6duxfdWdtxnOzEphvPrs1KR7Gyu9Y9Z+6ce2e9YxiK4z7DJznDY9yEK9yEaYuBxU0XwwwvRpiWMTM8ej+LTxj1HjyNj3MTTloMhG5CAQgCFoOeBzl8qjbyDJ+zGOR1Bx44GGzxLB7aj3wXKaY92APMBs6wUzXyoDvIhohQnQk8g21Nmfaq6ZDCx7YFMOG09qAaDjhVLnXN4Pb1QnLOYBvN/U7dwWhDDjsMzuCy9kB0gUGvYZkwpz0QbYBpo6XcvwoWg7yhOwjdMHQHoBuG7gB0w9AdQNMJsLXgYuZXgYlvBI697+DwGzYOdhRw4MUCxg4X5OehThtvvmXjxMcOJn9yMBcHtLIRF2B5BPCvDxwcOOIRrRdDXTYmTgvcmIFoCZBPu/j3Z85/Ir0XBtsLmL4soiPA1MngyJfQ/3wBc9dFNAQY7AiWfAm3v3CiIcDou/aBCLBwISIC3J0EvPFasCJQdWhUVTCCKn3k4IMvPRzx4ddtTPUK5Kwx5PlDC8C8ml8pRKpP4MSnjiSzr9kdKeAfb9uY+Fpg7gag1UDigQkQO1yQDQ+5dnXa5lMuro2DPMf6BaavCTSHBOaGAdfv6Gt+AhcgVmpmXrHxzimBmV8E3r1d54gyFzeSrhRmbQLw3jRgfikKZbBd3dTE37Tx1ju2zBIyN/q7cnO72yPS2X7A5FmBM9/vxsJFkF1mPtMEjVD/C4WyZ1D6swHA2R/2Jl4NEuifcQhhK5xxcbLGVni+WNvJG5YuQU3Eq0FmGSoBeBGUpuMf+S+Gxk445ZFXkZ/9UeBSn1qclREIjwBjJxxpXJWlMBsTmPhWyHPx47Y0R2qY6DylvYrc6qh3nVKEboHrCQiHALGi2U1+7uByhbnthY15Vznn6dz6lPcd9F3pqyAzYq9rFy+FSIBYZSnssuVUSJ51MNsvcG1su96T2/uRX/gZcGtx9/ev3PK/pySWVgGuv2rv6/xbKa/O+5U6SaaY0huzIN2+BJVfmIMhECB9Rcj1u58AI8ftcvqr5n6pzid7aq8IlDXaBeDS2ITvivDP9zz3p3RVkanOgOU4YPKcWoC5HhGeMmhlXExfFfK5YOWqcPxDTwCqAsrRvLDbA+hxm0qE2e4QCcArxch6hGlNQKLQ/+4l9m985s4IXOql+2C7GsT975s/F1IB+B6ghU2tc5tAjRXdt6qoAiRWZATgpouLFxUlzaexUTVEK/GICbAyUrsA5AfZ3xQtc7fAzXk3WgJYWXUvQCit+DLX1J5BTVUkfxtcG1cTM38HuVqcP+9/DYkY1MMSo9ECEGhJW48h7kj9M0I+LYr8r8OroyDncT3kqUsMkjzX/fM4GR+t6vYd9W5vzh/EM0JDpwBlIaZALmyot6f2lghTB0h1nvqBINw+1AJwjTB0B6Abhu4AdMPQHYBuGK38oiRnsEmvys5oD0QbIPH/y9Kc4VH9I6EL2G7QvroW3TDhyA0TxS0zX7WgAF/u3ChJG4lCEFhDwGDTWsVHd+wcs0x8uhWmQnHb3LN+ewc7W2Dj5DH17tEsHmrK6UBpn8NnjFqOLRMfsUz4RDplU4w6fLdrztdy8Ay20dYyzqCPuqYotM1ejJCgHWHcxJfLpc7n+BchOsuiJZSRagAAAABJRU5ErkJggg=="
+                  alt="Direct Campaign"
+                  width={60}
+                  height={60}
+                  style={{ borderRadius: "50%" }}
+                />
+              ) : (
+                <img
+                  src={CampaignImg}
+                  alt="icon"
+                  width={60}
+                  height={60}
+                  style={{ borderRadius: "50%" }}
+                />
+              )}
             </div>
             <div style={{ marginTop: 10 }}>
               <div
@@ -431,7 +453,7 @@ const Modal2 = ({
                   marginBottom: 3,
                 }}
               >
-                {CampaignName}
+                {CampaignName.slice(0, 25)}...
               </div>
               <div
                 style={{
@@ -585,7 +607,7 @@ const Modal2 = ({
                   )}
                 </span>
               </div>
-              {referralID && (
+              {walletID && (
                 <div style={inlineStyles.feeRow}>
                   <span>Referral Fee (5%):</span>
                   <span>
@@ -660,7 +682,10 @@ const Modal2 = ({
               )
             }
             disabled={
-              loading || senderaddress.trim() === "" || amount.trim() === ""
+              loading ||
+              senderaddress.trim() === "" ||
+              amount.trim() === "" ||
+              CampaignName.trim() === ""
             }
           >
             Proceed to donate

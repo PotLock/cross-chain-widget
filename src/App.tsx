@@ -5,7 +5,12 @@ import Widget from "./widget/components/Widget";
 function App() {
   return (
     <>
-      <Widget referralID={null} />
+      <Widget
+        walletID={null}
+        DonationType={null}
+        color={null}
+        AssetName={null}
+      />
     </>
   );
 }
