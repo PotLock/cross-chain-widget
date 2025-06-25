@@ -7,7 +7,7 @@ function App() {
     <>
       <Widget
         walletID={null}
-        DonationType={null}
+        DonationType={"POTLOCK Campaigns"}
         color={null}
         AssetName={null}
       />
