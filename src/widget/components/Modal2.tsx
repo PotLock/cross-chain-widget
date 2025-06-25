@@ -194,7 +194,7 @@ const Modal2 = ({
               borderRadius: "6px",
               padding: "12px",
               border: "1px solid #E5E5E5",
-              ...(isMobile && { width: "93%" }),
+              ...(isMobile && { width: "93%",height: '30%'  }),
             }}
           >
             <div
