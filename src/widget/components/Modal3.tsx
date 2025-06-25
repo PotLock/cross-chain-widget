@@ -200,47 +200,44 @@ const Modal3: React.FC<Modal3Props> = ({
       >
         <div
           style={{
+            position: "relative",
             display: "flex",
-            flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "center",
             background: "#262626",
             color: "#ffffff",
-            padding: "28px 18px",
+            padding: isMobile ? "20px 12px" : "28px 18px",
             borderRadius: "15px 15px 0 0",
-            margin: "-30px -30px 25px -30px",
+            margin: isMobile
+              ? "-20px -20px 20px -20px"
+              : "-30px -30px 25px -30px",
             fontWeight: 700,
-            ...(isMobile && {
-              padding: "20px 12px",
-              margin: "-20px -20px 20px -20px",
-            }),
           }}
         >
           <h2
             style={{
-              flexGrow: 1,
-              textAlign: "center",
-              fontSize: "20px",
+              fontSize: isMobile ? "18px" : "20px",
               fontWeight: 700,
-              marginLeft: "40px",
+              textAlign: "center",
             }}
           >
             Confirm Your Donation
           </h2>
+
           <button
             style={{
+              position: "absolute",
+              right: isMobile ? "12px" : "18px",
               background: "none",
               border: "none",
-              fontSize: "26px",
+              fontSize: isMobile ? "27px" : "30px",
               color: "#FCCFCF",
               cursor: "pointer",
               fontFamily: "'Lato', sans-serif",
               transition: "color 0.3s, transform 0.2s",
               ...(isCloseButtonHovered && {
-                color: "#a3bffa",
                 transform: "scale(1.1)",
               }),
-              ...(isMobile && { fontSize: "22px" }),
             }}
             onMouseEnter={() => setIsCloseButtonHovered(true)}
             onMouseLeave={() => setIsCloseButtonHovered(false)}
@@ -473,7 +470,7 @@ const Modal3: React.FC<Modal3Props> = ({
             paddingTop: "20px",
             borderTop: "1px solid #e6ecef",
             ...(isMobile && {
-              flexDirection: "column",
+              flexDirection: "row",
               gap: "10px",
               marginTop: "20px",
               paddingTop: "15px",
@@ -499,7 +496,7 @@ const Modal3: React.FC<Modal3Props> = ({
                 boxShadow: "0 6px 15px rgba(0, 0, 0, 0.15)",
               }),
               ...(isMobile && {
-                padding: "12px 20px",
+                padding: "12px 10px",
                 width: "100%",
                 boxSizing: "border-box",
                 marginRight: "0",
@@ -528,7 +525,7 @@ const Modal3: React.FC<Modal3Props> = ({
                 boxShadow: "0 8px 10px rgba(30, 58, 138, 0.4)",
               }),
               ...(isMobile && {
-                padding: "12px 20px",
+                padding: "12px 10px",
                 width: "100%",
                 boxSizing: "border-box",
               }),

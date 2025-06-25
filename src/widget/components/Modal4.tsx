@@ -187,20 +187,18 @@ const Modal4: React.FC<Modal4Props> = ({
       >
         <div
           style={{
+            position: "relative",
             display: "flex",
-            flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "center",
             background: "#262626",
             color: "#ffffff",
-            padding: "28px 18px",
+            padding: isMobile ? "20px 12px" : "28px 18px",
             borderRadius: "15px 15px 0 0",
-            margin: "-30px -30px 25px -30px",
+            margin: isMobile
+              ? "-20px -20px 20px -20px"
+              : "-30px -30px 25px -30px",
             fontWeight: 700,
-            ...(isMobile && {
-              padding: "20px 12px",
-              margin: "-20px -20px 20px -20px",
-            }),
           }}
         >
           <svg
@@ -210,6 +208,8 @@ const Modal4: React.FC<Modal4Props> = ({
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             style={{
+              position: "absolute",
+              left: isMobile ? "12px" : "18px",
               cursor: "pointer",
               transition: "transform 0.2s, fill 0.3s",
               ...(isBackSvgHovered && {
@@ -240,23 +240,24 @@ const Modal4: React.FC<Modal4Props> = ({
               fill={isBackSvgHovered ? "#a3bffa" : "#FCCFCF"}
             />
           </svg>
+
           <h2
             style={{
-              flexGrow: 1,
-              textAlign: "center",
-              fontSize: "20px",
+              fontSize: isMobile ? "18px" : "20px",
               fontWeight: 700,
-              marginLeft: "0px",
-              ...(isMobile && { fontSize: "18px", marginLeft: "30px" }),
+              textAlign: "center",
             }}
           >
             Confirm Your Donation
           </h2>
+
           <button
             style={{
+              position: "absolute",
+              right: isMobile ? "12px" : "18px",
               background: "none",
               border: "none",
-              fontSize: "26px",
+              fontSize: isMobile ? "22px" : "26px",
               color: "#FCCFCF",
               cursor: "pointer",
               fontFamily: "'Lato', sans-serif",
@@ -265,7 +266,6 @@ const Modal4: React.FC<Modal4Props> = ({
                 color: "#a3bffa",
                 transform: "scale(1.1)",
               }),
-              ...(isMobile && { fontSize: "22px" }),
             }}
             onMouseEnter={() => setIsCloseButtonHovered(true)}
             onMouseLeave={() => setIsCloseButtonHovered(false)}
@@ -275,6 +275,7 @@ const Modal4: React.FC<Modal4Props> = ({
             ×
           </button>
         </div>
+
         <div
           style={{
             display: "flex",
@@ -953,7 +954,7 @@ const Modal4: React.FC<Modal4Props> = ({
                 alignItems: "center",
                 justifyContent: "center",
                 width: "408px",
-                minWidth: "80px",
+                minWidth: "320px",
                 height: "48px",
                 gap: "4px",
                 borderRadius: "16px",

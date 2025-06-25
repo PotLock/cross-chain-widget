@@ -190,58 +190,55 @@ const SelectionModal = ({ onProceed, onClose }) => {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div
-          style={{
-            display: "flex" as const,
-            flexDirection: "row" as const,
-            alignItems: "center",
-            justifyContent: "space-between",
-            background: "#262626",
-            color: "#ffffff",
-            padding: "28px 18px",
-            borderRadius: "15px 15px 0 0",
-            margin: "-30px -30px 25px -30px",
-            fontWeight: 700,
-            ...(isMobile && {
-              padding: "20px 12px",
-              margin: "-20px -20px 20px -20px",
-            }),
-          }}
-        >
-          <h2
-            style={{
-              flexGrow: 1,
-              textAlign: "center" as const,
-              fontSize: "20px",
-              fontWeight: 700,
-              marginLeft: "40px",
-              ...(isMobile && { fontSize: "18px" }),
-            }}
-          >
-            Select Donation Target
-          </h2>
-          <button
-            style={{
-              background: "none",
-              border: "none",
-              fontSize: "26px",
-              color: "#FCCFCF",
-              cursor: "pointer",
-              fontFamily: "'Lato', sans-serif",
-              transition: "color 0.3s, transform 0.2s",
-              ...(isCloseButtonHovered && {
-                color: "#a3bffa",
-                transform: "scale(1.1)",
-              }),
-              ...(isMobile && { fontSize: "22px" }),
-            }}
-            onMouseEnter={() => setIsCloseButtonHovered(true)}
-            onMouseLeave={() => setIsCloseButtonHovered(false)}
-            onClick={onClose}
-          >
-            ×
-          </button>
-        </div>
+
+  <div
+  style={{
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "#262626",
+    color: "#ffffff",
+    padding: isMobile ? "20px 12px" : "28px 18px",
+    borderRadius: "15px 15px 0 0",
+    margin: isMobile ? "-20px -20px 20px -20px" : "-30px -30px 25px -30px",
+    fontWeight: 700,
+  }}
+>
+  <h2
+    style={{
+      fontSize: isMobile ? "18px" : "20px",
+      fontWeight: 700,
+      textAlign: "center",
+    }}
+  >
+    Select Donation Target
+  </h2>
+
+  <button
+    style={{
+      position: "absolute",
+      right: isMobile ? "12px" : "18px",
+      background: "none",
+      border: "none",
+      fontSize: isMobile ? "27px" : "30px",
+      color: "#FCCFCF",
+      cursor: "pointer",
+      fontFamily: "'Lato', sans-serif",
+      transition: "color 0.3s, transform 0.2s",
+      ...(isCloseButtonHovered && {
+        transform: "scale(1.1)",
+      }),
+    }}
+    onMouseEnter={() => setIsCloseButtonHovered(true)}
+    onMouseLeave={() => setIsCloseButtonHovered(false)}
+    onClick={onClose}
+  >
+    ×
+  </button>
+</div>
+
+
         <div>
           <input
             type="text"
