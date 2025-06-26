@@ -11,6 +11,8 @@ interface WidgetProps {
   walletID?: string;
   color?: string;
   AssetName?: string;
+  textColor?: string;
+  fontType?: string;
 }
 
 const Widget: React.FC<WidgetProps> = ({
@@ -18,6 +20,8 @@ const Widget: React.FC<WidgetProps> = ({
   walletID = null,
   color = "black",
   AssetName = "nep141:wrap.near",
+  textColor = "white",
+  fontType = "",
 }) => {
   const [step, setStep] = useState<number>(0);
   const [selectedCampaign, setSelectedCampaign] = useState<number | null>(null);
@@ -127,12 +131,13 @@ const Widget: React.FC<WidgetProps> = ({
         onClick={handleOpenModal}
         style={{
           backgroundColor: color,
-          color: "white",
+          color: textColor ? textColor : "white",
           border: "none",
           borderRadius: "8px",
           padding: "12px 24px",
           fontSize: "16px",
           fontWeight: "600",
+          fontFamily: fontType ? fontType : "",
           cursor: "pointer",
           display: "inline-flex",
           alignItems: "center",

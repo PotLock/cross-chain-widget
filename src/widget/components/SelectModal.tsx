@@ -190,54 +190,54 @@ const SelectionModal = ({ onProceed, onClose }) => {
         }}
         onClick={(e) => e.stopPropagation()}
       >
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#262626",
+            color: "#ffffff",
+            padding: isMobile ? "20px 12px" : "28px 18px",
+            borderRadius: "15px 15px 0 0",
+            margin: isMobile
+              ? "-20px -20px 20px -20px"
+              : "-30px -30px 25px -30px",
+            fontWeight: 700,
+          }}
+        >
+          <h2
+            style={{
+              fontSize: isMobile ? "18px" : "20px",
+              fontWeight: 700,
+              textAlign: "center",
+            }}
+          >
+            Select Donation Target
+          </h2>
 
-  <div
-  style={{
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "#262626",
-    color: "#ffffff",
-    padding: isMobile ? "20px 12px" : "28px 18px",
-    borderRadius: "15px 15px 0 0",
-    margin: isMobile ? "-20px -20px 20px -20px" : "-30px -30px 25px -30px",
-    fontWeight: 700,
-  }}
->
-  <h2
-    style={{
-      fontSize: isMobile ? "18px" : "20px",
-      fontWeight: 700,
-      textAlign: "center",
-    }}
-  >
-    Select Donation Target
-  </h2>
-
-  <button
-    style={{
-      position: "absolute",
-      right: isMobile ? "12px" : "18px",
-      background: "none",
-      border: "none",
-      fontSize: isMobile ? "27px" : "30px",
-      color: "#FCCFCF",
-      cursor: "pointer",
-      fontFamily: "'Lato', sans-serif",
-      transition: "color 0.3s, transform 0.2s",
-      ...(isCloseButtonHovered && {
-        transform: "scale(1.1)",
-      }),
-    }}
-    onMouseEnter={() => setIsCloseButtonHovered(true)}
-    onMouseLeave={() => setIsCloseButtonHovered(false)}
-    onClick={onClose}
-  >
-    ×
-  </button>
-</div>
-
+          <button
+            style={{
+              position: "absolute",
+              right: isMobile ? "12px" : "18px",
+              background: "none",
+              border: "none",
+              fontSize: isMobile ? "27px" : "30px",
+              color: "#FCCFCF",
+              cursor: "pointer",
+              fontFamily: "'Lato', sans-serif",
+              transition: "color 0.3s, transform 0.2s",
+              ...(isCloseButtonHovered && {
+                transform: "scale(1.1)",
+              }),
+            }}
+            onMouseEnter={() => setIsCloseButtonHovered(true)}
+            onMouseLeave={() => setIsCloseButtonHovered(false)}
+            onClick={onClose}
+          >
+            ×
+          </button>
+        </div>
 
         <div>
           <input
@@ -300,7 +300,7 @@ const SelectionModal = ({ onProceed, onClose }) => {
                       item.id,
                       item.name,
                       item.cover_image_url,
-                      item.description
+                      item.recipient
                     )
                   }
                 >

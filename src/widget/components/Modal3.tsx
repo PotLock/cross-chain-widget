@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { useMediaQuery } from "react-responsive";
+import QuitConfirmationModal from "./QuitConfirmationModal";
+import ErrorPopupModal from "./ErrorPopupModal";
 
 interface Modal3Props {
   onClose: () => void;
@@ -45,6 +47,9 @@ const Modal3: React.FC<Modal3Props> = ({
   const [isSentFundsButtonHovered, setIsSentFundsButtonHovered] =
     useState(false);
   const [isCopyButtonHovered, setIsCopyButtonHovered] = useState(false);
+  const [showQuitModal, setShowQuitModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [isLoadingAddress, setIsLoadingAddress] = useState(!isdeposit);
   const modalRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery({ maxWidth: 640 });
   const [isCopied, setisCopied] = useState(false);
@@ -76,7 +81,7 @@ const Modal3: React.FC<Modal3Props> = ({
 
     const result = combined.replace(/^0+/, "") || "0";
 
-    return result;
+    return combined;
   }
 
   function capitalizeFirstLetter(str: string) {
@@ -97,6 +102,7 @@ const Modal3: React.FC<Modal3Props> = ({
 
   const fetchTokens2 = async (): Promise<void> => {
     try {
+      setIsLoadingAddress(true);
       const [amount_digit, amount_symbol] = amount.includes(" ")
         ? amount.split(" ")
         : [amount, ""];
@@ -143,11 +149,17 @@ const Modal3: React.FC<Modal3Props> = ({
         }),
       });
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
+      const data = await response.json();
       setPool(data);
     } catch (error) {
+      console.error("Fetch error:", error);
+      setShowErrorModal(true);
     } finally {
+      setIsLoadingAddress(false);
     }
   };
 
@@ -165,10 +177,20 @@ const Modal3: React.FC<Modal3Props> = ({
     return `${hash.slice(0, 7)}....${hash.slice(-7)}`;
   }
 
+  const handleQuit = () => {
+    console.log("User confirmed quit");
+    setShowQuitModal(false);
+    onClose();
+  };
+
+  const handleCancelQuit = () => {
+    setShowQuitModal(false);
+  };
+
   return (
     <div
       style={{
-        position: "fixed" as const,
+        position: "fixed",
         top: "0",
         left: "0",
         right: "0",
@@ -179,7 +201,6 @@ const Modal3: React.FC<Modal3Props> = ({
         alignItems: "center",
         zIndex: 1000,
       }}
-      onClick={onClose}
     >
       <div
         style={{
@@ -188,7 +209,7 @@ const Modal3: React.FC<Modal3Props> = ({
           borderRadius: "15px",
           width: "400px",
           maxHeight: "80vh",
-          overflowY: "auto" as const,
+          overflowY: "auto",
           position: "relative",
           fontFamily: "'Lato', sans-serif",
           boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
@@ -224,10 +245,10 @@ const Modal3: React.FC<Modal3Props> = ({
             Confirm Your Donation
           </h2>
 
-          <button
+          <div
             style={{
               position: "absolute",
-              right: isMobile ? "12px" : "18px",
+              right: isMobile ? "32px" : "38px",
               background: "none",
               border: "none",
               fontSize: isMobile ? "27px" : "30px",
@@ -241,10 +262,10 @@ const Modal3: React.FC<Modal3Props> = ({
             }}
             onMouseEnter={() => setIsCloseButtonHovered(true)}
             onMouseLeave={() => setIsCloseButtonHovered(false)}
-            onClick={onClose}
+            onClick={() => setShowQuitModal(true)}
           >
             ×
-          </button>
+          </div>
         </div>
         <div>
           <div
@@ -272,8 +293,12 @@ const Modal3: React.FC<Modal3Props> = ({
               Send exactly <strong>{amount}</strong> to the address below
             </p>
           </div>
+
           <div
             style={{
+              filter: isLoadingAddress ? "blur(4px)" : "none",
+              opacity: isLoadingAddress ? 0.5 : 1,
+              transition: "filter 0.3s, opacity 0.3s",
               display: "flex",
               justifyContent: "center",
               marginBottom: "20px",
@@ -296,10 +321,46 @@ const Modal3: React.FC<Modal3Props> = ({
             }}
           >
             <QRCodeSVG
-              value={pool?.quote?.depositAddress || isdeposit}
+              value={pool?.quote?.depositAddress || isdeposit || "placeholder"}
               size={290}
             />
           </div>
+          {isLoadingAddress && (
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "10px",
+                color: "#1e293b",
+                fontSize: isMobile ? "14px" : "16px",
+                fontWeight: 600,
+              }}
+            >
+              <div
+                style={{
+                  border: "4px solid #f3f3f3",
+                  borderTop: "4px solid #262626",
+                  borderRadius: "50%",
+                  width: "40px",
+                  height: "40px",
+                  animation: "spin 1s linear infinite",
+                }}
+              ></div>
+              <span>Generating Address...</span>
+            </div>
+          )}
+          <style>{`
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}</style>
+
           <div
             style={{
               display: "flex",
@@ -457,7 +518,7 @@ const Modal3: React.FC<Modal3Props> = ({
               <br />• Only send from a wallet you control
               <br />• This address is only valid for this specific donation
               <br />• If this campaign doesn't meet its funding goal, your
-              donation will be redirected to Potlock's Community Fund instead of
+              donation will be redirected to POTLOCKs Community Fund instead of
               being refunded to your original wallet.
             </p>
           </div>
@@ -524,6 +585,13 @@ const Modal3: React.FC<Modal3Props> = ({
                 transform: "translateY(-2px)",
                 boxShadow: "0 8px 10px rgba(30, 58, 138, 0.4)",
               }),
+
+              ...(!pool?.quote?.depositAddress &&
+                !isdeposit && {
+                  background: "#00000044",
+                  cursor: "not-allowed",
+                  boxShadow: "none",
+                }),
               ...(isMobile && {
                 padding: "12px 10px",
                 width: "100%",
@@ -545,6 +613,14 @@ const Modal3: React.FC<Modal3Props> = ({
           </button>
         </div>
       </div>
+
+      <QuitConfirmationModal
+        isOpen={showQuitModal}
+        onCancel={handleCancelQuit}
+        onConfirm={handleQuit}
+      />
+
+      <ErrorPopupModal isOpen={showErrorModal} onBack={onBack} />
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import QuitConfirmationModal from "./QuitConfirmationModal";
 
 const Modal2 = ({
   onProceed,
@@ -44,6 +45,7 @@ const Modal2 = ({
   const [decimals, setDecimals] = useState("");
   const [tokenID, setTokenID] = useState("");
   const [senderAddress, setSenderAddress] = useState("");
+  const [showQuitModal, setShowQuitModal] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const tokenSelectorRef = useRef<HTMLDivElement>(null);
@@ -85,6 +87,14 @@ const Modal2 = ({
     fetchTokens();
   }, []);
 
+  function shortenHash(hash: string): string {
+    if (!hash || typeof hash !== "string") {
+      return "Loading...";
+    }
+    if (hash.length < 21) return hash;
+    return `${hash.slice(0, 10)}....${hash.slice(-10)}`;
+  }
+
   const nearToken = pool.find(
     (token) => token.symbol === "wNEAR" || token.assetId === "nep141:wrap.near"
   );
@@ -102,10 +112,26 @@ const Modal2 = ({
   const totalFeeSelectedCurrency =
     protocolFeeSelectedCurrency + networkFeeSelectedCurrency;
 
+  const handleQuit = () => {
+    console.log("User confirmed quit");
+    setShowQuitModal(false);
+    onClose();
+  };
+
+  const handleCancelQuit = () => {
+    setShowQuitModal(false);
+  };
+
+  const isDisabled =
+    loading ||
+    senderAddress.trim() === "" ||
+    amount.trim() === "" ||
+    CampaignName.trim() === "";
+
   return (
     <div
       style={{
-        position: "fixed" as const,
+        position: "fixed",
         top: 0,
         left: 0,
         right: 0,
@@ -116,7 +142,6 @@ const Modal2 = ({
         alignItems: "center",
         zIndex: 1000,
       }}
-      onClick={onClose}
     >
       <div
         style={{
@@ -125,7 +150,7 @@ const Modal2 = ({
           borderRadius: "15px",
           width: "400px",
           maxHeight: "120vh",
-          overflowY: "auto" as const,
+          overflowY: "auto",
           position: "relative",
           fontFamily: "'Lato', sans-serif",
           boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
@@ -161,10 +186,10 @@ const Modal2 = ({
             Make Donation
           </h2>
 
-          <button
+          <div
             style={{
               position: "absolute",
-              right: isMobile ? "12px" : "18px",
+              right: isMobile ? "32px" : "38px",
               background: "none",
               border: "none",
               fontSize: isMobile ? "27px" : "30px",
@@ -178,10 +203,10 @@ const Modal2 = ({
             }}
             onMouseEnter={() => setIsCloseButtonHovered(true)}
             onMouseLeave={() => setIsCloseButtonHovered(false)}
-            onClick={onClose}
+            onClick={() => setShowQuitModal(true)}
           >
             ×
-          </button>
+          </div>
         </div>
         <div>
           <div
@@ -194,7 +219,7 @@ const Modal2 = ({
               borderRadius: "6px",
               padding: "12px",
               border: "1px solid #E5E5E5",
-              ...(isMobile && { width: "93%",height: '30%'  }),
+              ...(isMobile && { width: "93%", height: "auto" }),
             }}
           >
             <div
@@ -248,7 +273,7 @@ const Modal2 = ({
                   textAlign: "left",
                 }}
               >
-                {CampaignDesc.split(" ").slice(0, 5).join(" ")}...
+                {shortenHash(CampaignDesc)}
               </div>
             </div>
           </div>
@@ -316,6 +341,7 @@ const Modal2 = ({
                   fontFamily: "'Lato', sans-serif",
                   color: "#000000",
                 }}
+                type={"number"}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
@@ -374,7 +400,7 @@ const Modal2 = ({
                 display: "flex",
                 flexDirection: "column",
                 width: "204px",
-                overflowY: "auto" as const,
+                overflowY: "auto",
                 maxHeight: "25vh",
                 top: "290px",
                 left: "20px",
@@ -607,7 +633,7 @@ const Modal2 = ({
                 transform: "translateY(-2px)",
                 boxShadow: "0 8px 10px rgba(30, 58, 138, 0.4)",
               }),
-              ...(loading && {
+              ...(isDisabled && {
                 background: "#00000044",
                 cursor: "not-allowed",
                 boxShadow: "none",
@@ -644,6 +670,12 @@ const Modal2 = ({
           </button>
         </div>
       </div>
+
+      <QuitConfirmationModal
+        isOpen={showQuitModal}
+        onCancel={handleCancelQuit}
+        onConfirm={handleQuit}
+      />
     </div>
   );
 };

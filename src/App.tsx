@@ -8,8 +8,10 @@ function App() {
       <Widget
         walletID={null}
         DonationType={"POTLOCK Campaigns"}
-        color={null}
+        color={"black"}
         AssetName={null}
+        textColor = {"white"}
+        fontType = {null}
       />
     </>
   );

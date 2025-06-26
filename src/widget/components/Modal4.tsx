@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import QuitConfirmationModal from "./QuitConfirmationModal";
 
 interface Modal4Props {
   amount: string;
@@ -26,7 +27,7 @@ const Modal4: React.FC<Modal4Props> = ({
   onBack,
   amount = "",
   depositAddress = "",
-  campaignID = "",
+  campaignID = 0, // Fixed default value to match type
   blockchain = "",
   CampaignName = "",
   CampaignImg = "",
@@ -45,6 +46,7 @@ const Modal4: React.FC<Modal4Props> = ({
   const [isCloseButtonHovered, setIsCloseButtonHovered] = useState(false);
   const [isTxLink1Hovered, setIsTxLink1Hovered] = useState(false);
   const [isTxLink2Hovered, setIsTxLink2Hovered] = useState(false);
+  const [showQuitModal, setShowQuitModal] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery({ maxWidth: 640 });
   const [isButtonHovered, setIsButtonHovered] = useState(false);
@@ -152,10 +154,20 @@ const Modal4: React.FC<Modal4Props> = ({
     sendfunds();
   }, []);
 
+  const handleQuit = () => {
+    console.log("User confirmed quit in Modal4");
+    setShowQuitModal(false);
+    onClose();
+  };
+
+  const handleCancelQuit = () => {
+    setShowQuitModal(false);
+  };
+
   return (
     <div
       style={{
-        position: "fixed" as const,
+        position: "fixed",
         top: "0",
         left: "0",
         right: "0",
@@ -166,7 +178,6 @@ const Modal4: React.FC<Modal4Props> = ({
         alignItems: "center",
         zIndex: 1000,
       }}
-      onClick={onClose}
     >
       <div
         style={{
@@ -175,7 +186,7 @@ const Modal4: React.FC<Modal4Props> = ({
           borderRadius: "15px",
           width: "400px",
           maxHeight: "80vh",
-          overflowY: "auto" as const,
+          overflowY: "auto",
           position: "relative",
           fontFamily: "'Lato', sans-serif",
           boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
@@ -251,29 +262,27 @@ const Modal4: React.FC<Modal4Props> = ({
             Confirm Your Donation
           </h2>
 
-          <button
+          <div
             style={{
               position: "absolute",
-              right: isMobile ? "12px" : "18px",
+              right: isMobile ? "32px" : "38px",
               background: "none",
               border: "none",
-              fontSize: isMobile ? "22px" : "26px",
+              fontSize: isMobile ? "27px" : "30px",
               color: "#FCCFCF",
               cursor: "pointer",
               fontFamily: "'Lato', sans-serif",
               transition: "color 0.3s, transform 0.2s",
               ...(isCloseButtonHovered && {
-                color: "#a3bffa",
                 transform: "scale(1.1)",
               }),
             }}
             onMouseEnter={() => setIsCloseButtonHovered(true)}
             onMouseLeave={() => setIsCloseButtonHovered(false)}
-            onClick={onClose}
-            aria-label="Close modal"
+            onClick={() => setShowQuitModal(true)}
           >
             ×
-          </button>
+          </div>
         </div>
 
         <div
@@ -637,7 +646,7 @@ const Modal4: React.FC<Modal4Props> = ({
                     onMouseLeave={() => setIsTxLink2Hovered(false)}
                   >
                     View Transaction
-                    <span style={{ marginLeft: 5 }}>
+                    <span style={{ marginLeft: 25 }}>
                       <svg
                         width="24"
                         height="25"
@@ -646,7 +655,7 @@ const Modal4: React.FC<Modal4Props> = ({
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          d="M15 3.5H21M21 3.5V9.5M21 3.5L10 14.5M18 13.5V19.5C18 20.0304 17.7893 20.5391 17.4142 20.9142C17.0391 21.2893 16.5304 21.5 16 21.5H5C4.46957 21.5 3.96086 21.2893 3.58579 20.9142C3.21071 20.5391 3 20.0304 3 19.5V8.5C3 7.96957 3.21071 7.46086 3.58579 7.08579C3.96086 6.71071 4.46957 6.5 5 6.5H11"
+                          d="M15 3.5H21M21 3.5V9M21 3.5L10 14.5M18 13.5V19.5C18 20.0304 17.7893 20.5391 17.4142 20.9142C17.0391 21.2893 16.5304 21.5 16 21.5H5C4.46957 21.5 3.96086 21.2943 3.58579 20.9142C3.21071 20.5391 3 20.0304 3 19.5V8.5C3 7.96957 3.21071 7.46086 3.58579 7.08579C3.96086 6.71071 4.46957 6.5 5 6.5H11"
                           stroke={isTxLink2Hovered ? "#a3bffa" : "#262626"}
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -690,7 +699,7 @@ const Modal4: React.FC<Modal4Props> = ({
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
-                gap: "30px",
+                gap: "10px",
                 ...(isMobile && { gap: "20px" }),
               }}
             >
@@ -794,11 +803,11 @@ const Modal4: React.FC<Modal4Props> = ({
                       style={{ marginRight: "6px" }}
                     >
                       <path
-                        d="M24 12.5C24 5.87258 18.6274 0.5 12 0.5C5.37258 0.5 0 5.87258 0 12.5C0 19.1274 5.37258 24.5 12 24.5C18.6274 24.5 24 19.1274 24 12.5Z"
+                        d="M24 12.5C24 5.37258 18.6274 0.5 12 0.5C5.37258 0.5 0 5.37258 0 12.5C0 19.1274 5.37258 24.5 12 24.5C18.6274 24.5 24 19.1274 24 12.5Z"
                         fill="black"
                       />
                       <path
-                        d="M15.5159 7.26259L13.0785 10.8792C12.9118 11.1292 13.2368 11.4209 13.4702 11.2167L15.5951 9.13341C15.6577 9.07924 15.7492 9.11674 15.7492 9.20841V15.7292C15.7492 15.8167 15.6326 15.8541 15.5826 15.7917L8.59933 7.10843C8.48532 6.96809 8.34097 6.85545 8.17714 6.77894C8.01333 6.70244 7.83428 6.66408 7.6535 6.66676C6.90351 6.66676 6.16602 7.04592 6.16602 7.91258V17.0833C6.16759 17.3535 6.25697 17.6159 6.42067 17.8309C6.58437 18.0458 6.81352 18.2018 7.07358 18.2751C7.33363 18.3485 7.61048 18.3353 7.8624 18.2375C8.1143 18.1398 8.32762 17.9629 8.47016 17.7333L10.9035 14.1167C11.0702 13.8667 10.7493 13.575 10.516 13.7792L8.4035 15.9042C8.34099 15.9584 8.24933 15.9209 8.24933 15.8292V9.32507C8.24933 9.23341 8.366 9.20007 8.416 9.26257L15.3868 17.8916C15.6201 18.1792 15.9701 18.3333 16.3325 18.3333C17.0868 18.3333 17.8326 17.9583 17.8326 17.0875V7.91675C17.8322 7.64439 17.7428 7.37961 17.5782 7.16267C17.4136 6.94574 17.1824 6.78852 16.9202 6.71494C16.658 6.64136 16.3789 6.65545 16.1255 6.75506C15.8719 6.85467 15.658 7.03434 15.5159 7.26676V7.26259Z"
+                        d="M15.5159 7.26259L13.0785 10.8792C12.9118 11.1292 13.2368 11.4209 13.4702 11.2167L15.5951 9.13341C15.6577 9.07924 15.7492 9.11674 15.7492 9.20841V15.7292C15.7492 15.8167 15.6326 15.8541 15.5826 15.7917L8.59933 7.10843C8.48532 6.96875 8.34097 6.85545 8.17714 6.77894C8.01333 6.70244 7.83428 6.66408 7.6535 6.66676C6.90351 6.66676 6.16602 7.04592 6.16602 7.91258V17.0833C6.16759 17.3535 6.25697 17.6159 6.42067 17.8309C6.58437 18.0458 6.81352 18.2018 7.07358 18.2751C7.33363 18.3485 7.61048 18.3353 7.8624 18.2375C8.1143 18.1398 8.32762 17.9629 8.47016 17.7333L10.9035 14.1167C11.07015 13.8667 10.7493 13.57543 10.516 13.7792L8.4035 15.9042C8.34094 15.9584 8.24933 15.9209 8.24933 15.8292V9.32507C8 24933 9.23341 8.366 0.9 2000 8.416 0.26257L15.3868 17.8916C15.6201 18.1792 15.9701 18.3333 16.3325 18.3333C17.0868 18.3333 17.8326 17.9583 17.8326 17.0875V7.91675C17.8325 7.44439 17.7428 7.37961 17.5782 7.16267C17.4136 6.94574 17.1824 6.78852 16.9202 6.71494C16.658 6.64136 16.3789 6.65545 16.1255 6.75506C15.8719 6.85467 15.658 7.03434 15.5159 7.26676V7.26259Z"
                         fill="#00EC97"
                       />
                     </svg>
@@ -847,7 +856,7 @@ const Modal4: React.FC<Modal4Props> = ({
                 justifyContent: "center",
                 alignItems: "center",
                 gap: "30px",
-                ...(isMobile && { gap: "20px" }),
+                ...(isMobile && { gap: "10px" }),
               }}
             >
               {FundDonated ? (
@@ -982,6 +991,12 @@ const Modal4: React.FC<Modal4Props> = ({
           </div>
         </div>
       </div>
+
+      <QuitConfirmationModal
+        isOpen={showQuitModal}
+        onCancel={handleCancelQuit}
+        onConfirm={handleQuit}
+      />
     </div>
   );
 };

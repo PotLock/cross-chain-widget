@@ -28,13 +28,13 @@ function mountWidget() {
     }
 
     const element = document.createElement("div");
-    element.setAttribute("data-widget-shadow-host", "true"); // helpful for cleanup
+    element.setAttribute("data-widget-shadow-host", "true");
     const shadow = element.attachShadow({ mode: "open" });
 
     const shadowRoot = document.createElement("div");
     shadowRoot.id = "widget-shadow-root";
 
-    const [walletID, DonationType, color, AssetName] = getWidgetAttributes();
+    const [walletID, DonationType, color, AssetName, textColor, fontType] = getWidgetAttributes();
 
     const component = (
       <Widget
@@ -42,6 +42,8 @@ function mountWidget() {
         DonationType={DonationType}
         color={color}
         AssetName={AssetName}
+        textColor = {textColor}
+        fontType = {fontType}
       />
     );
 
@@ -62,7 +64,7 @@ function injectStyle(shadowRoot: HTMLElement) {
   shadowRoot.appendChild(link);
 }
 
-function getWidgetAttributes(): [string, string, string, string] {
+function getWidgetAttributes(): [string, string, string, string, string, string] {
   const script = Array.from(document.scripts).find((s) =>
     s.src.includes("/widget.js")
   ) as HTMLScriptElement;
@@ -77,6 +79,8 @@ function getWidgetAttributes(): [string, string, string, string] {
           obj.donationTarget || "",
           obj.buttonColor || "",
           obj.Asset || "",
+          obj.textColor || "",
+          obj.fontType || "",
         ];
       } catch (e) {
         console.warn("Config parse error", e);
@@ -84,7 +88,7 @@ function getWidgetAttributes(): [string, string, string, string] {
     }
   }
 
-  return ["", "", "", ""];
+  return ["", "", "", "", "", ""];
 }
 
 initializeWidget();
