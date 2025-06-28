@@ -117,7 +117,7 @@ const Modal3: React.FC<Modal3Props> = ({
       const deadline =
         new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split(".")[0] +
         "Z";
-
+console.log(tokenID)
       const response = await fetch("https://1click.chaindefuser.com/v0/quote", {
         method: "POST",
         headers: {
@@ -154,6 +154,7 @@ const Modal3: React.FC<Modal3Props> = ({
       }
 
       const data = await response.json();
+      console.log(data)
       setPool(data);
     } catch (error) {
       console.error("Fetch error:", error);

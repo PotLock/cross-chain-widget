@@ -67,11 +67,11 @@ const Modal2 = ({
       const data = await res.json();
       setPool(data);
       if (data.length > 0) {
-        setSelectedToken(data[0].symbol || "wNEAR");
-        setPrice(data[0].price || 332.5);
-        setDecimals(data[0]?.decimals || "");
-        setTokenID(data[0]?.contractAddress || "");
-        setSelectedassetId(data[0]?.assetId || "nep141:wrap.near");
+        setSelectedToken(data[2].symbol || "USDC");
+        setPrice(data[2].price || 332.5);
+        setDecimals(data[2]?.decimals || "");
+        setTokenID(data[2]?.contractAddress || "");
+        setSelectedassetId(data[2]?.assetId || "nep141:17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1");
       }
       setError(null);
     } catch (error) {
@@ -447,37 +447,40 @@ const Modal2 = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              {pool
-                ?.filter((token) =>
-                  token.symbol.toLowerCase().includes(searchQuery.toLowerCase())
-                )
-                .map((token, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "8px",
-                      cursor: "pointer",
-                      borderRadius: "8px",
-                      color: "#000000",
-                      ...(isMobile && { padding: "6px", fontSize: "14px" }),
-                    }}
-                    onClick={() => {
-                      setSelectedToken(token.symbol);
-                      setShowDropdown(false);
-                      setBlockchain(token.blockchain);
-                      setPrice(token?.price || 332.5);
-                      setSelectedassetId(token.assetId);
-                      setDecimals(token?.decimals || "");
-                      setTokenID(token?.assetId || "");
-                    }}
-                  >
-                    <div>
-                      {token.symbol} ({token.blockchain})
-                    </div>
-                  </div>
-                ))}
+             {pool
+  ?.filter(
+    (token) =>
+      token.symbol.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      token.symbol !== "wNEAR"
+  )
+  .map((token, index) => (
+    <div
+      key={index}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        padding: "8px",
+        cursor: "pointer",
+        borderRadius: "8px",
+        color: "#000000",
+        ...(isMobile && { padding: "6px", fontSize: "14px" }),
+      }}
+      onClick={() => {
+        setSelectedToken(token.symbol);
+        setShowDropdown(false);
+        setBlockchain(token.blockchain);
+        setPrice(token?.price || 332.5);
+        setSelectedassetId(token.assetId);
+        setDecimals(token?.decimals || "");
+        setTokenID(token?.assetId || "");
+      }}
+    >
+      <div>
+        {token.symbol} ({token.blockchain})
+      </div>
+    </div>
+  ))}
+
             </div>
           )}
           {amount !== "" && amount !== null && (
