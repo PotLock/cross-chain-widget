@@ -30,7 +30,7 @@ const Modal2 = ({
   walletID?: string | null;
 }) => {
   const [pool, setPool] = useState<any[]>([]);
-  const [selectedToken, setSelectedToken] = useState("wNEAR");
+  const [selectedToken, setSelectedToken] = useState("USDC");
   const [selectedBlockchain, setBlockchain] = useState("NEAR");
   const [price, setPrice] = useState(0);
   const [selectedassetId, setSelectedassetId] = useState<string | null>(null);
