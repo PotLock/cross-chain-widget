@@ -21,8 +21,8 @@ const SkeletonLoader = ({ isMobile }) => {
   return (
     <div
       style={{
-        display: "flex" as const,
-        flexDirection: "column" as const,
+        display: "flex",
+        flexDirection: "column",
         gap: "15px",
       }}
     >
@@ -30,7 +30,7 @@ const SkeletonLoader = ({ isMobile }) => {
         <div
           key={index}
           style={{
-            display: "flex" as const,
+            display: "flex",
             alignItems: "center",
             padding: "10px",
             borderRadius: "10px",
@@ -117,12 +117,7 @@ const SelectionModal = ({ onProceed, onClose }) => {
     }
   };
 
-  const handleSelect = (
-    id: number,
-    name: string,
-    img: string,
-    desc: string
-  ) => {
+  const handleSelect = (id, name, img, desc) => {
     setSelectedCampaign(id);
     setSelectedCampaignName(name);
     setSelectedCampaignImg(img);
@@ -134,9 +129,7 @@ const SelectionModal = ({ onProceed, onClose }) => {
       setIsLoading(true);
       const response = await fetch(
         "https://us-central1-almond-1b205.cloudfunctions.net/potluck/fetchcampaigns",
-        {
-          method: "GET",
-        }
+        { method: "GET" }
       );
 
       if (!response.ok) {
@@ -161,15 +154,15 @@ const SelectionModal = ({ onProceed, onClose }) => {
   return (
     <div
       style={{
-        position: "fixed" as const,
-        top: "0",
-        left: "0",
-        right: "0",
-        bottom: "0",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         background: "rgba(0, 0, 0, 0.65)",
-        display: "flex" as const,
-        justifyContent: "center" as const,
-        alignItems: "center" as const,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         zIndex: 1000,
       }}
       onClick={onClose}
@@ -177,59 +170,55 @@ const SelectionModal = ({ onProceed, onClose }) => {
       <div
         style={{
           background: "#ffffff",
-          padding: "30px",
+          padding: isMobile ? "20px" : "30px",
           borderRadius: "15px",
-          width: "400px",
-          maxHeight: "80vh",
-          overflowY: "auto" as const,
+          width: isMobile ? "80%" : "400px",
+          maxWidth: "400px",
+          height: isMobile ? "60vh" : "600px", // Fixed height for modal
+          display: "flex",
+          flexDirection: "column",
           position: "relative",
           fontFamily: "'Lato', sans-serif",
           boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
           border: "1px solid #e6ecef",
-          ...(isMobile && { width: "80%", padding: "20px" }),
         }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Header */}
         <div
           style={{
             position: "relative",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
             background: "#262626",
             color: "#ffffff",
-            padding: isMobile ? "20px 12px" : "28px 18px",
+            padding: isMobile ? "30px 12px" : "28px 18px",
             borderRadius: "15px 15px 0 0",
-            margin: isMobile
-              ? "-20px -20px 20px -20px"
-              : "-30px -30px 25px -30px",
-            fontWeight: 700,
+            margin: isMobile ? "-20px -20px 20px -20px" : "-30px -30px 25px -30px",
+            textAlign: "center",
           }}
         >
           <h2
             style={{
               fontSize: isMobile ? "18px" : "20px",
               fontWeight: 700,
-              textAlign: "center",
+              margin: 0,
             }}
           >
             Select Donation Target
           </h2>
-
           <button
             style={{
               position: "absolute",
-              right: isMobile ? "12px" : "18px",
+              right: isMobile ? "10px" : "10px",
+              top: "50%",
+              transform: "translateY(-50%)",
               background: "none",
               border: "none",
-              fontSize: isMobile ? "27px" : "30px",
+              fontSize: isMobile ? "29px" : "35px",
               color: "#FCCFCF",
               cursor: "pointer",
               fontFamily: "'Lato', sans-serif",
               transition: "color 0.3s, transform 0.2s",
-              ...(isCloseButtonHovered && {
-                transform: "scale(1.1)",
-              }),
+              ...(isCloseButtonHovered && { transform: "translateY(-50%) scale(1.1)" }),
             }}
             onMouseEnter={() => setIsCloseButtonHovered(true)}
             onMouseLeave={() => setIsCloseButtonHovered(false)}
@@ -239,41 +228,52 @@ const SelectionModal = ({ onProceed, onClose }) => {
           </button>
         </div>
 
-        <div>
+        {/* Content */}
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            overflow: "hidden", 
+           
+          }}
+        >
           <input
-            type="text"
-            placeholder="Search by project name or campaign owner address or campaign id..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
-            style={{
-              display: "flex" as const,
-              flexDirection: "row" as const,
-              width: "408px",
-              height: "48px",
-              minWidth: "80px",
-              padding: "8px 12px",
-              gap: "4px",
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #E2E8F0",
-              borderRadius: "6px",
-              boxSizing: "border-box" as const,
-              color: "#0F172A",
-              ...(isMobile && { width: "100%", padding: "6px 10px" }),
-            }}
-          />
+  type="text"
+  placeholder="Search by project name  or campaign id..."
+  value={searchTerm}
+  onChange={(e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  }}
+  style={{
+    width: "100%",
+    height: "48px",
+    backgroundColor: "white",
+    padding: isMobile ? "6px 10px" : "8px 12px",
+    border: "1px solid #E2E8F0",
+    borderRadius: "6px",
+    boxSizing: "border-box",
+    color: "#0F172A",
+    fontSize: isMobile ? "14px" : "16px",
+    outline: "none",       
+    boxShadow: "none",   
+  }}
+  className="focus:outline-none"
+/>
+
           <div
             style={{
-              maxHeight: "400px",
-              overflowY: "auto" as const,
+              flex: 1,
+              maxHeight: "90%",
+              overflowY: "auto", // Scrollable campaigns container
               borderRadius: "8px",
-              padding: "13px",
+              padding: isMobile ? "10px" : "13px",
               border: "1px solid #DBDBDB",
               backgroundColor: "#ffffff",
-              marginTop: "30px",
-              ...(isMobile && { maxHeight: "300px", padding: "10px" }),
+              scrollbarWidth: "none",      // Firefox
+              msOverflowStyle: "none",     // IE/Edge
             }}
           >
             {isLoading ? (
@@ -283,9 +283,9 @@ const SelectionModal = ({ onProceed, onClose }) => {
                 <div
                   key={item.id}
                   style={{
-                    display: "flex" as const,
+                    display: "flex",
                     alignItems: "center",
-                    padding: "10px",
+                    padding: isMobile ? "8px" : "10px",
                     borderRadius: "10px",
                     cursor: "pointer",
                     transition: "background 0.2s ease",
@@ -293,31 +293,19 @@ const SelectionModal = ({ onProceed, onClose }) => {
                     ...(selectedCampaign === item.id && {
                       backgroundColor: "#F5F5F5",
                     }),
-                    ...(isMobile && { padding: "8px", marginBottom: "14px" }),
                   }}
                   onClick={() =>
-                    handleSelect(
-                      item.id,
-                      item.name,
-                      item.cover_image_url,
-                      item.recipient
-                    )
+                    handleSelect(item.id, item.name, item.cover_image_url, item.recipient)
                   }
                 >
-                  <div
-                    style={{
-                      display: "flex" as const,
-                      flexDirection: "row" as const,
-                      gap: "20px",
-                    }}
-                  >
+                  <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
                     <div
                       style={{
-                        width: "60px",
-                        height: "60px",
+                        width: isMobile? 50: "60px",
+                        height: isMobile? 50:"60px",
                         borderRadius: "50%",
                         backgroundColor: "#F5F5F5",
-                        display: "flex" as const,
+                        display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
@@ -326,23 +314,20 @@ const SelectionModal = ({ onProceed, onClose }) => {
                       <img
                         src={item.cover_image_url}
                         alt={`${item.name} icon`}
-                        width={60}
-                        height={60}
+                        width={ isMobile? 50:  60}
+                        height={isMobile? 50: 60}
                         style={{ borderRadius: "50%" }}
                       />
                     </div>
-
                     <div>
                       <div
                         style={{
-                          fontSize: "16px",
-                          marginRight: "10px",
+                          fontSize: isMobile ? "15px" : "16px",
                           color: "#000000",
                           fontFamily: "'Mona Sans', sans-serif",
                           fontWeight: 550,
                           marginBottom: "10px",
-                          textAlign: "left" as const,
-                          ...(isMobile && { fontSize: "15px" }),
+                          textAlign: "left",
                         }}
                       >
                         {item.name}
@@ -352,7 +337,7 @@ const SelectionModal = ({ onProceed, onClose }) => {
                           color: "#525252",
                           fontSize: "15px",
                           fontFamily: "sans-serif",
-                          textAlign: "left" as const,
+                          textAlign: "left",
                         }}
                       >
                         {item.description?.split(" ").slice(0, 30).join(" ")}
@@ -364,7 +349,7 @@ const SelectionModal = ({ onProceed, onClose }) => {
             ) : (
               <div
                 style={{
-                  textAlign: "center" as const,
+                  textAlign: "center",
                   color: "#525252",
                   padding: "20px",
                 }}
@@ -374,50 +359,28 @@ const SelectionModal = ({ onProceed, onClose }) => {
             )}
           </div>
         </div>
+
+        {/* Fixed Button */}
         <div
           style={{
-            display: "flex" as const,
-            justifyContent: "space-between",
-            marginTop: "25px",
             paddingTop: "20px",
             borderTop: "1px solid #e6ecef",
-            ...(isMobile && {
-              flexDirection: "column" as const,
-              gap: "10px",
-              marginTop: "20px",
-              paddingTop: "15px",
-            }),
           }}
         >
           <button
             style={{
-              display: "flex" as const,
-              flexDirection: "row" as const,
-              alignItems: "center",
-              justifyContent: "center",
-              width: "438px",
-              minWidth: "80px",
+              width: "100%",
               height: "48px",
-              gap: "4px",
               borderRadius: "6px",
-              padding: "8px 12px",
-              backgroundColor: "#000000",
+              padding: isMobile ? "10px" : "8px 12px",
+              backgroundColor: selectedCampaign ? "#000000" : "#00000044",
               color: "#ffffff",
-              fontSize: "16px",
+              fontSize: isMobile ? "15px" : "16px",
               fontWeight: 500,
-              cursor: "pointer",
+              cursor: selectedCampaign ? "pointer" : "not-allowed",
               border: "none",
-              textAlign: "center" as const,
-              ...(isButtonHovered && { opacity: 0.9 }),
-              ...(!selectedCampaign && {
-                backgroundColor: "#00000044",
-                cursor: "not-allowed",
-              }),
-              ...(isMobile && {
-                width: "100%",
-                padding: "10px",
-                fontSize: "15px",
-              }),
+              textAlign: "center",
+              ...(isButtonHovered && selectedCampaign && { opacity: 0.9 }),
             }}
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
@@ -433,3 +396,12 @@ const SelectionModal = ({ onProceed, onClose }) => {
 };
 
 export default SelectionModal;
+
+
+
+
+
+
+
+
+

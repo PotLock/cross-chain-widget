@@ -117,7 +117,7 @@ const Modal3: React.FC<Modal3Props> = ({
       const deadline =
         new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split(".")[0] +
         "Z";
-console.log(tokenID)
+
       const response = await fetch("https://1click.chaindefuser.com/v0/quote", {
         method: "POST",
         headers: {
@@ -154,7 +154,7 @@ console.log(tokenID)
       }
 
       const data = await response.json();
-      console.log(data)
+ 
       setPool(data);
     } catch (error) {
       console.error("Fetch error:", error);
@@ -208,48 +208,49 @@ console.log(tokenID)
           background: "#ffffff",
           padding: "30px",
           borderRadius: "15px",
-          width: "400px",
-          maxHeight: "80vh",
-          overflowY: "auto",
+          width: isMobile ? "80%" : "400px",
+          maxHeight:isMobile ? "70vh" : "80vh",
           position: "relative",
           fontFamily: "'Lato', sans-serif",
           boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
           border: "1px solid #e6ecef",
+          display: "flex",
+          flexDirection: "column",
           ...(isMobile && { width: "80%", padding: "20px" }),
         }}
         onClick={(e) => e.stopPropagation()}
         ref={modalRef}
       >
-        <div
+
+         <div
           style={{
             position: "relative",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
             background: "#262626",
             color: "#ffffff",
-            padding: isMobile ? "20px 12px" : "28px 18px",
+            padding: isMobile ? "30px 12px" : "28px 18px",
             borderRadius: "15px 15px 0 0",
-            margin: isMobile
-              ? "-20px -20px 20px -20px"
-              : "-30px -30px 25px -30px",
-            fontWeight: 700,
+            margin: isMobile ? "-20px -20px 20px -20px" : "-30px -30px 25px -30px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <h2
             style={{
-              fontSize: isMobile ? "18px" : "20px",
+              fontSize: isMobile ? "16px" : "20px",
               fontWeight: 700,
+              margin: 0,
               textAlign: "center",
             }}
           >
             Confirm Your Donation
           </h2>
-
-          <div
+          <button
             style={{
               position: "absolute",
-              right: isMobile ? "32px" : "38px",
+              right: isMobile ? "10px" : "10px",
+              top: "50%",
+              transform: "translateY(-50%)",
               background: "none",
               border: "none",
               fontSize: isMobile ? "27px" : "30px",
@@ -257,18 +258,26 @@ console.log(tokenID)
               cursor: "pointer",
               fontFamily: "'Lato', sans-serif",
               transition: "color 0.3s, transform 0.2s",
-              ...(isCloseButtonHovered && {
-                transform: "scale(1.1)",
-              }),
+              outline: "none",           
+              boxShadow: "none",        
+              ...(isCloseButtonHovered && { transform: "translateY(-50%) scale(1.1)" }),
             }}
             onMouseEnter={() => setIsCloseButtonHovered(true)}
             onMouseLeave={() => setIsCloseButtonHovered(false)}
             onClick={() => setShowQuitModal(true)}
           >
             ×
-          </div>
+          </button>
         </div>
-        <div>
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            paddingBottom: "50px",
+            scrollbarWidth: "none",    
+            msOverflowStyle: "none",   
+          }}
+        >
           <div
             style={{
               marginBottom: "20px",
@@ -277,7 +286,7 @@ console.log(tokenID)
           >
             <h3
               style={{
-                fontSize: "16px",
+                fontSize: "19px",
                 fontWeight: 600,
                 marginBottom: "10px",
                 color: "#000000",
@@ -366,7 +375,7 @@ console.log(tokenID)
             style={{
               display: "flex",
               flexDirection: "row",
-              width: "380px",
+              width: "93%",
               minHeight: "48px",
               gap: "12px",
               borderRadius: "4px",
@@ -502,7 +511,6 @@ console.log(tokenID)
               fontFamily: "Lato, sans-serif",
               fontSize: "15px",
               color: "#7B7B7B",
-              borderLeft: "4px solid #262626",
               textAlign: "left",
             }}
           >
@@ -528,40 +536,32 @@ console.log(tokenID)
           style={{
             display: "flex",
             justifyContent: "space-between",
-            marginTop: "25px",
-            paddingTop: "20px",
+            gap: "15px",
+            marginTop: "20px",
+            paddingTop: "15px",
             borderTop: "1px solid #e6ecef",
-            ...(isMobile && {
-              flexDirection: "row",
-              gap: "10px",
-              marginTop: "20px",
-              paddingTop: "15px",
-            }),
+            flexWrap: "wrap",
           }}
         >
           <button
             style={{
-              padding: "14px 30px",
-              background: "#e6ecef",
-              color: "#111827",
-              border: "none",
-              borderRadius: "10px",
-              cursor: "pointer",
-              marginRight: "15px",
-              fontFamily: "'Lato', sans-serif",
-              fontWeight: 700,
-              transition: "background 0.3s, transform 0.2s, box-shadow 0.3s",
-              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                padding: isMobile ? "12px 20px" : "14px 30px",
+                background: "#F1F5F9",
+                color: "#111827",
+                border: "none",
+                borderRadius: "10px",
+                cursor: "pointer",
+                fontFamily: "'Lato', sans-serif",
+                fontWeight: 550,
+                fontSize: isMobile ? "14px" : "16px",
+                transition: "background 0.3s, transform 0.2s, box-shadow 0.3s",
+                flex: 1,
+                maxWidth: "100%",
+                textAlign: "center",
               ...(isBackButtonHovered && {
-                background: "#d1d8e0",
+                background: "#F1F5F9",
                 transform: "translateY(-2px)",
-                boxShadow: "0 6px 15px rgba(0, 0, 0, 0.15)",
-              }),
-              ...(isMobile && {
-                padding: "12px 10px",
-                width: "100%",
-                boxSizing: "border-box",
-                marginRight: "0",
+                boxShadow: "0 6px 15px #F1F5F9",
               }),
             }}
             onMouseEnter={() => setIsBackButtonHovered(true)}
@@ -572,21 +572,23 @@ console.log(tokenID)
           </button>
           <button
             style={{
-              padding: "14px 30px",
+              padding: isMobile ? "12px 20px" : "14px 30px",
               background: "#000000",
               color: "#ffffff",
               border: "none",
               borderRadius: "10px",
-              cursor: "pointer",
+              cursor:  "pointer",
               fontFamily: "'Lato', sans-serif",
               fontWeight: 700,
+              fontSize: isMobile ? "14px" : "16px",
               transition: "background 0.3s, transform 0.2s, box-shadow 0.3s",
+              flex: 1,
+              maxWidth: "100%",
+              textAlign: "center",
               ...(isSentFundsButtonHovered && {
-                background: "#000000",
                 transform: "translateY(-2px)",
-                boxShadow: "0 8px 10px rgba(30, 58, 138, 0.4)",
+                boxShadow: "0 8px 10px #F1F5F9",
               }),
-
               ...(!pool?.quote?.depositAddress &&
                 !isdeposit && {
                   background: "#00000044",
@@ -627,3 +629,24 @@ console.log(tokenID)
 };
 
 export default Modal3;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

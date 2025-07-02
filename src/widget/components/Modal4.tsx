@@ -27,7 +27,7 @@ const Modal4: React.FC<Modal4Props> = ({
   onBack,
   amount = "",
   depositAddress = "",
-  campaignID = 0, // Fixed default value to match type
+  campaignID = 0,
   blockchain = "",
   CampaignName = "",
   CampaignImg = "",
@@ -83,10 +83,11 @@ const Modal4: React.FC<Modal4Props> = ({
       }
 
       const statusData = await statusResponse.json();
-      console.log("Status check response:", statusData);
+   
       setSwapData(statusData);
       if (statusData.status === "SUCCESS") {
         setFundReceived(true);
+        setFundReceivedFailed(false);
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
         setFundConverted(true);
@@ -126,7 +127,7 @@ const Modal4: React.FC<Modal4Props> = ({
         }
 
         setFundDonated(true);
-
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         onProceed(
           statusData.swapDetails.nearTxHashes[1],
           CampaignName,
@@ -186,41 +187,41 @@ const Modal4: React.FC<Modal4Props> = ({
           borderRadius: "15px",
           width: "400px",
           maxHeight: "80vh",
-          overflowY: "auto",
           position: "relative",
           fontFamily: "'Lato', sans-serif",
           boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
           border: "1px solid #e6ecef",
+          display: "flex",
+          flexDirection: "column",
           ...(isMobile && { width: "80%", padding: "20px" }),
         }}
         onClick={(e) => e.stopPropagation()}
         ref={modalRef}
       >
-        <div
+
+<div
           style={{
             position: "relative",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
             background: "#262626",
             color: "#ffffff",
-            padding: isMobile ? "20px 12px" : "28px 18px",
+            padding: isMobile ? "30px 12px" : "28px 18px",
             borderRadius: "15px 15px 0 0",
-            margin: isMobile
-              ? "-20px -20px 20px -20px"
-              : "-30px -30px 25px -30px",
-            fontWeight: 700,
+            margin: isMobile ? "-20px -20px 20px -20px" : "-30px -30px 25px -30px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <svg
-            width="14"
-            height="14"
+
+<svg
+            width="16"
+            height="16"
             viewBox="0 0 16 17"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             style={{
               position: "absolute",
-              left: isMobile ? "12px" : "18px",
+              left: isMobile ? "28px" : "28px",
               cursor: "pointer",
               transition: "transform 0.2s, fill 0.3s",
               ...(isBackSvgHovered && {
@@ -254,18 +255,20 @@ const Modal4: React.FC<Modal4Props> = ({
 
           <h2
             style={{
-              fontSize: isMobile ? "18px" : "20px",
+              fontSize: isMobile ? "16px" : "20px",
               fontWeight: 700,
+              margin: 0,
               textAlign: "center",
             }}
           >
             Confirm Your Donation
           </h2>
-
-          <div
+          <button
             style={{
               position: "absolute",
-              right: isMobile ? "32px" : "38px",
+              right: isMobile ? "10px" : "10px",
+              top: "50%",
+              transform: "translateY(-50%)",
               background: "none",
               border: "none",
               fontSize: isMobile ? "27px" : "30px",
@@ -273,94 +276,293 @@ const Modal4: React.FC<Modal4Props> = ({
               cursor: "pointer",
               fontFamily: "'Lato', sans-serif",
               transition: "color 0.3s, transform 0.2s",
-              ...(isCloseButtonHovered && {
-                transform: "scale(1.1)",
-              }),
+              outline: "none",           
+              boxShadow: "none",        
+              ...(isCloseButtonHovered && { transform: "translateY(-50%) scale(1.1)" }),
             }}
             onMouseEnter={() => setIsCloseButtonHovered(true)}
             onMouseLeave={() => setIsCloseButtonHovered(false)}
             onClick={() => setShowQuitModal(true)}
           >
             ×
-          </div>
+          </button>
         </div>
 
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
+            flex: 1,
+            overflowY: "auto",
+            paddingBottom: "80px", 
+            scrollbarWidth: "none",    
+            msOverflowStyle: "none",    
           }}
         >
-          <h2
-            style={{
-              textAlign: "center",
-              fontSize: "17px",
-              marginBottom: "30px",
-              color: "#000000",
-              fontFamily: "'Mona Sans', sans-serif",
-              fontWeight: 600,
-            }}
-          >
-            Processing Your Cross-Chain Donation
-          </h2>
           <div
             style={{
               display: "flex",
-              flexDirection: "row",
-              alignItems: "flex-start",
-              gap: "15px",
-              width: "70%",
-              marginBottom: "20px",
-              textAlign: "left",
-              ...(isMobile && {
-                flexDirection: "row",
-                alignItems: "center",
-                gap: "15px",
-              }),
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
+            <h2
+              style={{
+                textAlign: "center",
+                fontSize: isMobile ? "16px" : "18px",
+                marginBottom: "30px",
+                color: "#000000",
+                fontFamily: "'Mona Sans', sans-serif",
+                fontWeight: 600,
+              
+              }}
+            >
+            
+              Processing Your Cross-Chain Donation
+            </h2>
             <div
               style={{
                 display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "30px",
-                ...(isMobile && { gap: "20px" }),
+                flexDirection: "row",
+                alignItems: "flex-start",
+                gap: "15px",
+                width:isMobile ?  "90%" : "70%",
+                marginBottom: "20px",
+                textAlign: "left",
+                ...(isMobile && {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "15px",
+                }),
+                marginTop: 20
               }}
             >
-              {FundReceived ? (
-                FundReceivedFailed ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "30px",
+                  ...(isMobile && { gap: "20px" }),
+                }}
+              >
+                {FundReceived ? (
+                  FundReceivedFailed ? (
+                    <div
+                      style={{
+                        width:isMobile ? "35px" : "45px",
+                        height:isMobile ? "35px" : "45px",
+                        borderRadius: "50%",
+                        background: "#FF0000",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        color: "#ffffff",
+                        fontSize: "14px",
+                        fontWeight: 600,
+                      
+                      }}
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        fill="white"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7a1 1 0 0 0-1.41 1.41L10.59 12l-4.89 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z" />
+                      </svg>
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        width:isMobile ? "35px" : "45px",
+                        height:isMobile ? "35px" : "45px",
+                        borderRadius: "50%",
+                        background: "#00EC97",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        color: "#ffffff",
+                        fontSize: "14px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        fill="white"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z" />
+                      </svg>
+                    </div>
+                  )
+                ) : (
                   <div
                     style={{
-                      width: "24px",
-                      height: "24px",
+                      width:isMobile ? "35px" : "45px",
+                      height:isMobile ? "35px" : "45px",
                       borderRadius: "50%",
-                      background: "#FF0000",
+                      background: "#737373",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
                       color: "#ffffff",
                       fontSize: "14px",
                       fontWeight: 600,
+                     marginTop: isMobile ? 0 :8,
+
                     }}
                   >
-                    <svg
-                      width="16"
-                      height="16"
-                      fill="white"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7a1 1 0 0 0-1.41 1.41L10.59 12l-4.89 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z" />
-                    </svg>
+                    1
                   </div>
+                )}
+                <div
+                  style={{
+                    width: "1px",
+                    marginTop:"-30%"
+                   
+                  }}
+                >
+                  <svg
+                    width="1"
+                    height="36"
+                    viewBox="0 0 1 36"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <line
+                      x1="0.5"
+                      y1="0.5"
+                      x2="0.499998"
+                      y2="35.5"
+                      stroke="#A6A6A6"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: isMobile ? "15px" : "16px",
+                    fontWeight: 600,
+                    color: "#000000",
+                    fontFamily: "'Mona Sans', sans-serif",
+                    marginTop : isMobile ?  '-15%' : ''
+                  }}
+                >
+                  Receiving funds from {blockchain}
+                </div>
+                {FundReceived ? (
+                  FundReceivedFailed ? (
+                    <div
+                      style={{
+                        fontSize: isMobile ? "13px" : "14px",
+                        color: "#FF0000",
+                        fontFamily: "'Lato', sans-serif",
+                      }}
+                    >
+                     Receive Failed, refresh after some mins.
+                    </div>
+                  ) : (
+                    <>
+                      <div
+                        style={{
+                          fontSize: isMobile ? "13px" : "14px",
+                          color: "#333333",
+                          fontFamily: "'Lato', sans-serif",
+                        }}
+                      >
+                        Received {amount} sent from your wallet
+                      </div>
+                      <a
+                        href={`https://nearblocks.io/txns/${swapData?.swapDetails?.nearTxHashes[0]}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          fontSize: isMobile ? "13px" : "14px",
+                          color: "#262626",
+                          textDecoration: "none",
+                          fontFamily: "'Lato', sans-serif",
+                          transition: "color 0.3s",
+                          ...(isTxLink1Hovered && { color: "#a3bffa" }),
+                        }}
+                        onMouseEnter={() => setIsTxLink1Hovered(true)}
+                        onMouseLeave={() => setIsTxLink1Hovered(false)}
+                      >
+                        View Transaction
+                        <span style={{ marginLeft: 5 }}>
+                          <svg
+                            width="24"
+                            height="25"
+                            viewBox="0 0 24 25"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M15 3.5H21M21 3.5V9.5M21 3.5L10 14.5M18 13.5V19.5C18 20.0304 17.7893 20.5391 17.4142 20.9142C17.0391 21.2893 16.5304 21.5 16 21.5H5C4.46957 21.5 3.96086 21.2893 3.58579 20.9142C3.21071 20.5391 3 20.0304 3 19.5V8.5C3 7.96957 3.21071 7.46086 3.58579 7.08579C3.96086 6.71071 4.46957 6.5 5 6.5H11"
+                              stroke={isTxLink1Hovered ? "#a3bffa" : "#262626"}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </span>
+                      </a>
+                    </>
+                  )
                 ) : (
                   <div
                     style={{
-                      width: "24px",
-                      height: "24px",
+                      fontSize: isMobile ? "13px" : "14px",
+                      color: "#737373",
+                      fontFamily: "'Lato', sans-serif",
+                    }}
+                  >
+                    Awaiting confirmation of received funds....
+                  </div>
+                )}
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "flex-start",
+                gap: "15px",
+                width:isMobile ?  "90%" : "70%",
+                marginBottom: "20px",
+                textAlign: "left",
+                ...(isMobile && {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "15px",
+                }),
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "30px",
+                  ...(isMobile && { gap: "20px" }),
+                }}
+              >
+                {FundConverted ? (
+                  <div
+                    style={{
+                      width:isMobile ? "35px" : "45px",
+                      height:isMobile ? "35px" : "45px",
                       borderRadius: "50%",
                       background: "#00EC97",
                       display: "flex",
@@ -380,108 +582,97 @@ const Modal4: React.FC<Modal4Props> = ({
                       <path d="M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z" />
                     </svg>
                   </div>
-                )
-              ) : (
-                <div
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    borderRadius: "50%",
-                    background: "#A6A6A6",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "#ffffff",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                  }}
-                >
-                  1
-                </div>
-              )}
-              <div
-                style={{
-                  width: "1px",
-                  height: "36px",
-                }}
-              >
-                <svg
-                  width="1"
-                  height="36"
-                  viewBox="0 0 1 36"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <line
-                    x1="0.5"
-                    y1="0.5"
-                    x2="0.499998"
-                    y2="35.5"
-                    stroke="#A6A6A6"
-                  />
-                </svg>
-              </div>
-            </div>
-            <div
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "16px",
-                  fontWeight: 600,
-                  color: "#000000",
-                  fontFamily: "'Mona Sans', sans-serif",
-                }}
-              >
-                Receiving funds from {blockchain}
-              </div>
-              {FundReceived ? (
-                FundReceivedFailed ? (
+                ) : (
                   <div
                     style={{
+                      width:isMobile ? "35px" : "45px",
+                        height:isMobile ? "35px" : "45px",
+                      borderRadius: "50%",
+                      background: "#737373",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#ffffff",
                       fontSize: "14px",
-                      color: "#FF0000",
-                      fontFamily: "'Lato', sans-serif",
+                      fontWeight: 600,
+                     marginTop: 5,
                     }}
                   >
-                    Failed to receive the deposited amount. Please ensure the
-                    funds were sent to the correct address
+                    2
                   </div>
-                ) : (
+                )}
+                <div
+                  style={{
+                    width: "1px",
+                    marginTop:"-30%"
+                  }}
+                >
+                  <svg
+                    width="1"
+                    height="36"
+                    viewBox="0 0 1 36"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <line
+                      x1="0.5"
+                      y1="0.5"
+                      x2="0.499998"
+                      y2="35.5"
+                      stroke="#A6A6A6"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: isMobile ? "15px" : "16px",
+                    fontWeight: 600,
+                    color: "#000000",
+                    fontFamily: "'Mona Sans', sans-serif",
+                    marginTop : isMobile ?  '-15%' : ''
+                  }}
+                >
+                  Withdrawing to NEAR Intent
+                </div>
+                {FundConverted ? (
                   <>
                     <div
                       style={{
-                        fontSize: "14px",
+                        fontSize: isMobile ? "13px" : "14px",
                         color: "#333333",
                         fontFamily: "'Lato', sans-serif",
                       }}
                     >
-                      Received {amount} sent from your wallet
+                      Withdrawal completed successfully
                     </div>
                     <a
-                      href={`https://nearblocks.io/txns/${swapData?.swapDetails?.nearTxHashes[0]}`}
+                      href={`https://nearblocks.io/txns/${swapData?.swapDetails?.nearTxHashes[1]}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        fontSize: "14px",
+                        fontSize: isMobile ? "13px" : "14px",
                         color: "#262626",
                         textDecoration: "none",
                         fontFamily: "'Lato', sans-serif",
                         transition: "color 0.3s",
-                        ...(isTxLink1Hovered && { color: "#a3bffa" }),
+                        ...(isTxLink2Hovered && { color: "#a3bffa" }),
                       }}
-                      onMouseEnter={() => setIsTxLink1Hovered(true)}
-                      onMouseLeave={() => setIsTxLink1Hovered(false)}
+                      onMouseEnter={() => setIsTxLink2Hovered(true)}
+                      onMouseLeave={() => setIsTxLink2Hovered(false)}
                     >
                       View Transaction
-                      <span style={{ marginLeft: 5 }}>
+                      <span style={{ marginLeft: 25 }}>
                         <svg
                           width="24"
                           height="25"
@@ -490,8 +681,8 @@ const Modal4: React.FC<Modal4Props> = ({
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            d="M15 3.5H21M21 3.5V9.5M21 3.5L10 14.5M18 13.5V19.5C18 20.0304 17.7893 20.5391 17.4142 20.9142C17.0391 21.2893 16.5304 21.5 16 21.5H5C4.46957 21.5 3.96086 21.2893 3.58579 20.9142C3.21071 20.5391 3 20.0304 3 19.5V8.5C3 7.96957 3.21071 7.46086 3.58579 7.08579C3.96086 6.71071 4.46957 6.5 5 6.5H11"
-                            stroke={isTxLink1Hovered ? "#a3bffa" : "#262626"}
+                            d="M15 3.5H21M21 3.5V9M21 3.5L10 14.5M18 13.5V19.5C18 20.0304 17.7893 20.5391 17.4142 20.9142C17.0391 21.2893 16.5304 21.5 16 21.5H5C4.46957 21.5 3.96086 21.2943 3.58579 20.9142C3.21071 20.5391 3 20.0304 3 19.5V8.5C3 7.96957 3.21071 7.46086 3.58579 7.08579C3.96086 6.71071 4.46957 6.5 5 6.5H11"
+                            stroke={isTxLink2Hovered ? "#a3bffa" : "#262626"}
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           />
@@ -499,496 +690,343 @@ const Modal4: React.FC<Modal4Props> = ({
                       </span>
                     </a>
                   </>
-                )
-              ) : (
-                <div
-                  style={{
-                    fontSize: "14px",
-                    color: "#333333",
-                    fontFamily: "'Lato', sans-serif",
-                  }}
-                >
-                  Awaiting confirmation of received funds....
-                </div>
-              )}
-            </div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "flex-start",
-              gap: "15px",
-              width: "70%",
-              marginBottom: "20px",
-              textAlign: "left",
-              ...(isMobile && {
-                flexDirection: "row",
-                alignItems: "center",
-                gap: "15px",
-              }),
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "30px",
-                ...(isMobile && { gap: "20px" }),
-              }}
-            >
-              {FundConverted ? (
-                <div
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    borderRadius: "50%",
-                    background: "#00EC97",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "#ffffff",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                  }}
-                >
-                  <svg width="16" height="16" fill="white" viewBox="0 0 24 24">
-                    <path d="M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z" />
-                  </svg>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    borderRadius: "50%",
-                    background: "#A6A6A6",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "#ffffff",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                  }}
-                >
-                  2
-                </div>
-              )}
-              <div
-                style={{
-                  width: "1px",
-                  height: "36px",
-                }}
-              >
-                <svg
-                  width="1"
-                  height="36"
-                  viewBox="0 0 1 36"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <line
-                    x1="0.5"
-                    y1="0.5"
-                    x2="0.499998"
-                    y2="35.5"
-                    stroke="#A6A6A6"
-                  />
-                </svg>
-              </div>
-            </div>
-            <div
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "16px",
-                  fontWeight: 600,
-                  color: "#000000",
-                  fontFamily: "'Mona Sans', sans-serif",
-                }}
-              >
-                Withdrawing to NEAR Intent
-              </div>
-              {FundConverted ? (
-                <>
+                ) : (
                   <div
                     style={{
-                      fontSize: "14px",
-                      color: "#333333",
+                      fontSize: isMobile ? "13px" : "14px",
+                      color: "#737373",
                       fontFamily: "'Lato', sans-serif",
                     }}
                   >
-                    Withdrawal completed successfully
+                    Waiting for withdrawal.....
                   </div>
-                  <a
-                    href={`https://nearblocks.io/txns/${swapData?.swapDetails?.nearTxHashes[1]}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                )}
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "flex-start",
+                gap: "15px",
+                width:isMobile ?  "90%" : "70%",
+                marginBottom: "20px",
+                textAlign: "left",
+                ...(isMobile && {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "15px",
+                }),
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "30px",
+                  ...(isMobile && { gap: "10px" }),
+                }}
+              >
+                {FundDeposited ? (
+                  <div
+                    style={{
+                      width:isMobile ? "35px" : "45px",
+                      height:isMobile ? "35px" : "45px",
+                      borderRadius: "50%",
+                      background: "#00EC97",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#ffffff",
+                      fontSize: "14px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="white"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z" />
+                    </svg>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      width:isMobile ? "35px" : "45px",
+                        height:isMobile ? "35px" : "45px",
+                      borderRadius: "50%",
+                      background: "#737373",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#ffffff",
+                      fontSize: "14px",
+                      fontWeight: 600,
+                      marginTop: isMobile ? 0: 5,
+                    }}
+                  >
+                    3
+                  </div>
+                )}
+                <div
+                  style={{
+                    width: "1px",
+                    marginTop: isMobile ? '' :"-30%"
+                  }}
+                >
+                  <svg
+                    width="1"
+                    height="36"
+                    viewBox="0 0 1 36"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <line
+                      x1="0.5"
+                      y1="0.5"
+                      x2="0.499998"
+                      y2="35.5"
+                      stroke="#A6A6A6"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: isMobile ? "15px" : "16px",
+                    fontWeight: 600,
+                    color: "#000000",
+                    fontFamily: "'Mona Sans', sans-serif",
+                    marginTop : isMobile ?  '-15%' : ''
+                  }}
+                >
+                  Converting to Near
+                </div>
+                {FundDeposited ? (
+                  <div
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      fontSize: "14px",
-                      color: "#262626",
-                      textDecoration: "none",
-                      fontFamily: "'Lato', sans-serif",
-                      transition: "color 0.3s",
-                      ...(isTxLink2Hovered && { color: "#a3bffa" }),
+                      gap: "10px",
+                      flexWrap: "wrap",
+                      fontSize: isMobile ? "13px" : "14px",
                     }}
-                    onMouseEnter={() => setIsTxLink2Hovered(true)}
-                    onMouseLeave={() => setIsTxLink2Hovered(false)}
                   >
-                    View Transaction
-                    <span style={{ marginLeft: 25 }}>
+                    <span style={{ fontWeight: 550, color: "#000000" }}>
+                      {amount} ➝
+                    </span>
+                    <span style={{ display: "flex", alignItems: "center" }}>
                       <svg
                         width="24"
                         height="25"
                         viewBox="0 0 24 25"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        style={{ marginRight: "6px" }}
                       >
                         <path
-                          d="M15 3.5H21M21 3.5V9M21 3.5L10 14.5M18 13.5V19.5C18 20.0304 17.7893 20.5391 17.4142 20.9142C17.0391 21.2893 16.5304 21.5 16 21.5H5C4.46957 21.5 3.96086 21.2943 3.58579 20.9142C3.21071 20.5391 3 20.0304 3 19.5V8.5C3 7.96957 3.21071 7.46086 3.58579 7.08579C3.96086 6.71071 4.46957 6.5 5 6.5H11"
-                          stroke={isTxLink2Hovered ? "#a3bffa" : "#262626"}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+                          d="M24 12.5C24 5.37258 18.6274 0.5 12 0.5C5.37258 0.5 0 5.37258 0 12.5C0 19.1274 5.37258 24.5 12 24.5C18.6274 24.5 24 19.1274 24 12.5Z"
+                          fill="black"
+                        />
+                        <path
+                          d="M15.5159 7.26259L13.0785 10.8792C12.9118 11.1292 13.2368 11.4209 13.4702 11.2167L15.5951 9.13341C15.6577 9.07924 15.7492 9.11674 15.7492 9.20841V15.7292C15.7492 15.8167 15.6326 15.8541 15.5826 15.7917L8.59933 7.10843C8.48532 6.96875 8.34097 6.85545 8.17714 6.77894C8.01333 6.70244 7.83428 6.66408 7.6535 6.66676C6.90351 6.66676 6.16602 7.04592 6.16602 7.91258V17.0833C6.16759 17.3535 6.25697 17.6159 6.42067 17.8309C6.58437 18.0458 6.81352 18.2018 7.07358 18.2751C7.33363 18.3485 7.61048 18.3353 7.8624 18.2375C8.1143 18.1398 8.32762 17.9629 8.47016 17.7333L10.9035 14.1167C11.07015 13.8667 10.7493 13.57543 10.516 13.7792L8.4035 15.9042C8.34094 15.9584 8.24933 15.9209 8.24933 15.8292V9.32507C8.24933 9.23341 8.366 9.2000 8.416 9.26257L15.3868 17.8916C15.6201 18.1792 15.9701 18.3333 16.3325 18.3333C17.0868 18.3333 17.8326 17.9583 17.8326 17.0875V7.91675C17.8325 7.44439 17.7428 7.37961 17.5782 7.16267C17.4136 6.94574 17.1824 6.78852 16.9202 6.71494C16.658 6.64136 16.3789 6.65545 16.1255 6.75506C15.8719 6.85467 15.658 7.03434 15.5159 7.26676V7.26259Z"
+                          fill="#00EC97"
                         />
                       </svg>
+                      <span style={{ fontWeight: 550, color: "#000000" }}>
+                        {(swapData?.swapDetails?.amountOutFormatted
+                          ? parseFloat(swapData.swapDetails.amountOutFormatted)
+                          : 0
+                        ).toFixed(2)}{" "}
+                        Near
+                      </span>
                     </span>
-                  </a>
-                </>
-              ) : (
-                <div
-                  style={{
-                    fontSize: "14px",
-                    color: "#333333",
-                    fontFamily: "'Lato', sans-serif",
-                  }}
-                >
-                  Waiting for withdrawal.....
-                </div>
-              )}
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      fontSize: isMobile ? "13px" : "14px",
+                      color: "#737373",
+                      fontFamily: "'Lato', sans-serif",
+                    }}
+                  >
+                    Awaiting funds withdrawal for conversion.....
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "flex-start",
-              gap: "15px",
-              width: "70%",
-              marginBottom: "20px",
-              textAlign: "left",
-              ...(isMobile && {
+            <div
+              style={{
+                display: "flex",
                 flexDirection: "row",
-                alignItems: "center",
+                alignItems: "flex-start",
                 gap: "15px",
-              }),
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "10px",
-                ...(isMobile && { gap: "20px" }),
-              }}
-            >
-              {FundDeposited ? (
-                <div
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    borderRadius: "50%",
-                    background: "#00EC97",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "#ffffff",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                  }}
-                >
-                  <svg width="16" height="16" fill="white" viewBox="0 0 24 24">
-                    <path d="M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z" />
-                  </svg>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    borderRadius: "50%",
-                    background: "#A6A6A6",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "#ffffff",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                  }}
-                >
-                  3
-                </div>
-              )}
-              <div
-                style={{
-                  width: "1px",
-                  height: "36px",
-                }}
-              >
-                <svg
-                  width="1"
-                  height="36"
-                  viewBox="0 0 1 36"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <line
-                    x1="0.5"
-                    y1="0.5"
-                    x2="0.499998"
-                    y2="35.5"
-                    stroke="#A6A6A6"
-                  />
-                </svg>
-              </div>
-            </div>
-            <div
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "16px",
-                  fontWeight: 600,
-                  color: "#000000",
-                  fontFamily: "'Mona Sans', sans-serif",
-                }}
-              >
-                Converting to Near
-              </div>
-              {FundDeposited ? (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <span style={{ fontWeight: 550, color: "#000000" }}>
-                    {amount} ➝
-                  </span>
-                  <span style={{ display: "flex", alignItems: "center" }}>
-                    <svg
-                      width="24"
-                      height="25"
-                      viewBox="0 0 24 25"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      style={{ marginRight: "6px" }}
-                    >
-                      <path
-                        d="M24 12.5C24 5.37258 18.6274 0.5 12 0.5C5.37258 0.5 0 5.37258 0 12.5C0 19.1274 5.37258 24.5 12 24.5C18.6274 24.5 24 19.1274 24 12.5Z"
-                        fill="black"
-                      />
-                      <path
-                        d="M15.5159 7.26259L13.0785 10.8792C12.9118 11.1292 13.2368 11.4209 13.4702 11.2167L15.5951 9.13341C15.6577 9.07924 15.7492 9.11674 15.7492 9.20841V15.7292C15.7492 15.8167 15.6326 15.8541 15.5826 15.7917L8.59933 7.10843C8.48532 6.96875 8.34097 6.85545 8.17714 6.77894C8.01333 6.70244 7.83428 6.66408 7.6535 6.66676C6.90351 6.66676 6.16602 7.04592 6.16602 7.91258V17.0833C6.16759 17.3535 6.25697 17.6159 6.42067 17.8309C6.58437 18.0458 6.81352 18.2018 7.07358 18.2751C7.33363 18.3485 7.61048 18.3353 7.8624 18.2375C8.1143 18.1398 8.32762 17.9629 8.47016 17.7333L10.9035 14.1167C11.07015 13.8667 10.7493 13.57543 10.516 13.7792L8.4035 15.9042C8.34094 15.9584 8.24933 15.9209 8.24933 15.8292V9.32507C8 24933 9.23341 8.366 0.9 2000 8.416 0.26257L15.3868 17.8916C15.6201 18.1792 15.9701 18.3333 16.3325 18.3333C17.0868 18.3333 17.8326 17.9583 17.8326 17.0875V7.91675C17.8325 7.44439 17.7428 7.37961 17.5782 7.16267C17.4136 6.94574 17.1824 6.78852 16.9202 6.71494C16.658 6.64136 16.3789 6.65545 16.1255 6.75506C15.8719 6.85467 15.658 7.03434 15.5159 7.26676V7.26259Z"
-                        fill="#00EC97"
-                      />
-                    </svg>
-                    <span style={{ fontWeight: 550, color: "#000000" }}>
-                      {(swapData?.swapDetails?.amountOutFormatted
-                        ? parseFloat(swapData.swapDetails.amountOutFormatted)
-                        : 0
-                      ).toFixed(2)}{" "}
-                      Near
-                    </span>
-                  </span>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    fontSize: "14px",
-                    color: "#333333",
-                    fontFamily: "'Lato', sans-serif",
-                  }}
-                >
-                  Awaiting funds withdrawal for conversion.....
-                </div>
-              )}
-            </div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "flex-start",
-              gap: "15px",
-              width: "70%",
-              marginBottom: "20px",
-              textAlign: "left",
-              ...(isMobile && {
-                flexDirection: "row",
-                alignItems: "center",
-                gap: "15px",
-              }),
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "30px",
-                ...(isMobile && { gap: "10px" }),
-              }}
-            >
-              {FundDonated ? (
-                <div
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    borderRadius: "50%",
-                    background: "#00EC97",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "#ffffff",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                  }}
-                >
-                  <svg width="16" height="16" fill="white" viewBox="0 0 24 24">
-                    <path d="M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z" />
-                  </svg>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    borderRadius: "50%",
-                    background: "#A6A6A6",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "#ffffff",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                  }}
-                >
-                  4
-                </div>
-              )}
-            </div>
-            <div
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "16px",
-                  fontWeight: 600,
-                  color: "#000000",
-                  fontFamily: "'Mona Sans', sans-serif",
-                }}
-              >
-                Donating to campaign
-              </div>
-              {FundDonated ? (
-                <div
-                  style={{
-                    fontSize: "14px",
-                    color: "#333333",
-                    fontFamily: "'Lato', sans-serif",
-                  }}
-                >
-                  Successfully deposited {amount} Near to{" "}
-                  <strong style={{ fontWeight: 600, color: "#000000" }}>
-                    {CampaignName}
-                  </strong>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    fontSize: "14px",
-                    color: "#333333",
-                    fontFamily: "'Lato', sans-serif",
-                  }}
-                >
-                  Donation Pending.....
-                </div>
-              )}
-            </div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginTop: "25px",
-              paddingTop: "20px",
-              borderTop: "1px solid #e6ecef",
-              ...(isMobile && {
-                flexDirection: "column",
-                gap: "10px",
-                marginTop: "20px",
-                paddingTop: "15px",
-              }),
-            }}
-          >
-            <button
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "408px",
-                minWidth: "320px",
-                height: "48px",
-                gap: "4px",
-                borderRadius: "16px",
-                padding: "8px 12px",
-                backgroundColor: "#000000",
-                color: "#ffffff",
-                fontSize: "16px",
-                fontWeight: 500,
-                cursor: "pointer",
-                border: "none",
-                textAlign: "center",
-                ...(isButtonHovered && { opacity: 0.9 }),
+                width:isMobile ?  "90%" : "70%",
+                marginBottom: "20px",
+                textAlign: "left",
                 ...(isMobile && {
-                  width: "100%",
-                  padding: "10px",
-                  fontSize: "15px",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "15px",
                 }),
               }}
-              onMouseEnter={() => setIsButtonHovered(true)}
-              onMouseLeave={() => setIsButtonHovered(false)}
-              onClick={refreshTransaction}
             >
-              Refresh Transaction
-            </button>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "30px",
+                  ...(isMobile && { gap: "10px" }),
+                }}
+              >
+                {FundDonated ? (
+                  <div
+                    style={{
+                      width:isMobile ? "35px" : "45px",
+                      height:isMobile ? "35px" : "45px",
+                      borderRadius: "50%",
+                      background: "#00EC97",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#ffffff",
+                      fontSize: "14px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="white"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z" />
+                    </svg>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      width:isMobile ? "35px" : "45px",
+                      height:isMobile ? "35px" : "45px",
+                      borderRadius: "50%",
+                      background: "#737373",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#ffffff",
+                      fontSize: "14px",
+                      fontWeight: 600,
+                     marginTop: 5,
+                    }}
+                  >
+                    4
+                  </div>
+                )}
+              </div>
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: isMobile ? "15px" : "16px",
+                    fontWeight: 600,
+                    color: "#000000",
+                    fontFamily: "'Mona Sans', sans-serif",
+                  }}
+                >
+                  Donating to campaign
+                </div>
+                {FundDonated ? (
+                  <div
+                    style={{
+                      fontSize: isMobile ? "13px" : "14px",
+                      color: "#737373",
+                      fontFamily: "'Lato', sans-serif",
+                    }}
+                  >
+                    Successfully deposited {amount} Near to{" "}
+                    <strong style={{ fontWeight: 600, color: "#000000" }}>
+                      {CampaignName}
+                    </strong>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      fontSize: isMobile ? "13px" : "14px",
+                      color: "#737373",
+                      fontFamily: "'Lato', sans-serif",
+                    }}
+                  >
+                    Donation Pending.....
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
+        </div>
+        <div
+          style={{
+            position: "sticky",
+            bottom: 0,
+            background: "#ffffff",
+            paddingTop: "20px",
+            borderTop: "1px solid #e6ecef",
+            ...(isMobile && {
+              paddingTop: "15px",
+            }),
+          }}
+        >
+          <button
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "408px",
+              minWidth: "320px",
+              height: "48px",
+              gap: "4px",
+              borderRadius: "16px",
+              padding: "8px 12px",
+              backgroundColor: "#000000",
+              color: "#ffffff",
+              fontSize: "16px",
+              fontWeight: 500,
+              cursor: "pointer",
+              border: "none",
+              textAlign: "center",
+              ...(isButtonHovered && { opacity: 0.9 }),
+              ...(isMobile && {
+                width: "100%",
+                padding: "10px",
+                fontSize: "15px",
+              }),
+            }}
+            onMouseEnter={() => setIsButtonHovered(true)}
+            onMouseLeave={() => setIsButtonHovered(false)}
+            onClick={refreshTransaction}
+          >
+            Refresh Transaction
+          </button>
         </div>
       </div>
 
@@ -1002,3 +1040,18 @@ const Modal4: React.FC<Modal4Props> = ({
 };
 
 export default Modal4;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

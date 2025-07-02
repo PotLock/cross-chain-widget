@@ -108,7 +108,7 @@ const Modal5: React.FC<Modal5Props> = ({
           <button
             style={{
               position: "absolute",
-              right: isMobile ? "12px" : "18px",
+              right: isMobile ? "10px" : "10px",
               background: "none",
               border: "none",
               fontSize: isMobile ? "27px" : "30px",
@@ -116,6 +116,8 @@ const Modal5: React.FC<Modal5Props> = ({
               cursor: "pointer",
               fontFamily: "'Lato', sans-serif",
               transition: "color 0.3s, transform 0.2s",
+              outline: "none",           
+              boxShadow: "none",        
               ...(isCloseButtonHovered && {
                 transform: "scale(1.1)",
               }),

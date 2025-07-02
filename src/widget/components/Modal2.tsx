@@ -30,15 +30,17 @@ const Modal2 = ({
   walletID?: string | null;
 }) => {
   const [pool, setPool] = useState<any[]>([]);
-  const [selectedToken, setSelectedToken] = useState("USDC");
-  const [selectedBlockchain, setBlockchain] = useState("NEAR");
+  const [selectedBlockchain, setBlockchain] = useState("Chain");
+  const [selectedToken, setSelectedToken] = useState("Select Token");
   const [price, setPrice] = useState(0);
   const [selectedassetId, setSelectedassetId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQueryBlockchain, setSearchQueryBlockchain] = useState("");
+  const [searchQueryToken, setSearchQueryToken] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [amount, setAmount] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [showBlockchainDropdown, setShowBlockchainDropdown] = useState(false);
+  const [showTokenDropdown, setShowTokenDropdown] = useState(false);
   const [isCloseButtonHovered, setIsCloseButtonHovered] = useState(false);
   const [isGoBackButtonHovered, setIsGoBackButtonHovered] = useState(false);
   const [isProceedButtonHovered, setIsProceedButtonHovered] = useState(false);
@@ -47,8 +49,8 @@ const Modal2 = ({
   const [senderAddress, setSenderAddress] = useState("");
   const [showQuitModal, setShowQuitModal] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const tokenSelectorRef = useRef<HTMLDivElement>(null);
+  const blockchainDropdownRef = useRef<HTMLDivElement>(null);
+  const tokenDropdownRef = useRef<HTMLDivElement>(null);
 
   const isMobile = useMediaQuery({ maxWidth: 640 });
 
@@ -67,11 +69,8 @@ const Modal2 = ({
       const data = await res.json();
       setPool(data);
       if (data.length > 0) {
-        setSelectedToken(data[2].symbol || "USDC");
-        setPrice(data[2].price || 332.5);
-        setDecimals(data[2]?.decimals || "");
-        setTokenID(data[2]?.contractAddress || "");
-        setSelectedassetId(data[2]?.assetId || "nep141:17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1");
+     
+      
       }
       setError(null);
     } catch (error) {
@@ -89,11 +88,15 @@ const Modal2 = ({
 
   function shortenHash(hash: string): string {
     if (!hash || typeof hash !== "string") {
-      return "Loading...";
+      return "...";
     }
     if (hash.length < 21) return hash;
     return `${hash.slice(0, 10)}....${hash.slice(-10)}`;
   }
+
+  const uniqueBlockchains = [...new Set(pool.map((token) => token.blockchain))];
+
+  const filteredTokens = pool.filter((token) => token.blockchain === selectedBlockchain);
 
   const nearToken = pool.find(
     (token) => token.symbol === "wNEAR" || token.assetId === "nep141:wrap.near"
@@ -122,11 +125,60 @@ const Modal2 = ({
     setShowQuitModal(false);
   };
 
-  const isDisabled =
-    loading ||
-    senderAddress.trim() === "" ||
-    amount.trim() === "" ||
-    CampaignName.trim() === "";
+  const validateForm = () => {
+    if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+      setError("Please enter a valid amount greater than 0.");
+      return false;
+    }
+    if (!senderAddress || senderAddress.trim() === "") {
+      setError("Please provide a valid sender wallet address.");
+      return false;
+    }
+    if (CampaignName.trim() === "") {
+      setError("Campaign name is required.");
+      return false;
+    }
+    setError(null);
+    return true;
+  };
+
+  const handleProceed = () => {
+    if (validateForm()) {
+      onProceed(
+        campaignID,
+        `${(donationAmount + totalFeeSelectedCurrency).toFixed(4)} ${selectedToken || "USDC"}`,
+        networkFeeSelectedCurrency.toFixed(4),
+        selectedBlockchain,
+        decimals,
+        tokenID,
+        senderAddress
+      );
+     
+    }
+  };
+
+  const isDisabled = loading ||
+  senderAddress.trim() === "" ||
+  amount.trim() === "" ||
+  CampaignName.trim() === ""
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        blockchainDropdownRef.current &&
+        !blockchainDropdownRef.current.contains(event.target as Node) &&
+        tokenDropdownRef.current &&
+        !tokenDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowBlockchainDropdown(false);
+        setShowTokenDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div
@@ -142,54 +194,54 @@ const Modal2 = ({
         alignItems: "center",
         zIndex: 1000,
       }}
+      onClick={(e) => e.stopPropagation()}
     >
       <div
         style={{
           background: "#ffffff",
-          padding: "30px",
+          padding: isMobile ? "20px" : "30px",
           borderRadius: "15px",
-          width: "400px",
-          maxHeight: "120vh",
-          overflowY: "auto",
-          position: "relative",
+          width: isMobile ? "80%" : "400px",
+          maxWidth: "400px",
+          maxHeight:isMobile ? "50vh" : "80vh",
+          display: "flex",
+          flexDirection: "column",
           fontFamily: "'Lato', sans-serif",
           boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
           border: "1px solid #e6ecef",
-          ...(isMobile && { width: "80%", padding: "20px" }),
         }}
-        onClick={(e) => e.stopPropagation()}
         ref={modalRef}
       >
+       
         <div
           style={{
             position: "relative",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
             background: "#262626",
             color: "#ffffff",
-            padding: isMobile ? "20px 12px" : "28px 18px",
+            padding: isMobile ? "30px 12px" : "28px 18px",
             borderRadius: "15px 15px 0 0",
-            margin: isMobile
-              ? "-20px -20px 20px -20px"
-              : "-30px -30px 25px -30px",
-            fontWeight: 700,
+            margin: isMobile ? "-20px -20px 20px -20px" : "-30px -30px 25px -30px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <h2
             style={{
-              fontSize: isMobile ? "18px" : "20px",
+              fontSize: isMobile ? "16px" : "20px",
               fontWeight: 700,
+              margin: 0,
               textAlign: "center",
             }}
           >
-            Make Donation
+            Enter Donation Amount
           </h2>
-
-          <div
+          <button
             style={{
               position: "absolute",
-              right: isMobile ? "32px" : "38px",
+              right: isMobile ? "10px" : "10px",
+              top: "50%",
+              transform: "translateY(-50%)",
               background: "none",
               border: "none",
               fontSize: isMobile ? "27px" : "30px",
@@ -197,29 +249,42 @@ const Modal2 = ({
               cursor: "pointer",
               fontFamily: "'Lato', sans-serif",
               transition: "color 0.3s, transform 0.2s",
-              ...(isCloseButtonHovered && {
-                transform: "scale(1.1)",
-              }),
+              outline: "none",           
+              boxShadow: "none",        
+              ...(isCloseButtonHovered && { transform: "translateY(-50%) scale(1.1)" }),
             }}
             onMouseEnter={() => setIsCloseButtonHovered(true)}
             onMouseLeave={() => setIsCloseButtonHovered(false)}
             onClick={() => setShowQuitModal(true)}
           >
             ×
-          </div>
+          </button>
         </div>
-        <div>
+
+       
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
+          
           <div
             style={{
               display: "flex",
               flexDirection: "row",
-              width: "380px",
-              height: "66px",
-              gap: "30px",
-              borderRadius: "6px",
+              gap: "20px",
               padding: "12px",
               border: "1px solid #E5E5E5",
-              ...(isMobile && { width: "93%", height: "auto" }),
+              borderRadius: "6px",
+              justifyContent: "left",
+              alignItems: "center",
+              width: "91.5%"
             }}
           >
             <div
@@ -232,11 +297,12 @@ const Modal2 = ({
                 alignItems: "center",
                 justifyContent: "center",
                 boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                flexShrink: 0,
               }}
             >
               {CampaignImg === "Direct" ? (
                 <img
-                  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFBUlEQVR4nO1ba28bRRTdP8EHICD+DhJU/IdCIaRNQAIJ+gGQ+IAoAgQSj6pQECIU0qqlqpI+ACchbZzSEBLS1Hk4Dz9mnYQ0TeKdVt6duxfdWdtxnOzEphvPrs1KR7Gyu9Y9Z+6ce2e9YxiK4z7DJznDY9yEK9yEaYuBxU0XwwwvRpiWMTM8ej+LTxj1HjyNj3MTTloMhG5CAQgCFoOeBzl8qjbyDJ+zGOR1Bx44GGzxLB7aj3wXKaY92APMBs6wUzXyoDvIhohQnQk8g21Nmfaq6ZDCx7YFMOG09qAaDjhVLnXN4Pb1QnLOYBvN/U7dwWhDDjsMzuCy9kB0gUGvYZkwpz0QbYBpo6XcvwoWg7yhOwjdMHQHoBuG7gB0w9AdQNMJsLXgYuZXgYlvBI697+DwGzYOdhRw4MUCxg4X5OehThtvvmXjxMcOJn9yMBcHtLIRF2B5BPCvDxwcOOIRrRdDXTYmTgvcmIFoCZBPu/j3Z85/Ir0XBtsLmL4soiPA1MngyJfQ/3wBc9dFNAQY7AiWfAm3v3CiIcDou/aBCLBwISIC3J0EvPFasCJQdWhUVTCCKn3k4IMvPRzx4ddtTPUK5Kwx5PlDC8C8ml8pRKpP4MSnjiSzr9kdKeAfb9uY+Fpg7gag1UDigQkQO1yQDQ+5dnXa5lMuro2DPMf6BaavCTSHBOaGAdfv6Gt+AhcgVmpmXrHxzimBmV8E3r1d54gyFzeSrhRmbQLw3jRgfikKZbBd3dTE37Tx1ju2zBIyN/q7cnO72yPS2X7A5FmBM9/vxsJFkF1mPtMEjVD/C4WyZ1D6swHA2R/2Jl4NEuifcQhhK5xxcbLGVni+WNvJG5YuQU3Eq0FmGSoBeBGUpuMf+S+Gxk445ZFXkZ/9UeBSn1qclREIjwBjJxxpXJWlMBsTmPhWyHPx47Y0R2qY6DylvYrc6qh3nVKEboHrCQiHALGi2U1+7uByhbnthY15Vznn6dz6lPcd9F3pqyAzYq9rFy+FSIBYZSnssuVUSJ51MNsvcG1su96T2/uRX/gZcGtx9/ev3PK/pySWVgGuv2rv6/xbKa/O+5U6SaaY0huzIN2+BJVfmIMhECB9Rcj1u58AI8ftcvqr5n6pzid7aq8IlDXaBeDS2ITvivDP9zz3p3RVkanOgOU4YPKcWoC5HhGeMmhlXExfFfK5YOWqcPxDTwCqAsrRvLDbA+hxm0qE2e4QCcArxch6hGlNQKLQ/+4l9m985s4IXOql+2C7GsT975s/F1IB+B6ghU2tc5tAjRXdt6qoAiRWZATgpouLFxUlzaexUTVEK/GICbAyUrsA5AfZ3xQtc7fAzXk3WgJYWXUvQCit+DLX1J5BTVUkfxtcG1cTM38HuVqcP+9/DYkY1MMSo9ECEGhJW48h7kj9M0I+LYr8r8OroyDncT3kqUsMkjzX/fM4GR+t6vYd9W5vzh/EM0JDpwBlIaZALmyot6f2lghTB0h1nvqBINw+1AJwjTB0B6Abhu4AdMPQHYBuGK38oiRnsEmvys5oD0QbIPH/y9Kc4VH9I6EL2G7QvroW3TDhyA0TxS0zX7WgAF/u3ChJG4lCEFhDwGDTWsVHd+wcs0x8uhWmQnHb3LN+ewc7W2Dj5DH17tEsHmrK6UBpn8NnjFqOLRMfsUz4RDplU4w6fLdrztdy8Ay20dYyzqCPuqYotM1ejJCgHWHcxJfLpc7n+BchOsuiJZSRagAAAABJRU5ErkJggg=="
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFBUlEQVR4nO1ba28bRRTdP8EHICD+DhJU/IdCIaRNQAIJ+gGQ+IAoAgQSj6pQECIU0qqlqpI+ACchbZzSEBLS1Hk4Dz9mnYQ0TeKdVt6duxfdWdtxnOzEphvPrs1KR7Gyu9Y9Z+6ce2e9YxiK4z7DJznDY9yEK9yEaYuBxU0XwwwvRpiWMTM8ej+LTxj1HjyNj3MTTloMhG5CAQgCFoOeBzl8qjbyDJ+zGOR1Bx44GGzxLB7aj3wXKaY92APMBs6wUzXyoDvIhohQnQk8g21Nmfaq6ZDCx7YFMOG09qAaDjhVLnXN4Pb1QnLOYBvN/U7dwWhDDjsMzuCy9kB0gUGvYZkwpz0QbYBpo6XcvwoWg7yhOwjdMHQHoBuG7gB0w9AdQNMJsLXgYuZXgYlvBI697+DwGzYOdhRw4MUCxg4X5OehThtvvmXjxMcOJn9yMBcHtLIRF2B5BPCvDxwcOOIRrRdDXTYmTgvcmIFoCZBPu/j3Z85/Ir0XBtsLmL4soiPA1MngyJfQ/3wBc9dFNAQY7AiWfAm3v3CiIcDou/aBCLBwISIC3J0EvPFasCJQdWhUVTCCKn3k4IMvPRzx4ddtTPUK5Kwx5PlDC8C8ml8pRKpP4MSnjiSzr9kdKeAfb9uY+Fpg7gag1UDigQkQO1yQDQ+5dnXa5lMuro2DPMf6BaavCTSHBOaGAdfv6Gt+AhcgVmpmXrHxzimBmV8E3r1d54gyFzeSrhRmbQLw3jRgfikKZbBd3dTE37Tx1ju2zBIyN/q7cnO72yPS2X7A5FmBM9/vxsJFkF1mPtMEjVD/C4WyZ1D6swHA2R/2Jl4NEuifcQhhK5xxcbLGVni+WNvJG5YuQU3Eq0FmGSoBeBGUpuMf+S+Gxk445ZFXkZ/9UeBSn1qclREIjwBjJxxpXJWlMBsTmPhWyHPx47Y0R2qY6DylvYrc6qh3nVKEboHrCQiHALGi2U1+7uByhbnthY15Vznn6dz6lPcd9F3pqyAzYq9rFy+FSIBYZSnssuVUSJ51MNsvcG1su96T2/uRX/gZcGtx9/ev3PK/pySWVgGuv2rv6/xbKa/O+5U6SaaY0huzIN2+BJVfmIMhECB9Rcj1u58AI8ftcvqr5n6pzid7aq8IlDXaBeDS2ITvivDP9zz3p3RVkanOgOU4YPKcWoC5HhGeMmhlXExfFfK5YOWqcPxDTwCqAsrRvLDbA+hxm0qE2e4QCcArxch6hGlNQKLQ/+4l9m985s4IXOql+2C7GsT975s/F1IB+B6ghU2tc5tAjRXdt6qoAiRWZATgpouLFxUlzaexUTVEK/GICbAyUrsA5AfZ3xQtc7fAzXk3WgJYWXUvQCit+DLX1J5BTVUkfxtcG1cTM38HuVqcP+9/DYkY1MMSo9ECEGhJW48h7kj9M0I+LYr8r8OroyDncT3kqUsMkjzX/fM4GR+t6vYd9W5vzh/EM0JDpwBlIaZALmyot6f2lghTB0h1nvqBINw+1AJwjTB0B6Abhu4AdMPQHYBuGK38oiRnsEmvys5oD0QbIPH/y9Kc4VH9I6EL2G7QvroW3TDhyA0TxS0zX7WgAF/u3ChJG4lCEFhDwGDTWsVHd+wcs0x8uhWmQnHb3LN+ewc7W2Dj5DH17tEsHmrK6UBpn8NnjFqOLRMfsUz4RDplU4w6fLdrztdy8Ay20dYyzqCPuqYotM1ejJCgHWHcxJfLpc7n+BchOsuiJZSRagAAAABJRU5ErkJggg=="
                   alt="Direct Campaign"
                   width={60}
                   height={60}
@@ -252,23 +318,29 @@ const Modal2 = ({
                 />
               )}
             </div>
-            <div style={{ marginTop: 10 }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
               <div
                 style={{
                   color: "black",
                   fontWeight: 600,
-                  fontSize: 16,
+                  fontSize: isMobile ? "15px" : "16px",
                   fontFamily: "sans-serif",
                   textAlign: "left",
-                  marginBottom: 3,
+                  marginBottom: "3px",
                 }}
               >
-                {CampaignName.slice(0, 25)}...
+                {CampaignName.length > 25 ? `${CampaignName.slice(0, 25)}...` : CampaignName}
               </div>
               <div
                 style={{
                   color: "#525252",
-                  fontSize: 15,
+                  fontSize: isMobile ? "14px" : "15px",
                   fontFamily: "sans-serif",
                   textAlign: "left",
                 }}
@@ -277,17 +349,284 @@ const Modal2 = ({
               </div>
             </div>
           </div>
+
+        
           <div
             style={{
-              margin: "20px 0",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              width: "91.5%"
             }}
           >
             <div
               style={{
-                marginBottom: 10,
                 color: "black",
-                textAlign: "left",
                 fontWeight: 600,
+                fontSize: isMobile ? "15px" : "16px",
+                textAlign: "left",
+              }}
+            >
+              Chain 
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                width: "100%",
+                height: "48px",
+                borderRadius: "12px",
+                padding: "4px 12px",
+                border: "1px solid #DBDBDB",
+                alignItems: "center",
+                position: "relative",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  cursor: "pointer",
+                  flex: 1,
+                  maxWidth: "25%",
+                  borderRightColor: "#DBDBDB",
+                  borderRightStyle: "solid",   
+                  borderRightWidth: "1px",      
+                  height: "100%",
+                  
+                }}
+                onClick={() => {
+                  setShowBlockchainDropdown(!showBlockchainDropdown);
+                  setShowTokenDropdown(false);
+                }}
+              >
+               
+                <span style={{ fontWeight: 500, color: "#000" }}>{selectedBlockchain}</span>
+                <span style={{ fontSize: "12px", color: "#666", marginTop: 2 }}><svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.59 0.294922L6 4.87492L1.41 0.294922L0 1.70492L6 7.70492L12 1.70492L10.59 0.294922Z" fill="#A6A6A6"/>
+</svg>
+</span>
+              </div>
+              <div
+                style={{
+                  flex: 1,
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
+    marginLeft: 20,
+    justifyContent:"space-between",
+    height: "100%",
+                }}
+                onClick={() => {
+                  setShowTokenDropdown(!showTokenDropdown);
+                  setShowBlockchainDropdown(false);
+                }}
+              >
+                <span style={{ color: "#888", fontWeight: 400 }}>
+                  {selectedToken || "Select Token"}
+                </span>
+                <span style={{ fontSize: "12px", color: "#666", marginLeft: "8px" , justifyContent: "flex-end",}}><svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.59 0.294922L6 4.87492L1.41 0.294922L0 1.70492L6 7.70492L12 1.70492L10.59 0.294922Z" fill="#A6A6A6"/>
+</svg>
+</span>
+              </div>
+            </div>
+            {showBlockchainDropdown && (
+              <div
+                style={{
+                  position: "absolute",
+                  width: isMobile ? "40%" : "165px",
+                  maxHeight: "25vh",
+                  overflowY: "auto",
+                  top: isMobile ? "50%" : "49%",
+                  left: isMobile ? "30%" : "calc(50% - 110px)",
+                  transform: "translateX(-50%)",
+                  background: "#FFFFFF",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "12px",
+                  boxShadow: "0 6px 24px rgba(0, 0, 0, 0.1)",
+                  padding: isMobile ? "8px" : "10px",
+                  zIndex: 10,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                  scrollbarWidth: "none",    
+                  msOverflowStyle: "none",    
+                }}
+                ref={blockchainDropdownRef}
+              >
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: isMobile ? "14px" : "15px",
+                    paddingBottom: "8px",
+                    borderBottom: "1px solid #eee",
+                    marginBottom: "10px",
+                    color: "#000000",
+                    textAlign: "center",
+                  }}
+                >
+                  Available Blockchains
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search by blockchain..."
+                  style={{
+                    width: "100%",
+                    padding: "10px 12px",
+                    margin: "10px 0",
+                    fontSize: isMobile ? "13px" : "14px",
+                    borderRadius: "8px",
+                    border: "1px solid #d1d8e0",
+                    background: "#f9fafb",
+                    fontFamily: "'Lato', sans-serif",
+                    boxSizing: "border-box",
+                    transition: "border-color 0.3s, box-shadow 0.3s",
+                    color: "#000000",
+                  }}
+                  value={searchQueryBlockchain}
+                  onChange={(e) => setSearchQueryBlockchain(e.target.value)}
+                />
+                {uniqueBlockchains
+                  .filter((blockchain) =>
+                    blockchain.toLowerCase().includes(searchQueryBlockchain.toLowerCase()
+                    )
+                  )
+                  .map((blockchain, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: isMobile ? "6px" : "8px",
+                        cursor: "pointer",
+                        borderRadius: "8px",
+                        color: "#000000",
+                        fontSize: isMobile ? "15px" : "16px",
+                      }}
+                      onClick={() => {
+                        setBlockchain(blockchain);
+                        setShowBlockchainDropdown(false);
+                        const defaultToken = pool.find(t => t.blockchain === blockchain);
+                        if (defaultToken) {
+                          setSelectedToken(defaultToken.symbol === "wNEAR" ? '' : defaultToken.symbol  );
+                          setPrice(defaultToken.price || 0);
+                          setDecimals(defaultToken.decimals || "");
+                          setTokenID(defaultToken.assetId || "");
+                          setSelectedassetId(defaultToken.assetId || "");
+                        }
+                      }}
+                    >
+                      {blockchain}
+                    </div>
+                  ))}
+              </div>
+            )}
+            {showTokenDropdown && (
+              <div
+                style={{
+                  position: "absolute",
+                  width: isMobile ? "40%" : "180px",
+                  maxHeight: "25vh",
+                  overflowY: "auto",
+                  top: isMobile ? "50%" : "49%",
+                  left: isMobile ? "55%" : "calc(50% - -10px)",
+                  transform: "translateX(-50%)",
+                  background: "#FFFFFF",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "12px",
+                  boxShadow: "0 6px 24px rgba(0, 0, 0, 0.1)",
+                  padding: isMobile ? "8px" : "10px",
+                  zIndex: 10,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                  scrollbarWidth: "none",     
+                  msOverflowStyle: "none",     
+                }}
+                ref={tokenDropdownRef}
+              >
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: isMobile ? "14px" : "15px",
+                    paddingBottom: "8px",
+                    borderBottom: "1px solid #eee",
+                    marginBottom: "10px",
+                    color: "#000000",
+                    textAlign: "center",
+                  }}
+                >
+                  Available Tokens
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search by token..."
+                  style={{
+                    width: "100%",
+                    padding: "10px 12px",
+                    margin: "10px 0",
+                    fontSize: isMobile ? "13px" : "14px",
+                    borderRadius: "8px",
+                    border: "1px solid #d1d8e0",
+                    background: "#f9fafb",
+                    fontFamily: "'Lato', sans-serif",
+                    boxSizing: "border-box",
+                    transition: "border-color 0.3s, box-shadow 0.3s",
+                    color: "#000000",
+                  }}
+                  value={searchQueryToken}
+                  onChange={(e) => setSearchQueryToken(e.target.value)}
+                />
+                {filteredTokens
+                  .filter((token) =>
+                    token.symbol.toLowerCase().includes(searchQueryToken.toLowerCase()) &&
+                    token.symbol !== "wNEAR"
+                  )
+                  .map((token, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: isMobile ? "6px" : "8px",
+                        cursor: "pointer",
+                        borderRadius: "8px",
+                        color: "#000000",
+                        fontSize: isMobile ? "13px" : "14px",
+                      }}
+                      onClick={() => {
+                        setSelectedToken(token.symbol);
+                        setShowTokenDropdown(false);
+                        setPrice(token.price || 0);
+                        setDecimals(token.decimals || "");
+                        setTokenID(token.assetId || "");
+                        setSelectedassetId(token.assetId || "");
+                      }}
+                    >
+                      {token.symbol}
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+
+          {/* Amount Input */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              width: "91.5%"
+            }}
+          >
+            <div
+              style={{
+                color: "black",
+                fontWeight: 600,
+                fontSize: isMobile ? "15px" : "16px",
+                textAlign: "left",
               }}
             >
               Amount
@@ -296,63 +635,47 @@ const Modal2 = ({
               style={{
                 display: "flex",
                 flexDirection: "row",
-                width: "380px",
+                width: "100%",
                 height: "48px",
-                transform: "rotate(0deg)",
                 borderRadius: "8px",
                 padding: "4px 12px",
                 border: "1px solid #DBDBDB",
                 backgroundColor: "#FFFFFF",
-                marginBottom: 20,
-                ...(isMobile && { width: "93%" }),
+                alignItems: "center",
               }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontWeight: 700,
-                  color: "#0F172A",
-                  fontFamily: "'Lato', sans-serif",
-                  marginRight: "10px",
-                }}
-                ref={tokenSelectorRef}
-                onClick={() => setShowDropdown((prev) => !prev)}
-              >
-                <span>{selectedToken}</span>
-                <span
-                  style={{
-                    fontSize: "12px",
-                    marginLeft: "4px",
-                  }}
-                >
-                  ▾
-                </span>
-              </div>
-              <input
-                style={{
-                  border: "none",
-                  outline: "none",
-                  fontSize: "16px",
-                  width: "100px",
-                  background: "transparent",
-                  fontFamily: "'Lato', sans-serif",
-                  color: "#000000",
-                }}
-                type={"number"}
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="0.00"
-              />
+             <input
+  style={{
+    border: "none",
+    outline: "none",
+    fontSize: isMobile ? "14px" : "16px",
+    width: "100%",
+    background: "transparent",
+    fontFamily: "'Lato', sans-serif",
+    color: "#000000",
+  }}
+  type="number"
+  value={amount}
+  onChange={(e) => setAmount(e.target.value)}
+  onKeyDown={(e) => {
+    
+    if (
+      ["e", "E", "+", "-"].includes(e.key) 
+     
+    ) {
+      e.preventDefault();
+    }
+  }}
+  placeholder="0.00"
+/>
+
               <div
                 style={{
                   fontWeight: 500,
                   color: "#64748B",
-                  fontSize: "14px",
+                  fontSize: isMobile ? "12px" : "14px",
                   marginLeft: "auto",
-                  marginTop: "14px",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {new Intl.NumberFormat("en-US", {
@@ -361,12 +684,23 @@ const Modal2 = ({
                 }).format(parseFloat(amount || "0") * (price || 0))}
               </div>
             </div>
+          </div>
+
+         
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              width: "91%"
+            }}
+          >
             <div
               style={{
-                marginBottom: 10,
                 color: "black",
-                textAlign: "left",
                 fontWeight: 600,
+                fontSize: isMobile ? "15px" : "16px",
+                textAlign: "left",
               }}
             >
               Address
@@ -375,11 +709,8 @@ const Modal2 = ({
               type="text"
               placeholder="Please provide the sender wallet address"
               style={{
-                display: "flex",
-                flexDirection: "row",
-                width: "380px",
-                height: "40px",
-                transform: "rotate(0deg)",
+                width: "100%",
+                height: "48px",
                 borderRadius: "8px",
                 padding: "4px 12px",
                 border: "1px solid #DBDBDB",
@@ -387,119 +718,46 @@ const Modal2 = ({
                 outline: "none",
                 boxShadow: "none",
                 color: "black",
-                ...(isMobile && { width: "93%" }),
+                fontSize: isMobile ? "14px" : "16px",
+                fontFamily: "'Lato', sans-serif",
               }}
               value={senderAddress}
               onChange={(e) => setSenderAddress(e.target.value)}
             />
           </div>
-          {showDropdown && (
+
+          {/* Fee Breakdown */}
+          {/* {amount !== "" && amount !== null && (
             <div
               style={{
-                position: "absolute",
                 display: "flex",
                 flexDirection: "column",
-                width: "204px",
-                overflowY: "auto",
-                maxHeight: "25vh",
-                top: "290px",
-                left: "20px",
-                gap: "5px",
-                background: "#FFFFFF",
-                border: "1px solid #e2e8f0",
-                borderRadius: "12px",
-                boxShadow: "0 6px 24px rgba(0, 0, 0, 0.1)",
-                padding: "10px",
-                zIndex: 10,
-                ...(isMobile && { width: "70%", left: "10px", padding: "8px" }),
+                gap: "10px",
               }}
-              ref={dropdownRef}
             >
-              <div
+              <h3
                 style={{
-                  fontWeight: "bold",
-                  fontSize: "15px",
-                  paddingBottom: "8px",
-                  borderBottom: "1px solid #eee",
-                  marginBottom: "10px",
-                  color: "#000000",
-                  ...(isMobile && { fontSize: "14px" }),
+                  fontSize: isMobile ? "15px" : "16px",
+                  fontWeight: 600,
+                  textAlign: "left",
+                  margin: 0,
                 }}
               >
-                Available Tokens
-              </div>
-              <input
-                type="text"
-                placeholder="Search by symbol..."
-                style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  margin: "10px 0",
-                  fontSize: "14px",
-                  borderRadius: "8px",
-                  border: "1px solid #d1d8e0",
-                  background: "#f9fafb",
-                  fontFamily: "'Lato', sans-serif",
-                  boxSizing: "border-box",
-                  transition: "border-color 0.3s, box-shadow 0.3s",
-                  color: "#000000",
-                }}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-             {pool
-  ?.filter(
-    (token) =>
-      token.symbol.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      token.symbol !== "wNEAR"
-  )
-  .map((token, index) => (
-    <div
-      key={index}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        padding: "8px",
-        cursor: "pointer",
-        borderRadius: "8px",
-        color: "#000000",
-        ...(isMobile && { padding: "6px", fontSize: "14px" }),
-      }}
-      onClick={() => {
-        setSelectedToken(token.symbol);
-        setShowDropdown(false);
-        setBlockchain(token.blockchain);
-        setPrice(token?.price || 332.5);
-        setSelectedassetId(token.assetId);
-        setDecimals(token?.decimals || "");
-        setTokenID(token?.assetId || "");
-      }}
-    >
-      <div>
-        {token.symbol} ({token.blockchain})
-      </div>
-    </div>
-  ))}
-
-            </div>
-          )}
-          {amount !== "" && amount !== null && (
-            <div>
-              <h3 style={{ fontSize: 16 }}>Fee Breakdown</h3>
+                Fee Breakdown
+              </h3>
               <div
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginBottom: "10px",
-                  fontSize: "14px",
+                  fontSize: isMobile ? "13px" : "14px",
                   color: "#1e293b",
                 }}
               >
                 <span>Protocol Fee (2.5%):</span>
                 <span>
-                  {protocolFeeSelectedCurrency.toFixed(4)} {selectedToken}
+                  {protocolFeeSelectedCurrency.toFixed(4)} {selectedToken || "USDC"}
                   {nearPrice > 0 && price > 0 && (
-                    <span style={{ color: "#64748B", fontSize: "12px" }}>
+                    <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px" }}>
                       {" "}
                       ({protocolFeeNear.toFixed(4)} NEAR)
                     </span>
@@ -510,16 +768,15 @@ const Modal2 = ({
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginBottom: "10px",
-                  fontSize: "14px",
+                  fontSize: isMobile ? "13px" : "14px",
                   color: "#1e293b",
                 }}
               >
                 <span>Network Fee:</span>
                 <span>
-                  {networkFeeSelectedCurrency.toFixed(4)} {selectedToken}
+                  {networkFeeSelectedCurrency.toFixed(4)} {selectedToken || "USDC"}
                   {nearPrice > 0 && price > 0 && (
-                    <span style={{ color: "#64748B", fontSize: "12px" }}>
+                    <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px" }}>
                       {" "}
                       (0.08 NEAR)
                     </span>
@@ -531,16 +788,15 @@ const Modal2 = ({
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    marginBottom: "10px",
-                    fontSize: "14px",
+                    fontSize: isMobile ? "13px" : "14px",
                     color: "#1e293b",
                   }}
                 >
                   <span>Referral Fee (5%):</span>
                   <span>
-                    {referralFeeSelectedCurrency.toFixed(4)} {selectedToken}
+                    {referralFeeSelectedCurrency.toFixed(4)} {selectedToken || "USDC"}
                     {nearPrice > 0 && price > 0 && (
-                      <span style={{ color: "#64748B", fontSize: "12px" }}>
+                      <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px" }}>
                         {" "}
                         ({referralFeeNear.toFixed(4)} NEAR)
                       </span>
@@ -552,19 +808,127 @@ const Modal2 = ({
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginBottom: "10px",
-                  fontSize: "14px",
+                  fontSize: isMobile ? "15px" : "16px",
+                  color: "#1e293b",
+                  fontWeight: 600,
+                }}
+              >
+                <span>Total (incl. fees):</span>
+                <span>
+                  {(donationAmount + totalFeeSelectedCurrency).toFixed(4)} {selectedToken || "USDC"}
+                  {nearPrice > 0 && price > 0 && (
+                    <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px" }}>
+                      {" "}
+                      ({(donationAmount + totalFeeNear).toFixed(4)} NEAR)
+                    </span>
+                  )}
+                </span>
+              </div>
+            </div>
+          )} */}
+
+{amount !== "" && amount !== null && (
+            <div
+              style={{
+                // display: "flex",
+                // flexDirection: "column",
+                // gap: "10px",
+                border: "1px solid #E5E7EB",
+                borderRadius: "12px",
+                padding: "8px",
+                backgroundColor: "#F7F7F7",
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: isMobile ? "15px" : "16px",
+                  fontWeight: 600,
+                  textAlign: "left",
+                  margin: 0,
+                  color: "black"
+                }}
+              >
+                Fee Breakdown
+              </h3>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: isMobile ? "13px" : "14px",
                   color: "#1e293b",
                 }}
               >
-                <span style={{ fontWeight: 600, fontSize: 16 }}>
-                  Total (incl. fees):
-                </span>
-                <span style={{ fontWeight: 600, fontSize: 16 }}>
-                  {(donationAmount + totalFeeSelectedCurrency).toFixed(4)}{" "}
-                  {selectedToken}
+                <span>Protocol Fee (2.5%):</span>
+                <span>
+                  {protocolFeeSelectedCurrency.toFixed(4)} {selectedToken || "USDC"}
                   {nearPrice > 0 && price > 0 && (
-                    <span style={{ color: "#64748B", fontSize: "12px" }}>
+                    <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px" }}>
+                      {" "}
+                      ({protocolFeeNear.toFixed(4)} NEAR)
+                    </span>
+                  )}
+                </span>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: isMobile ? "13px" : "14px",
+                  color: "#1e293b",
+                }}
+              >
+                <span>Network Fee:</span>
+                <span>
+                  {networkFeeSelectedCurrency.toFixed(4)} {selectedToken || "USDC"}
+                  {nearPrice > 0 && price > 0 && (
+                    <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px" }}>
+                      {" "}
+                      (0.08 NEAR)
+                    </span>
+                  )}
+                </span>
+              </div>
+              {walletID && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: isMobile ? "13px" : "14px",
+                    color: "#1e293b",
+                  }}
+                >
+                  <span>Referral Fee (5%):</span>
+                  <span>
+                    {referralFeeSelectedCurrency.toFixed(4)} {selectedToken || "USDC"}
+                    {nearPrice > 0 && price > 0 && (
+                      <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px" }}>
+                        {" "}
+                        ({referralFeeNear.toFixed(4)} NEAR)
+                      </span>
+                    )}
+                  </span>
+                </div>
+              )}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: isMobile ? "15px" : "16px",
+                  color: "#1e293b",
+                  fontWeight: 600,
+                  borderTop: "1px solid #e6ecef",
+                  marginTop: "10px",
+                }}
+              >
+              
+                <span style={{marginTop: "10px",}} >Total (incl. fees):</span>
+                <span  style={{marginTop: "10px",}}>
+                  {(donationAmount + totalFeeSelectedCurrency).toFixed(4)} {selectedToken || "USDC"}
+                  {nearPrice > 0 && price > 0 && (
+                    <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px",  }}>
                       {" "}
                       ({(donationAmount + totalFeeNear).toFixed(4)} NEAR)
                     </span>
@@ -574,100 +938,70 @@ const Modal2 = ({
             </div>
           )}
         </div>
+
+
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
-            marginTop: "25px",
-            paddingTop: "20px",
+            gap: "15px",
+            marginTop: "20px",
+            paddingTop: "15px",
             borderTop: "1px solid #e6ecef",
-            ...(isMobile && {
-              flexDirection: "row",
-              gap: "10px",
-              marginTop: "20px",
-              paddingTop: "15px",
-            }),
+            flexWrap: "wrap",
           }}
         >
           <button
             style={{
-              padding: "14px 30px",
-              background: "#e6ecef",
+              padding: isMobile ? "12px 20px" : "14px 30px",
+              background: "#F1F5F9",
               color: "#111827",
               border: "none",
               borderRadius: "10px",
               cursor: "pointer",
-              marginRight: "15px",
               fontFamily: "'Lato', sans-serif",
-              fontWeight: 700,
+              fontWeight: 550,
+              fontSize: isMobile ? "14px" : "16px",
               transition: "background 0.3s, transform 0.2s, box-shadow 0.3s",
-              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+              flex: 1,
+              maxWidth: "100%",
+              textAlign: "center",
               ...(isGoBackButtonHovered && {
-                background: "#d1d8e0",
+                background: "#F1F5F9",
                 transform: "translateY(-2px)",
-                boxShadow: "0 6px 15px rgba(0, 0, 0, 0.15)",
-              }),
-              ...(isMobile && {
-                padding: "12px 10px",
-                width: "100%",
-                boxSizing: "border-box",
-                marginRight: "0",
+                boxShadow: "0 6px 15px #F1F5F9",
               }),
             }}
             onMouseEnter={() => setIsGoBackButtonHovered(true)}
             onMouseLeave={() => setIsGoBackButtonHovered(false)}
             onClick={onGoBack}
           >
-            Go Back
+            Back
           </button>
           <button
             style={{
-              padding: "14px 30px",
-              background: "#000000",
+              padding: isMobile ? "12px 20px" : "14px 30px",
+              background: isDisabled ? "#00000044" : "#000000",
               color: "#ffffff",
               border: "none",
               borderRadius: "10px",
-              cursor: "pointer",
+              cursor: isDisabled ? "not-allowed" : "pointer",
               fontFamily: "'Lato', sans-serif",
               fontWeight: 700,
+              fontSize: isMobile ? "14px" : "16px",
               transition: "background 0.3s, transform 0.2s, box-shadow 0.3s",
-              ...(isProceedButtonHovered && {
-                background: "#000000",
+              flex: 1,
+              maxWidth: "100%",
+              textAlign: "center",
+              ...(isProceedButtonHovered && !isDisabled && {
                 transform: "translateY(-2px)",
-                boxShadow: "0 8px 10px rgba(30, 58, 138, 0.4)",
-              }),
-              ...(isDisabled && {
-                background: "#00000044",
-                cursor: "not-allowed",
-                boxShadow: "none",
-              }),
-              ...(isMobile && {
-                padding: "12px 10px",
-                width: "100%",
-                boxSizing: "border-box",
+                boxShadow: "0 8px 10px #F1F5F9",
               }),
             }}
             onMouseEnter={() => setIsProceedButtonHovered(true)}
             onMouseLeave={() => setIsProceedButtonHovered(false)}
-            onClick={() =>
-              onProceed(
-                campaignID,
-                `${(donationAmount + totalFeeSelectedCurrency).toFixed(
-                  4
-                )} ${selectedToken}`,
-                networkFeeSelectedCurrency.toFixed(4),
-                selectedBlockchain,
-                decimals,
-                tokenID,
-                senderAddress
-              )
-            }
-            disabled={
-              loading ||
-              senderAddress.trim() === "" ||
-              amount.trim() === "" ||
-              CampaignName.trim() === ""
-            }
+            onClick={handleProceed}
+            disabled={isDisabled}
           >
             Proceed to donate
           </button>
@@ -684,3 +1018,16 @@ const Modal2 = ({
 };
 
 export default Modal2;
+
+
+
+
+
+
+
+
+
+
+
+
+

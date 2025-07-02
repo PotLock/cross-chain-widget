@@ -83,7 +83,7 @@ const QuitConfirmationModal = ({
           <button
             style={{
               padding: isMobile ? "12px 10px" : "14px 30px",
-              background: "#e6ecef",
+              background: "#F1F5F9",
               color: "#111827",
               border: "none",
               borderRadius: "10px",
@@ -91,12 +91,12 @@ const QuitConfirmationModal = ({
               fontFamily: "'Lato', sans-serif",
               fontWeight: 700,
               transition: "background 0.3s, transform 0.2s, box-shadow 0.3s",
-              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+            
               width: isMobile ? "100%" : "auto",
               ...(isCancelButtonHovered && {
                 background: "#d1d8e0",
                 transform: "translateY(-2px)",
-                boxShadow: "0 6px 15px rgba(0, 0, 0, 0.15)",
+                //boxShadow: "0 6px 15px rgba(0, 0, 0, 0.15)",
               }),
             }}
             onMouseEnter={() => setIsCancelButtonHovered(true)}
@@ -121,7 +121,7 @@ const QuitConfirmationModal = ({
               ...(isConfirmButtonHovered && {
                 background: "#b91c1c",
                 transform: "translateY(-2px)",
-                boxShadow: "0 6px 15px rgba(220, 38, 38, 0.3)",
+               // boxShadow: "0 6px 15px rgba(220, 38, 38, 0.3)",
               }),
             }}
             onMouseEnter={() => setIsConfirmButtonHovered(true)}
