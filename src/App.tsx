@@ -12,6 +12,7 @@ function App() {
         AssetName={null}
         textColor = {"white"}
         fontType = {null}
+        textInfo = {null}
       />
     </>
   );

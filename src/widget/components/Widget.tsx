@@ -13,6 +13,7 @@ interface WidgetProps {
   AssetName?: string;
   textColor?: string;
   fontType?: string;
+  textInfo?: string
 }
 
 const Widget: React.FC<WidgetProps> = ({
@@ -22,6 +23,7 @@ const Widget: React.FC<WidgetProps> = ({
   AssetName = "nep141:wrap.near",
   textColor = "white",
   fontType = "",
+  textInfo =""
 }) => {
   const [step, setStep] = useState<number>(0);
   const [selectedCampaign, setSelectedCampaign] = useState<number | null>(null);
@@ -154,7 +156,7 @@ const Widget: React.FC<WidgetProps> = ({
           e.currentTarget.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
         }}
       >
-        ❤️ Donate
+        ❤️ {textInfo? textInfo: "Donate"}
       </button>
 
       {DonationType === "POTLOCK Campaigns" ? (

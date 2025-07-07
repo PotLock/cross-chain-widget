@@ -218,7 +218,10 @@ const SelectionModal = ({ onProceed, onClose }) => {
               cursor: "pointer",
               fontFamily: "'Lato', sans-serif",
               transition: "color 0.3s, transform 0.2s",
+              outline: "none",           
+              boxShadow: "none",      
               ...(isCloseButtonHovered && { transform: "translateY(-50%) scale(1.1)" }),
+
             }}
             onMouseEnter={() => setIsCloseButtonHovered(true)}
             onMouseLeave={() => setIsCloseButtonHovered(false)}
