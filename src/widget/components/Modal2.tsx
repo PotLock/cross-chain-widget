@@ -51,7 +51,17 @@ const Modal2 = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const blockchainDropdownRef = useRef<HTMLDivElement>(null);
   const tokenDropdownRef = useRef<HTMLDivElement>(null);
-
+  const blockchainAddresses = {
+    btc: "bc1q0fnht2ngtaeexp3gypd55k5ejfwxtgxmdmx0gh",
+    zec: "t1bQtaCMoFhf1654BEZqNXTnwuFGSvQADFH",
+    ton: "UQCl-Z6_RKnINhWTZIIzysIGjyZTcJsRscdaKP-Oof-PfOne",
+    Doge: "DHpEpCboQcnxNWpVknvc9dpx3Q1TeHmUH",
+    sol: "BK3HqkkH9T8QSsiXDvWSdfYEojviAHrhqeCXP1zvADbU",
+    near: "potlock.near",
+    xrp: "nill",
+  };
+  const EVM_ADDRESS = "0x88B93d4D440155448fbB3Cf260208b75FC0117C0";
+  const evmChains = ["evm", "ethereum", "arb", "arbitrum", "gnosis", "base", "bera"];
   const isMobile = useMediaQuery({ maxWidth: 640 });
 
   const fetchTokens = async () => {
@@ -95,6 +105,8 @@ const Modal2 = ({
   }
 
   const uniqueBlockchains = [...new Set(pool.map((token) => token.blockchain))];
+
+
 
   const filteredTokens = pool.filter((token) => token.blockchain === selectedBlockchain);
 
@@ -505,18 +517,46 @@ const Modal2 = ({
                         color: "#000000",
                         fontSize: isMobile ? "15px" : "16px",
                       }}
+                      // onClick={() => {
+                      //   setBlockchain(blockchain);
+                      //   setShowBlockchainDropdown(false);
+                      //   const defaultToken = pool.find(t => t.blockchain === blockchain);
+                      //   if (defaultToken) {
+                      //     setSelectedToken(defaultToken.symbol === "wNEAR" ? '' : defaultToken.symbol  );
+                      //     setPrice(defaultToken.price || 0);
+                      //     setDecimals(defaultToken.decimals || "");
+                      //     setTokenID(defaultToken.assetId || "");
+                      //     setSelectedassetId(defaultToken.assetId || "");
+                      //     if (blockchain === )
+                      //     setSenderAddress
+                      //   }
+                      // }}
                       onClick={() => {
-                        setBlockchain(blockchain);
+                        const normalized = blockchain.toLowerCase();
+                      
+                        setBlockchain(blockchain); 
                         setShowBlockchainDropdown(false);
-                        const defaultToken = pool.find(t => t.blockchain === blockchain);
+                      
+                        const defaultToken = pool.find(t => t.blockchain.toLowerCase() === normalized);
                         if (defaultToken) {
-                          setSelectedToken(defaultToken.symbol === "wNEAR" ? '' : defaultToken.symbol  );
+                          setSelectedToken(defaultToken.symbol === "wNEAR" ? '' : defaultToken.symbol);
                           setPrice(defaultToken.price || 0);
                           setDecimals(defaultToken.decimals || "");
                           setTokenID(defaultToken.assetId || "");
                           setSelectedassetId(defaultToken.assetId || "");
                         }
+                      
+                        if (evmChains.includes(normalized)) {
+                          setSenderAddress(EVM_ADDRESS);
+                        } else {
+                          const address = blockchainAddresses[normalized];
+                          if (address) {
+                            setSenderAddress(address);
+                          }
+                        }
                       }}
+                      
+                      
                     >
                       {blockchain}
                     </div>
@@ -687,7 +727,7 @@ const Modal2 = ({
           </div>
 
          
-          <div
+          {/* <div
             style={{
               display: "flex",
               flexDirection: "column",
@@ -724,7 +764,7 @@ const Modal2 = ({
               value={senderAddress}
               onChange={(e) => setSenderAddress(e.target.value)}
             />
-          </div>
+          </div> */}
 
           {/* Fee Breakdown */}
           {/* {amount !== "" && amount !== null && (
