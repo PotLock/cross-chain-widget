@@ -154,7 +154,7 @@ const Modal3: React.FC<Modal3Props> = ({
       });
 
       if (!response.ok) {
-        const data2 = await response.json();
+       // const data2 = await response.json();
       //  console.log(data2)
         throw new Error(`HTTP error! status: ${response.status}`);
       }

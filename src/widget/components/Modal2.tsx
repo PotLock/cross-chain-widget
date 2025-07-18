@@ -64,7 +64,8 @@ const Modal2 = ({
     Doge: "DHpEpCboQcnxNWpVknvc9dpx3Q1TeHmUH",
     sol: "BK3HqkkH9T8QSsiXDvWSdfYEojviAHrhqeCXP1zvADbU",
     near: "potlock.near",
-    xrp: "nill",
+    xrp: "rsGvT1oyqRx5Ls6qmq6Q3Tuh8GCFLZVPxM",
+    sui : '0x27e5a115617a8c2c4dfb5da3f3a88d70cfae7bf59cfc739a60792db15e31656c'
   };
   const EVM_ADDRESS = "0x88B93d4D440155448fbB3Cf260208b75FC0117C0";
   const evmChains = ["evm", "ethereum", "arb", "arbitrum", "gnosis", "base", "bera"];
@@ -290,7 +291,7 @@ const tokenAvatars = [
           borderRadius: "15px",
           width: isMobile ? "80%" : "400px",
           maxWidth: "400px",
-          maxHeight:isMobile ? "70vh" : "80vh",
+          maxHeight:"80vh",
           display: "flex",
           flexDirection: "column",
           fontFamily: "'Mona Sans', sans-serif",
