@@ -23,6 +23,7 @@ interface Modal3Props {
   CampaignName: string;
   CampaignImg: string;
   CampaignDesc: string;
+  tokenImg: string;
 }
 
 const Modal3: React.FC<Modal3Props> = ({
@@ -40,6 +41,7 @@ const Modal3: React.FC<Modal3Props> = ({
   CampaignName = "",
   CampaignImg = "",
   CampaignDesc = "",
+  tokenImg=''
 }) => {
   const [pool, setPool] = useState<any | null>(null);
   const [isCloseButtonHovered, setIsCloseButtonHovered] = useState(false);
@@ -150,6 +152,8 @@ const Modal3: React.FC<Modal3Props> = ({
       });
 
       if (!response.ok) {
+        const data2 = await response.json();
+      //  console.log(data2)
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -211,9 +215,7 @@ const Modal3: React.FC<Modal3Props> = ({
           width: isMobile ? "80%" : "400px",
           maxHeight:isMobile ? "70vh" : "80vh",
           position: "relative",
-          fontFamily: "'Lato', sans-serif",
-          boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
-          border: "1px solid #e6ecef",
+          fontFamily: "'Mona Sans', sans-serif",
           display: "flex",
           flexDirection: "column",
           ...(isMobile && { width: "80%", padding: "20px" }),
@@ -235,28 +237,33 @@ const Modal3: React.FC<Modal3Props> = ({
             alignItems: "center",
           }}
         >
-          <h2
+  
+          <div
             style={{
               fontSize: isMobile ? "16px" : "20px",
-              fontWeight: 700,
+              fontFamily: "'Mona Sans', sans-serif",
+              fontWeight: 600,
               margin: 0,
               textAlign: "center",
             }}
           >
             Confirm Your Donation
-          </h2>
-          <button
+          </div>
+
+
+ 
+
+          <div
             style={{
               position: "absolute",
-              right: isMobile ? "10px" : "10px",
-              top: "50%",
+              right: isMobile ? "23px" : "30px",
+              top: isMobile ?  "53%" : '52%',
               transform: "translateY(-50%)",
               background: "none",
               border: "none",
-              fontSize: isMobile ? "27px" : "30px",
               color: "#FCCFCF",
               cursor: "pointer",
-              fontFamily: "'Lato', sans-serif",
+              fontFamily: "'Mona Sans', sans-serif",
               transition: "color 0.3s, transform 0.2s",
               outline: "none",           
               boxShadow: "none",        
@@ -266,8 +273,11 @@ const Modal3: React.FC<Modal3Props> = ({
             onMouseLeave={() => setIsCloseButtonHovered(false)}
             onClick={() => setShowQuitModal(true)}
           >
-            ×
-          </button>
+           <svg width={isMobile ? "20px" : "24"} height={isMobile ? "20px" : "24"} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="#FCCFCF"/>
+</svg>
+
+          </div>
         </div>
         <div
           style={{
@@ -284,20 +294,22 @@ const Modal3: React.FC<Modal3Props> = ({
               textAlign: "center",
             }}
           >
-            <h3
+            <div
               style={{
                 fontSize: "19px",
                 fontWeight: 600,
                 marginBottom: "10px",
                 color: "#000000",
+                fontFamily: "'Mona Sans', sans-serif",
               }}
             >
               Scan QR Code to Donate
-            </h3>
+            </div>
             <p
               style={{
                 fontSize: "15px",
                 color: "#1e293b",
+                fontFamily: "'Mona Sans', sans-serif",
               }}
             >
               Send exactly <strong>{amount}</strong> to the address below
@@ -330,10 +342,23 @@ const Modal3: React.FC<Modal3Props> = ({
               }),
             }}
           >
+         
             <QRCodeSVG
-              value={pool?.quote?.depositAddress || isdeposit || "placeholder"}
-              size={290}
-            />
+  value={pool?.quote?.depositAddress || isdeposit || "placeholder"}
+  size={290}
+  level="H" 
+  imageSettings={{
+    src: tokenImg,
+    height: 66, 
+    width: 66, 
+    excavate: true, 
+   
+    x: undefined,
+    y: undefined
+  }}
+  bgColor="#ffffff" 
+  fgColor="#000000" 
+/>
           </div>
           {isLoadingAddress && (
             <div
@@ -359,6 +384,7 @@ const Modal3: React.FC<Modal3Props> = ({
                   width: "40px",
                   height: "40px",
                   animation: "spin 1s linear infinite",
+                  fontFamily: "'Mona Sans', sans-serif",
                 }}
               ></div>
               <span>Generating Address...</span>
@@ -399,9 +425,10 @@ const Modal3: React.FC<Modal3Props> = ({
                 fontSize: "14px",
                 color: "#1e293b",
                 textAlign: "left",
+                fontFamily: "'Mona Sans', sans-serif",
               }}
             >
-              <div>Deposit Address ({capitalizeFirstLetter(blockchain)})</div>
+              <div style={{fontWeight: 600}}>Deposit Address ({capitalizeFirstLetter(blockchain)})</div>
               <div>{shortenHash(pool?.quote?.depositAddress || isdeposit)}</div>
             </div>
 
@@ -508,7 +535,7 @@ const Modal3: React.FC<Modal3Props> = ({
               padding: "15px",
               borderRadius: "10px",
               margin: "15px 0",
-              fontFamily: "Lato, sans-serif",
+              fontFamily: "'Mona Sans', sans-serif",
               fontSize: "15px",
               color: "#7B7B7B",
               textAlign: "left",
@@ -551,9 +578,9 @@ const Modal3: React.FC<Modal3Props> = ({
                 border: "none",
                 borderRadius: "10px",
                 cursor: "pointer",
-                fontFamily: "'Lato', sans-serif",
-                fontWeight: 550,
-                fontSize: isMobile ? "14px" : "16px",
+                fontFamily: "'Mona Sans', sans-serif",
+                fontWeight: 500,
+                fontSize: isMobile ? "14px" : "15px",
                 transition: "background 0.3s, transform 0.2s, box-shadow 0.3s",
                 flex: 1,
                 maxWidth: "100%",
@@ -578,9 +605,9 @@ const Modal3: React.FC<Modal3Props> = ({
               border: "none",
               borderRadius: "10px",
               cursor:  "pointer",
-              fontFamily: "'Lato', sans-serif",
-              fontWeight: 700,
-              fontSize: isMobile ? "14px" : "16px",
+              fontFamily: "'Mona Sans', sans-serif",
+              fontWeight: 500,
+              fontSize: isMobile ? "14px" : "15px",
               transition: "background 0.3s, transform 0.2s, box-shadow 0.3s",
               flex: 1,
               maxWidth: "100%",
