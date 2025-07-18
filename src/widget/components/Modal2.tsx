@@ -290,7 +290,7 @@ const tokenAvatars = [
           borderRadius: "15px",
           width: isMobile ? "80%" : "400px",
           maxWidth: "400px",
-          maxHeight:isMobile ? "50vh" : "80vh",
+          maxHeight:isMobile ? "70vh" : "80vh",
           display: "flex",
           flexDirection: "column",
           fontFamily: "'Mona Sans', sans-serif",

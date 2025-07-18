@@ -174,7 +174,7 @@ const SelectionModal = ({ onProceed, onClose, textInfo }) => {
           borderRadius: "15px",
           width: isMobile ? "80%" : "400px",
           maxWidth: "400px",
-          height: isMobile ? "60vh" : "600px", // Fixed height for modal
+          height: isMobile ? "70vh" : "600px", // Fixed height for modal
           display: "flex",
           flexDirection: "column",
           position: "relative",
