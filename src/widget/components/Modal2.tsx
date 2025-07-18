@@ -11,6 +11,7 @@ const Modal2 = ({
   CampaignImg = "",
   CampaignDesc = "",
   walletID = null,
+  textInfo= ''
 }: {
   onProceed: (
     campaignID: number,
@@ -29,6 +30,7 @@ const Modal2 = ({
   CampaignImg?: string;
   CampaignDesc?: string;
   walletID?: string | null;
+  textInfo: string
 }) => {
   const [pool, setPool] = useState<any[]>([]);
   const [selectedBlockchain, setBlockchain] = useState("Chain");
@@ -319,7 +321,7 @@ const tokenAvatars = [
               textAlign: "center",
             }}
           >
-            Enter Donation Amount
+            Enter {textInfo} Amount
           </div>
 
 
@@ -1047,7 +1049,7 @@ const tokenAvatars = [
           </button>
           <button
             style={{
-              padding: isMobile ? "12px 20px" : "14px 30px",
+            //  padding: isMobile ? "12px 20px" : "14px 30px",
               background: isDisabled ? "#00000044" : "#000000",
               color: "#ffffff",
               border: "none",
@@ -1070,7 +1072,7 @@ const tokenAvatars = [
             onClick={handleProceed}
             disabled={isDisabled}
           >
-            Proceed to donate
+            Proceed to {textInfo}
           </button>
         </div>
       </div>

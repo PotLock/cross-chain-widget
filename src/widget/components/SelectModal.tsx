@@ -78,7 +78,7 @@ const SkeletonLoader = ({ isMobile }) => {
   );
 };
 
-const SelectionModal = ({ onProceed, onClose }) => {
+const SelectionModal = ({ onProceed, onClose, textInfo }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [selectedCampaignName, setSelectedCampaignName] = useState(null);
@@ -204,7 +204,7 @@ const SelectionModal = ({ onProceed, onClose }) => {
               textAlign: "center",
             }}
           >
-              Select Donation Target
+              Select {textInfo} Target
           </div>
           {/* <button
             style={{
@@ -419,7 +419,7 @@ const SelectionModal = ({ onProceed, onClose }) => {
             onClick={handleProceed}
             disabled={!selectedCampaign}
           >
-            Confirm Donation
+            Proceed 
           </button>
         </div>
       </div>

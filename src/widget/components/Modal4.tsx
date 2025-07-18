@@ -12,6 +12,7 @@ interface Modal4Props {
   CampaignDesc: string;
   walletID: any;
   tokenImg: string;
+  textInfo: string
   onClose: () => void;
   onBack: (depositAddress: string) => void;
   onProceed: (
@@ -34,7 +35,8 @@ const Modal4: React.FC<Modal4Props> = ({
   CampaignImg = "",
   CampaignDesc = "",
   walletID = null,
-  tokenImg=''
+  tokenImg='',
+  textInfo=''
 }) => {
   const [FundReceived, setFundReceived] = useState<boolean | null>(false);
   const [FundReceivedFailed, setFundReceivedFailed] = useState<boolean | null>(
@@ -262,7 +264,7 @@ const Modal4: React.FC<Modal4Props> = ({
               textAlign: "center",
             }}
           >
-              Confirm Your Donation
+              Confirm Deposit
           </div>
 
 
@@ -322,7 +324,7 @@ const Modal4: React.FC<Modal4Props> = ({
               }}
             >
             
-              Processing Your Cross-Chain Donation
+              Processing Your Cross-Chain Deposit
             </h2>
             <div
               style={{
@@ -973,7 +975,7 @@ const Modal4: React.FC<Modal4Props> = ({
                     marginTop : isMobile ?  '' : '3%'
                   }}
                 >
-                  Donating to campaign
+                  Depositing
                 </div>
                 {FundDonated ? (
                   <div
@@ -996,7 +998,7 @@ const Modal4: React.FC<Modal4Props> = ({
                       fontFamily: "'Mona Sans', sans-serif",
                     }}
                   >
-                    Donation Pending.....
+                    {textInfo} Pending.....
                   </div>
                 )}
               </div>
@@ -1044,13 +1046,8 @@ const Modal4: React.FC<Modal4Props> = ({
             }}
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
-            //onClick={(refreshTransaction)}
-            onClick={() => { onProceed(
-             '0.003',
-              CampaignName,
-              amount,
-              'statusData.swapDetails.amountInUsd'
-            );}}
+            onClick={(refreshTransaction)}
+           
           >
             Refresh Transaction
           </button>

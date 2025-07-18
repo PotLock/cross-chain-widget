@@ -24,6 +24,7 @@ interface Modal3Props {
   CampaignImg: string;
   CampaignDesc: string;
   tokenImg: string;
+  textInfo: string
 }
 
 const Modal3: React.FC<Modal3Props> = ({
@@ -41,7 +42,8 @@ const Modal3: React.FC<Modal3Props> = ({
   CampaignName = "",
   CampaignImg = "",
   CampaignDesc = "",
-  tokenImg=''
+  tokenImg='',
+  textInfo =''
 }) => {
   const [pool, setPool] = useState<any | null>(null);
   const [isCloseButtonHovered, setIsCloseButtonHovered] = useState(false);
@@ -247,7 +249,7 @@ const Modal3: React.FC<Modal3Props> = ({
               textAlign: "center",
             }}
           >
-            Confirm Your Donation
+             {textInfo} Amount
           </div>
 
 

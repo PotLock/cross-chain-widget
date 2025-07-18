@@ -167,6 +167,7 @@ const Widget: React.FC<WidgetProps> = ({
             <SelectionModal
               onProceed={handleProceedToDonate}
               onClose={handleCloseModal}
+              textInfo={textInfo? textInfo: "Donate"}
             />
           )}
           {step === 2 && (
@@ -179,6 +180,7 @@ const Widget: React.FC<WidgetProps> = ({
               CampaignImg={selectedCampaignImg || ""}
               CampaignDesc={selectedCampaignDesc || ""}
               walletID={walletID}
+              textInfo={textInfo? textInfo: "Donate"}
             />
           )}
           {step === 3 && (
@@ -198,6 +200,7 @@ const Widget: React.FC<WidgetProps> = ({
               CampaignImg={selectedCampaignImg || ""}
               CampaignDesc={selectedCampaignDesc || ""}
               tokenImg={tokenImg}
+              textInfo={textInfo? textInfo: "Donate"}
             />
           )}
 
@@ -215,6 +218,7 @@ const Widget: React.FC<WidgetProps> = ({
               CampaignDesc={selectedCampaignDesc || ""}
               walletID={walletID}
               tokenImg={tokenImg}
+              textInfo={textInfo? textInfo: "Donate"}
             />
           )}
 
@@ -231,6 +235,7 @@ const Widget: React.FC<WidgetProps> = ({
               CampaignDesc={selectedCampaignDesc || ""}
               walletID={walletID}
               tokenImg={tokenImg}
+              textInfo={textInfo? textInfo: "Donate"}
             />
           )}
         </>
@@ -246,6 +251,7 @@ const Widget: React.FC<WidgetProps> = ({
               CampaignImg={"Direct"}
               CampaignDesc={selectedCampaignDesc || ""}
               walletID={null}
+              textInfo={textInfo? textInfo: "Donate"}
             />
           )}
           {step === 2 && (
@@ -265,6 +271,7 @@ const Widget: React.FC<WidgetProps> = ({
               CampaignImg={"Direct"}
               CampaignDesc={AssetName}
               tokenImg={tokenImg}
+              textInfo={textInfo? textInfo: "Donate"}
             />
           )}
 
@@ -282,6 +289,7 @@ const Widget: React.FC<WidgetProps> = ({
               CampaignDesc={AssetName}
               walletID={null}
               tokenImg={tokenImg}
+              textInfo={textInfo? textInfo: "Donate"}
             />
           )}
 
@@ -298,6 +306,7 @@ const Widget: React.FC<WidgetProps> = ({
               CampaignDesc={AssetName}
               walletID={null}
               tokenImg={tokenImg}
+              textInfo={textInfo? textInfo: "Donate"}
             />
           )}
         </>

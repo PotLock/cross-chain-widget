@@ -13,6 +13,7 @@ interface Modal5Props {
   CampaignDesc: string;
   walletID?: any;
   tokenImg: string;
+  textInfo: string
 }
 
 const Modal5: React.FC<Modal5Props> = ({
@@ -26,7 +27,8 @@ const Modal5: React.FC<Modal5Props> = ({
   CampaignImg = "",
   CampaignDesc = "",
   walletID = null,
-  tokenImg=''
+  tokenImg='',
+  textInfo=''
 }) => {
   const [isCloseButtonHovered, setIsCloseButtonHovered] = useState(false);
   const [isCopyButtonHovered, setIsCopyButtonHovered] = useState(false);
@@ -106,7 +108,7 @@ const Modal5: React.FC<Modal5Props> = ({
               textAlign: "center",
             }}
           >
-            Donation Confirmed
+            {textInfo} Confirmed
           </div>
 
 
@@ -820,7 +822,7 @@ const Modal5: React.FC<Modal5Props> = ({
                 }}
                 aria-live="polite"
               >
-                Donation Successful!
+                {textInfo} Successful!
               </div>
      
 
@@ -866,7 +868,7 @@ const Modal5: React.FC<Modal5Props> = ({
                   margin: 0
                 }}
               >
-                has been donated to{" "}
+                has been {textInfo} to{" "}
                 <strong
                   style={{
                     fontWeight: 600,
