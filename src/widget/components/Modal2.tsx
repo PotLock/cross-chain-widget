@@ -19,7 +19,8 @@ const Modal2 = ({
     blockchain: string,
     decimals: string,
     tokenId: string,
-    senderAddress: string
+    senderAddress: string,
+    tokenImg: string
   ) => void;
   onClose: () => void;
   onGoBack: () => void;
@@ -46,6 +47,9 @@ const Modal2 = ({
   const [isProceedButtonHovered, setIsProceedButtonHovered] = useState(false);
   const [decimals, setDecimals] = useState("");
   const [tokenID, setTokenID] = useState("");
+  const [tokenImage, settokenImage] = useState('');
+  const [blockchainImage, setblockchainImage] = useState('');
+  
   const [senderAddress, setSenderAddress] = useState("");
   const [showQuitModal, setShowQuitModal] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -63,6 +67,8 @@ const Modal2 = ({
   const EVM_ADDRESS = "0x88B93d4D440155448fbB3Cf260208b75FC0117C0";
   const evmChains = ["evm", "ethereum", "arb", "arbitrum", "gnosis", "base", "bera"];
   const isMobile = useMediaQuery({ maxWidth: 640 });
+
+
 
   const fetchTokens = async () => {
     try {
@@ -106,13 +112,40 @@ const Modal2 = ({
 
   const uniqueBlockchains = [...new Set(pool.map((token) => token.blockchain))];
 
-
+  
+const tokenAvatars = [
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar.svg", name: "Sol" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(1).svg", name: "NEAR" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(2).svg", name: "USDC" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(3).svg", name: "Stellar" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(4).svg", name: "Base" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(5).svg", name: "Pol" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(6).svg", name: "Sui" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(7).svg", name: "Doge" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(8).svg", name: "Arb" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(9).svg", name: "Eth" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(10).svg", name: "Zec" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(11).svg", name: "BSC" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(12).svg", name: "XRP" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(13).svg", name: "Tron" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(14).svg", name: "USDT" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(15).svg", name: "Aurora" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar%20(16).svg", name: "Aptos" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar17.png", name: "Avax" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar18.png", name: "Op" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar19.png", name: "Btc" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar20.png", name: "ton" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar21.png", name: "gnosis" },
+  // { src: "/assets/Avatar22.jpeg", name: "Blockchain" },
+  { src: "https://ik.imagekit.io/zjvk6l5gp/Avatar23.jpeg", name: "Bera" },
+  
+];
 
   const filteredTokens = pool.filter((token) => token.blockchain === selectedBlockchain);
-
   const nearToken = pool.find(
     (token) => token.symbol === "wNEAR" || token.assetId === "nep141:wrap.near"
   );
+  
   const nearPrice = nearToken?.price || 0;
 
   const donationAmount = parseFloat(amount) || 0;
@@ -163,7 +196,8 @@ const Modal2 = ({
         selectedBlockchain,
         decimals,
         tokenID,
-        senderAddress
+        senderAddress,
+        tokenImage
       );
      
     }
@@ -174,23 +208,62 @@ const Modal2 = ({
   amount.trim() === "" ||
   CampaignName.trim() === ""
 
+
+
+  function capitalizeAll(str: string): string {
+    if (!str) return '';
+    if (str.toUpperCase() === 'GNOSIS') {
+      const dat = 'GNO'
+      return dat.toUpperCase();
+    }else{
+      return str.toUpperCase();
+    }
+    
+  }
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        blockchainDropdownRef.current &&
-        !blockchainDropdownRef.current.contains(event.target as Node) &&
-        tokenDropdownRef.current &&
-        !tokenDropdownRef.current.contains(event.target as Node)
+        showBlockchainDropdown && 
+        blockchainDropdownRef.current && 
+        !blockchainDropdownRef.current.contains(event.target as Node)
       ) {
         setShowBlockchainDropdown(false);
+      }
+
+      if (
+        showTokenDropdown && 
+        tokenDropdownRef.current && 
+        !tokenDropdownRef.current.contains(event.target as Node)
+      ) {
         setShowTokenDropdown(false);
       }
     };
+  
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [showBlockchainDropdown, showTokenDropdown]);
+
+
+  // useEffect(() => {
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     if (
+  //       blockchainDropdownRef.current &&
+  //       !blockchainDropdownRef.current.contains(event.target as Node) &&
+  //       tokenDropdownRef.current &&
+  //       !tokenDropdownRef.current.contains(event.target as Node)
+  //     ) {
+  //       setShowBlockchainDropdown(false);
+  //       setShowTokenDropdown(false);
+  //     }
+  //   };
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
 
   return (
     <div
@@ -218,9 +291,8 @@ const Modal2 = ({
           maxHeight:isMobile ? "50vh" : "80vh",
           display: "flex",
           flexDirection: "column",
-          fontFamily: "'Lato', sans-serif",
-          boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
-          border: "1px solid #e6ecef",
+          fontFamily: "'Mona Sans', sans-serif",
+        
         }}
         ref={modalRef}
       >
@@ -238,28 +310,30 @@ const Modal2 = ({
             alignItems: "center",
           }}
         >
-          <h2
+          <div
             style={{
               fontSize: isMobile ? "16px" : "20px",
-              fontWeight: 700,
+              fontFamily: "'Mona Sans', sans-serif",
+              fontWeight: 600,
               margin: 0,
               textAlign: "center",
             }}
           >
             Enter Donation Amount
-          </h2>
-          <button
+          </div>
+
+
+          <div
             style={{
               position: "absolute",
-              right: isMobile ? "10px" : "10px",
-              top: "50%",
+              right: isMobile ? "23px" : "30px",
+              top: isMobile ?  "53%" : '52%',
               transform: "translateY(-50%)",
               background: "none",
               border: "none",
-              fontSize: isMobile ? "27px" : "30px",
               color: "#FCCFCF",
               cursor: "pointer",
-              fontFamily: "'Lato', sans-serif",
+              fontFamily: "'Mona Sans', sans-serif",
               transition: "color 0.3s, transform 0.2s",
               outline: "none",           
               boxShadow: "none",        
@@ -269,8 +343,11 @@ const Modal2 = ({
             onMouseLeave={() => setIsCloseButtonHovered(false)}
             onClick={() => setShowQuitModal(true)}
           >
-            ×
-          </button>
+           <svg width={isMobile ? "20px" : "24"} height={isMobile ? "20px" : "24"} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="#FCCFCF"/>
+</svg>
+
+          </div>
         </div>
 
        
@@ -342,7 +419,7 @@ const Modal2 = ({
                   color: "black",
                   fontWeight: 600,
                   fontSize: isMobile ? "15px" : "16px",
-                  fontFamily: "sans-serif",
+                  fontFamily: "'Mona Sans', sans-serif",
                   textAlign: "left",
                   marginBottom: "3px",
                 }}
@@ -353,7 +430,7 @@ const Modal2 = ({
                 style={{
                   color: "#525252",
                   fontSize: isMobile ? "14px" : "15px",
-                  fontFamily: "sans-serif",
+                  fontFamily: "'Mona Sans', sans-serif",
                   textAlign: "left",
                 }}
               >
@@ -374,7 +451,8 @@ const Modal2 = ({
             <div
               style={{
                 color: "black",
-                fontWeight: 600,
+                fontWeight: 500,
+                fontFamily: "'Mona Sans', sans-serif",
                 fontSize: isMobile ? "15px" : "16px",
                 textAlign: "left",
               }}
@@ -399,9 +477,10 @@ const Modal2 = ({
                   display: "flex",
                   alignItems: "center",
                   gap: "8px",
+                  justifyContent:"space-between",
                   cursor: "pointer",
                   flex: 1,
-                  maxWidth: "25%",
+                  maxWidth: blockchainImage !== ''  ? '35%' : "30%",
                   borderRightColor: "#DBDBDB",
                   borderRightStyle: "solid",   
                   borderRightWidth: "1px",      
@@ -411,11 +490,33 @@ const Modal2 = ({
                 onClick={() => {
                   setShowBlockchainDropdown(!showBlockchainDropdown);
                   setShowTokenDropdown(false);
+                  setAmount('')
                 }}
               >
-               
-                <span style={{ fontWeight: 500, color: "#000" }}>{selectedBlockchain}</span>
-                <span style={{ fontSize: "12px", color: "#666", marginTop: 2 }}><svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <div style={{
+                   display: "flex",
+                   alignItems: "center",
+                   padding: isMobile ? "6px" : "8px",
+                   fontFamily: "'Mona Sans', sans-serif",
+                   borderRadius: "8px",
+                   color: "#000000",
+                   fontSize: isMobile ? "15px" : "16px",
+                   gap: isMobile ? "5px": "10px",
+                  
+               }}>
+              {blockchainImage !== '' && <img 
+          src={blockchainImage} 
+          alt={'blockchain'}
+          style={{
+            width: isMobile? "20px" : '30px',
+            height: isMobile? "20px" : '30px',
+            borderRadius: "50%",
+            objectFit: "cover"
+          }}/>}
+               <span style={{ fontWeight: 500,   color: selectedToken === "Select Token" ? "#7B7B7B" : "#000000",fontFamily: "'Mona Sans', sans-serif", }}>{ selectedBlockchain === 'Chain' ? selectedBlockchain :  capitalizeAll(selectedBlockchain)}</span>
+               </div>
+              
+                <span style={{ fontSize: "12px", color: "#666", marginTop: 2, justifyContent: "flex-end", marginRight: 10 }}><svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10.59 0.294922L6 4.87492L1.41 0.294922L0 1.70492L6 7.70492L12 1.70492L10.59 0.294922Z" fill="#A6A6A6"/>
 </svg>
 </span>
@@ -433,11 +534,33 @@ const Modal2 = ({
                 onClick={() => {
                   setShowTokenDropdown(!showTokenDropdown);
                   setShowBlockchainDropdown(false);
+                  setAmount('')
                 }}
               >
-                <span style={{ color: "#888", fontWeight: 400 }}>
-                  {selectedToken || "Select Token"}
-                </span>
+         
+
+<div style={{
+                   display: "flex",
+                   alignItems: "center",
+                   padding: isMobile ? "6px" : "8px",
+            
+                   borderRadius: "8px",
+                   color:    "#000000",
+                   fontSize: isMobile ? "15px" : "16px",
+                   gap: isMobile ? "5px": "10px",
+                  
+               }}>
+              {tokenImage !== '' && <img 
+          src={tokenImage} 
+          alt={'tokenImage'}
+          style={{
+            width: isMobile? "20px" : '30px',
+            height: isMobile? "20px" : '30px',
+            borderRadius: "50%",
+            objectFit: "cover"
+          }}/>}
+               <span style={{ fontWeight: 500,   color: selectedToken === "Select Token" ? "#7B7B7B" : "#000000",fontFamily: "'Mona Sans', sans-serif", }}> {selectedToken === "Select Token" ? selectedToken : capitalizeAll(selectedToken)}</span>
+               </div>
                 <span style={{ fontSize: "12px", color: "#666", marginLeft: "8px" , justifyContent: "flex-end",}}><svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10.59 0.294922L6 4.87492L1.41 0.294922L0 1.70492L6 7.70492L12 1.70492L10.59 0.294922Z" fill="#A6A6A6"/>
 </svg>
@@ -451,13 +574,12 @@ const Modal2 = ({
                   width: isMobile ? "40%" : "165px",
                   maxHeight: "25vh",
                   overflowY: "auto",
-                  top: isMobile ? "50%" : "49%",
-                  left: isMobile ? "30%" : "calc(50% - 110px)",
+                  top: isMobile ? "55%" : "53%",
+                  left: isMobile ? "32%" : "calc(50% - 110px)",
                   transform: "translateX(-50%)",
                   background: "#FFFFFF",
                   border: "1px solid #e2e8f0",
                   borderRadius: "12px",
-                  boxShadow: "0 6px 24px rgba(0, 0, 0, 0.1)",
                   padding: isMobile ? "8px" : "10px",
                   zIndex: 10,
                   display: "flex",
@@ -468,14 +590,16 @@ const Modal2 = ({
                 }}
                 ref={blockchainDropdownRef}
               >
+                
                 <div
                   style={{
-                    fontWeight: "bold",
                     fontSize: isMobile ? "14px" : "15px",
                     paddingBottom: "8px",
                     borderBottom: "1px solid #eee",
                     marginBottom: "10px",
                     color: "#000000",
+                    fontWeight: 600,
+                    fontFamily: "'Mona Sans', sans-serif",
                     textAlign: "center",
                   }}
                 >
@@ -492,7 +616,7 @@ const Modal2 = ({
                     borderRadius: "8px",
                     border: "1px solid #d1d8e0",
                     background: "#f9fafb",
-                    fontFamily: "'Lato', sans-serif",
+                    fontFamily: "'Mona Sans', sans-serif",
                     boxSizing: "border-box",
                     transition: "border-color 0.3s, box-shadow 0.3s",
                     color: "#000000",
@@ -500,156 +624,191 @@ const Modal2 = ({
                   value={searchQueryBlockchain}
                   onChange={(e) => setSearchQueryBlockchain(e.target.value)}
                 />
-                {uniqueBlockchains
-                  .filter((blockchain) =>
-                    blockchain.toLowerCase().includes(searchQueryBlockchain.toLowerCase()
-                    )
-                  )
-                  .map((blockchain, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: isMobile ? "6px" : "8px",
-                        cursor: "pointer",
-                        borderRadius: "8px",
-                        color: "#000000",
-                        fontSize: isMobile ? "15px" : "16px",
-                      }}
-                      // onClick={() => {
-                      //   setBlockchain(blockchain);
-                      //   setShowBlockchainDropdown(false);
-                      //   const defaultToken = pool.find(t => t.blockchain === blockchain);
-                      //   if (defaultToken) {
-                      //     setSelectedToken(defaultToken.symbol === "wNEAR" ? '' : defaultToken.symbol  );
-                      //     setPrice(defaultToken.price || 0);
-                      //     setDecimals(defaultToken.decimals || "");
-                      //     setTokenID(defaultToken.assetId || "");
-                      //     setSelectedassetId(defaultToken.assetId || "");
-                      //     if (blockchain === )
-                      //     setSenderAddress
-                      //   }
-                      // }}
-                      onClick={() => {
-                        const normalized = blockchain.toLowerCase();
-                      
-                        setBlockchain(blockchain); 
-                        setShowBlockchainDropdown(false);
-                      
-                        const defaultToken = pool.find(t => t.blockchain.toLowerCase() === normalized);
-                        if (defaultToken) {
-                          setSelectedToken(defaultToken.symbol === "wNEAR" ? '' : defaultToken.symbol);
-                          setPrice(defaultToken.price || 0);
-                          setDecimals(defaultToken.decimals || "");
-                          setTokenID(defaultToken.assetId || "");
-                          setSelectedassetId(defaultToken.assetId || "");
-                        }
-                      
-                        if (evmChains.includes(normalized)) {
-                          setSenderAddress(EVM_ADDRESS);
-                        } else {
-                          const address = blockchainAddresses[normalized];
-                          if (address) {
-                            setSenderAddress(address);
-                          }
-                        }
-                      }}
-                      
-                      
-                    >
-                      {blockchain}
-                    </div>
-                  ))}
+               
+                  {uniqueBlockchains
+  .filter((blockchain) =>
+    blockchain.toLowerCase().includes(searchQueryBlockchain.toLowerCase())
+  )
+  .map((blockchain, index) => {
+    const blockchainAvatar = tokenAvatars.find(a => 
+      a.name.toLowerCase() === blockchain.toLowerCase()
+    );
+   
+    const avatarSrc = blockchainAvatar?.src ||  "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar22.jpeg";
+
+    return (
+      <div
+        key={index}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          padding: isMobile ? "6px" : "8px",
+          fontWeight: 500,
+          fontFamily: "'Mona Sans', sans-serif",
+          cursor: "pointer",
+          borderRadius: "8px",
+          color: "#000000",
+          fontSize: isMobile ? "15px" : "16px",
+          gap: "12px",
+        }}
+        onClick={() => {
+          const normalized = blockchain.toLowerCase();
+          setBlockchain(blockchain); 
+          setShowBlockchainDropdown(false);
+        
+          const defaultToken = pool.find(t => t.blockchain.toLowerCase() === normalized);
+          if (defaultToken) {
+            setSelectedToken(defaultToken.symbol === "wNEAR" ? '' : defaultToken.symbol);
+            setPrice(defaultToken.price || 0);
+            setDecimals(defaultToken.decimals || "");
+            setTokenID(defaultToken.assetId || "");
+            setSelectedassetId(defaultToken.assetId || "");
+          }
+        
+          if (evmChains.includes(normalized)) {
+            setSenderAddress(EVM_ADDRESS);
+          } else {
+            const address = blockchainAddresses[normalized];
+            if (address) {
+              setSenderAddress(address);
+            }
+          }
+          setblockchainImage(avatarSrc)
+          settokenImage('')
+        }}
+      >
+        <img 
+          src={avatarSrc} 
+          alt={blockchain}
+          style={{
+            width: "20px",
+            height: "20px",
+            borderRadius: "50%",
+            objectFit: "cover"
+          }}
+        />
+        {capitalizeAll(blockchain)}
+      </div>
+    );
+  })}
               </div>
             )}
+
             {showTokenDropdown && (
-              <div
-                style={{
-                  position: "absolute",
-                  width: isMobile ? "40%" : "180px",
-                  maxHeight: "25vh",
-                  overflowY: "auto",
-                  top: isMobile ? "50%" : "49%",
-                  left: isMobile ? "55%" : "calc(50% - -10px)",
-                  transform: "translateX(-50%)",
-                  background: "#FFFFFF",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "12px",
-                  boxShadow: "0 6px 24px rgba(0, 0, 0, 0.1)",
-                  padding: isMobile ? "8px" : "10px",
-                  zIndex: 10,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "5px",
-                  scrollbarWidth: "none",     
-                  msOverflowStyle: "none",     
-                }}
-                ref={tokenDropdownRef}
-              >
-                <div
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: isMobile ? "14px" : "15px",
-                    paddingBottom: "8px",
-                    borderBottom: "1px solid #eee",
-                    marginBottom: "10px",
-                    color: "#000000",
-                    textAlign: "center",
-                  }}
-                >
-                  Available Tokens
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search by token..."
-                  style={{
-                    width: "100%",
-                    padding: "10px 12px",
-                    margin: "10px 0",
-                    fontSize: isMobile ? "13px" : "14px",
-                    borderRadius: "8px",
-                    border: "1px solid #d1d8e0",
-                    background: "#f9fafb",
-                    fontFamily: "'Lato', sans-serif",
-                    boxSizing: "border-box",
-                    transition: "border-color 0.3s, box-shadow 0.3s",
-                    color: "#000000",
-                  }}
-                  value={searchQueryToken}
-                  onChange={(e) => setSearchQueryToken(e.target.value)}
-                />
-                {filteredTokens
-                  .filter((token) =>
-                    token.symbol.toLowerCase().includes(searchQueryToken.toLowerCase()) &&
-                    token.symbol !== "wNEAR"
-                  )
-                  .map((token, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: isMobile ? "6px" : "8px",
-                        cursor: "pointer",
-                        borderRadius: "8px",
-                        color: "#000000",
-                        fontSize: isMobile ? "13px" : "14px",
-                      }}
-                      onClick={() => {
-                        setSelectedToken(token.symbol);
-                        setShowTokenDropdown(false);
-                        setPrice(token.price || 0);
-                        setDecimals(token.decimals || "");
-                        setTokenID(token.assetId || "");
-                        setSelectedassetId(token.assetId || "");
-                      }}
-                    >
-                      {token.symbol}
-                    </div>
-                  ))}
-              </div>
-            )}
+  <div
+    style={{
+      position: "absolute",
+      width: isMobile ? "40%" : "180px",
+      maxHeight: "25vh",
+      overflowY: "auto",
+      top: isMobile ? "55%" : "53%",
+      left: isMobile ? "62%" : "calc(50% - -50px)",
+      transform: "translateX(-50%)",
+      background: "#FFFFFF",
+      border: "1px solid #e2e8f0",
+      borderRadius: "12px",
+   //   boxShadow: "0 6px 24px rgba(0, 0, 0, 0.1)",
+      padding: isMobile ? "8px" : "10px",
+      zIndex: 10,
+      display: "flex",
+      flexDirection: "column",
+      gap: "5px",
+      scrollbarWidth: "none",     
+      msOverflowStyle: "none",     
+    }}
+    ref={tokenDropdownRef}
+  >
+    <div
+      style={{
+        fontWeight: 600,
+        fontFamily: "'Mona Sans', sans-serif",
+        fontSize: isMobile ? "14px" : "15px",
+        paddingBottom: "8px",
+        borderBottom: "1px solid #eee",
+        marginBottom: "10px",
+        color: "#000000",
+        textAlign: "center",
+      }}
+    >
+      Available Tokens
+    </div>
+    <input
+      type="text"
+      placeholder="Search by token..."
+      style={{
+        width: "100%",
+        padding: "10px 12px",
+        margin: "10px 0",
+        fontSize: isMobile ? "13px" : "14px",
+        borderRadius: "8px",
+        border: "1px solid #d1d8e0",
+        background: "#f9fafb",
+       
+        boxSizing: "border-box",
+        transition: "border-color 0.3s, box-shadow 0.3s",
+        color: "#000000",
+      }}
+      value={searchQueryToken}
+      onChange={(e) => setSearchQueryToken(e.target.value)}
+    />
+    {filteredTokens
+      .filter((token) =>
+        token.symbol.toLowerCase().includes(searchQueryToken.toLowerCase()) &&
+        token.symbol !== "wNEAR"
+      )
+      .map((token, index) => {
+        // Find token avatar or fall back to blockchain avatar
+        const tokenAvatar = tokenAvatars.find(a => 
+          a.name.toLowerCase() === token.symbol.toLowerCase()
+        );
+        
+        const blockchainAvatar = tokenAvatars.find(a => 
+          a.name.toLowerCase() === token.blockchain.toLowerCase()
+        );
+
+        const avatarSrc = tokenAvatar?.src || blockchainAvatar?.src ||  "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar22.jpeg"
+      
+        return (
+          <div
+            key={index}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: isMobile ? "6px" : "8px",
+              cursor: "pointer",
+              borderRadius: "8px",
+              color: "#000000",
+              fontSize: isMobile ? "13px" : "14px",
+              gap: "8px",
+              fontFamily: "'Mona Sans', sans-serif",
+              fontWeight: 600,
+            }}
+            onClick={() => {
+              setSelectedToken(token.symbol);
+              setShowTokenDropdown(false);
+              setPrice(token.price || 0);
+              setDecimals(token.decimals || "");
+              setTokenID(token.assetId || "");
+              setSelectedassetId(token.assetId || "");
+              settokenImage(avatarSrc)
+            }}
+          >
+            <img 
+              src={avatarSrc} 
+              alt={token.symbol}
+              style={{
+                width: "20px",
+                height: "20px",
+                borderRadius: "50%",
+                objectFit: "cover"
+              }}
+            />
+            {token.symbol}
+          </div>
+        );
+      })}
+  </div>
+)}
           </div>
 
           {/* Amount Input */}
@@ -664,9 +823,11 @@ const Modal2 = ({
             <div
               style={{
                 color: "black",
-                fontWeight: 600,
+               
                 fontSize: isMobile ? "15px" : "16px",
                 textAlign: "left",
+                fontFamily: "'Mona Sans', sans-serif",
+                fontWeight: 500,
               }}
             >
               Amount
@@ -691,7 +852,7 @@ const Modal2 = ({
     fontSize: isMobile ? "14px" : "16px",
     width: "100%",
     background: "transparent",
-    fontFamily: "'Lato', sans-serif",
+    fontFamily: "'Mona Sans', sans-serif",
     color: "#000000",
   }}
   type="number"
@@ -716,6 +877,7 @@ const Modal2 = ({
                   fontSize: isMobile ? "12px" : "14px",
                   marginLeft: "auto",
                   whiteSpace: "nowrap",
+                  fontFamily: "'Mona Sans', sans-serif",
                 }}
               >
                 {new Intl.NumberFormat("en-US", {
@@ -727,152 +889,12 @@ const Modal2 = ({
           </div>
 
          
-          {/* <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-              width: "91%"
-            }}
-          >
-            <div
-              style={{
-                color: "black",
-                fontWeight: 600,
-                fontSize: isMobile ? "15px" : "16px",
-                textAlign: "left",
-              }}
-            >
-              Address
-            </div>
-            <input
-              type="text"
-              placeholder="Please provide the sender wallet address"
-              style={{
-                width: "100%",
-                height: "48px",
-                borderRadius: "8px",
-                padding: "4px 12px",
-                border: "1px solid #DBDBDB",
-                backgroundColor: "#FFFFFF",
-                outline: "none",
-                boxShadow: "none",
-                color: "black",
-                fontSize: isMobile ? "14px" : "16px",
-                fontFamily: "'Lato', sans-serif",
-              }}
-              value={senderAddress}
-              onChange={(e) => setSenderAddress(e.target.value)}
-            />
-          </div> */}
-
-          {/* Fee Breakdown */}
-          {/* {amount !== "" && amount !== null && (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: isMobile ? "15px" : "16px",
-                  fontWeight: 600,
-                  textAlign: "left",
-                  margin: 0,
-                }}
-              >
-                Fee Breakdown
-              </h3>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontSize: isMobile ? "13px" : "14px",
-                  color: "#1e293b",
-                }}
-              >
-                <span>Protocol Fee (2.5%):</span>
-                <span>
-                  {protocolFeeSelectedCurrency.toFixed(4)} {selectedToken || "USDC"}
-                  {nearPrice > 0 && price > 0 && (
-                    <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px" }}>
-                      {" "}
-                      ({protocolFeeNear.toFixed(4)} NEAR)
-                    </span>
-                  )}
-                </span>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontSize: isMobile ? "13px" : "14px",
-                  color: "#1e293b",
-                }}
-              >
-                <span>Network Fee:</span>
-                <span>
-                  {networkFeeSelectedCurrency.toFixed(4)} {selectedToken || "USDC"}
-                  {nearPrice > 0 && price > 0 && (
-                    <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px" }}>
-                      {" "}
-                      (0.08 NEAR)
-                    </span>
-                  )}
-                </span>
-              </div>
-              {walletID && (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    fontSize: isMobile ? "13px" : "14px",
-                    color: "#1e293b",
-                  }}
-                >
-                  <span>Referral Fee (5%):</span>
-                  <span>
-                    {referralFeeSelectedCurrency.toFixed(4)} {selectedToken || "USDC"}
-                    {nearPrice > 0 && price > 0 && (
-                      <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px" }}>
-                        {" "}
-                        ({referralFeeNear.toFixed(4)} NEAR)
-                      </span>
-                    )}
-                  </span>
-                </div>
-              )}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontSize: isMobile ? "15px" : "16px",
-                  color: "#1e293b",
-                  fontWeight: 600,
-                }}
-              >
-                <span>Total (incl. fees):</span>
-                <span>
-                  {(donationAmount + totalFeeSelectedCurrency).toFixed(4)} {selectedToken || "USDC"}
-                  {nearPrice > 0 && price > 0 && (
-                    <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px" }}>
-                      {" "}
-                      ({(donationAmount + totalFeeNear).toFixed(4)} NEAR)
-                    </span>
-                  )}
-                </span>
-              </div>
-            </div>
-          )} */}
+        
 
 {amount !== "" && amount !== null && (
             <div
               style={{
-                // display: "flex",
-                // flexDirection: "column",
-                // gap: "10px",
+        
                 border: "1px solid #E5E7EB",
                 borderRadius: "12px",
                 padding: "8px",
@@ -888,7 +910,8 @@ const Modal2 = ({
                   fontWeight: 600,
                   textAlign: "left",
                   margin: 0,
-                  color: "black"
+                  color: "black",
+                  fontFamily: "'Mona Sans', sans-serif",
                 }}
               >
                 Fee Breakdown
@@ -899,6 +922,7 @@ const Modal2 = ({
                   justifyContent: "space-between",
                   fontSize: isMobile ? "13px" : "14px",
                   color: "#1e293b",
+                  fontFamily: "'Mona Sans', sans-serif",
                 }}
               >
                 <span>Protocol Fee (2.5%):</span>
@@ -918,6 +942,7 @@ const Modal2 = ({
                   justifyContent: "space-between",
                   fontSize: isMobile ? "13px" : "14px",
                   color: "#1e293b",
+                  fontFamily: "'Mona Sans', sans-serif",
                 }}
               >
                 <span>Network Fee:</span>
@@ -938,6 +963,7 @@ const Modal2 = ({
                     justifyContent: "space-between",
                     fontSize: isMobile ? "13px" : "14px",
                     color: "#1e293b",
+                    fontFamily: "'Mona Sans', sans-serif",
                   }}
                 >
                   <span>Referral Fee (5%):</span>
@@ -961,6 +987,7 @@ const Modal2 = ({
                   fontWeight: 600,
                   borderTop: "1px solid #e6ecef",
                   marginTop: "10px",
+                  fontFamily: "'Mona Sans', sans-serif",
                 }}
               >
               
@@ -999,9 +1026,9 @@ const Modal2 = ({
               border: "none",
               borderRadius: "10px",
               cursor: "pointer",
-              fontFamily: "'Lato', sans-serif",
-              fontWeight: 550,
-              fontSize: isMobile ? "14px" : "16px",
+              fontFamily: "'Mona Sans', sans-serif",
+              fontWeight: 500,
+              fontSize: isMobile ? "12px" : "16px",
               transition: "background 0.3s, transform 0.2s, box-shadow 0.3s",
               flex: 1,
               maxWidth: "100%",
@@ -1026,9 +1053,9 @@ const Modal2 = ({
               border: "none",
               borderRadius: "10px",
               cursor: isDisabled ? "not-allowed" : "pointer",
-              fontFamily: "'Lato', sans-serif",
-              fontWeight: 700,
-              fontSize: isMobile ? "14px" : "16px",
+              fontFamily: "'Mona Sans', sans-serif",
+              fontWeight: 500,
+              fontSize: isMobile ? "12px" : "15px",
               transition: "background 0.3s, transform 0.2s, box-shadow 0.3s",
               flex: 1,
               maxWidth: "100%",

@@ -12,6 +12,7 @@ interface Modal5Props {
   CampaignImg: string;
   CampaignDesc: string;
   walletID?: any;
+  tokenImg: string;
 }
 
 const Modal5: React.FC<Modal5Props> = ({
@@ -25,6 +26,7 @@ const Modal5: React.FC<Modal5Props> = ({
   CampaignImg = "",
   CampaignDesc = "",
   walletID = null,
+  tokenImg=''
 }) => {
   const [isCloseButtonHovered, setIsCloseButtonHovered] = useState(false);
   const [isCopyButtonHovered, setIsCopyButtonHovered] = useState(false);
@@ -71,7 +73,7 @@ const Modal5: React.FC<Modal5Props> = ({
           maxHeight: "80vh",
           overflowY: "auto" as const,
           position: "relative",
-          fontFamily: "'Lato', sans-serif",
+          fontFamily: "'Mona Sans', sans-serif",
           boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
           border: "1px solid #e6ecef",
           ...(isMobile && { width: "83%", padding: "20px" }),
@@ -95,39 +97,46 @@ const Modal5: React.FC<Modal5Props> = ({
             fontWeight: 700,
           }}
         >
-          <h2
+          <div
             style={{
-              fontSize: isMobile ? "18px" : "20px",
-              fontWeight: 700,
+              fontSize: isMobile ? "16px" : "20px",
+              fontFamily: "'Mona Sans', sans-serif",
+              fontWeight: 600,
+              margin: 0,
               textAlign: "center",
             }}
           >
             Donation Confirmed
-          </h2>
+          </div>
 
-          <button
+
+
+
+          <div
             style={{
               position: "absolute",
-              right: isMobile ? "10px" : "10px",
+              right: isMobile ? "23px" : "30px",
+              top: isMobile ?  "53%" : '52%',
+              transform: "translateY(-50%)",
               background: "none",
               border: "none",
-              fontSize: isMobile ? "27px" : "30px",
               color: "#FCCFCF",
               cursor: "pointer",
-              fontFamily: "'Lato', sans-serif",
+              fontFamily: "'Mona Sans', sans-serif",
               transition: "color 0.3s, transform 0.2s",
               outline: "none",           
               boxShadow: "none",        
-              ...(isCloseButtonHovered && {
-                transform: "scale(1.1)",
-              }),
+              ...(isCloseButtonHovered && { transform: "translateY(-50%) scale(1.1)" }),
             }}
             onMouseEnter={() => setIsCloseButtonHovered(true)}
             onMouseLeave={() => setIsCloseButtonHovered(false)}
             onClick={onClose}
           >
-            ×
-          </button>
+           <svg width={isMobile ? "20px" : "24"} height={isMobile ? "20px" : "24"} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="#FCCFCF"/>
+</svg>
+
+          </div>
         </div>
         <div
           style={{
@@ -800,7 +809,7 @@ const Modal5: React.FC<Modal5Props> = ({
                   />
                 </svg>
               </div>
-              <h2
+              <div
                 style={{
                   fontSize: "20px",
                   color: "#000000",
@@ -812,37 +821,49 @@ const Modal5: React.FC<Modal5Props> = ({
                 aria-live="polite"
               >
                 Donation Successful!
-              </h2>
-              <p
-                style={{
-                  fontSize: "16px",
-                  color: "#333333",
-                  fontFamily: "'Lato', sans-serif",
-                }}
-              >
-                <span
-                  style={{
-                    fontWeight: 600,
-                    color: "#000000",
-                  }}
-                >
-                  {amount_digit} {amount_symbol}
-                </span>{" "}
-                ~
-                <span
-                  style={{
-                    fontWeight: 600,
-                    color: "#000000",
-                  }}
-                >
-                  ${usdAmount}
-                </span>
-              </p>
+              </div>
+     
+
+<p style={{
+  fontSize: "16px",
+  color: "#333333",
+  fontFamily: "'Mona Sans', sans-serif",
+  display: "flex",
+  alignItems: "center",
+  gap: "5px", 
+}}>
+  <img 
+    src={tokenImg} 
+    alt="Token"
+    style={{
+      width: "21px",
+      height: "21px",
+      borderRadius: "50%",
+      objectFit: "cover",
+    }}
+  />
+  <span style={{ 
+    fontWeight: 600,
+    color: "#000000",
+    whiteSpace: "nowrap" 
+  }}>
+    {amount_digit} {amount_symbol}
+  </span>
+  <span>~</span>
+  <span style={{ 
+    fontWeight: 600,
+    color: "#000000",
+    whiteSpace: "nowrap"
+  }}>
+ ${usdAmount}
+  </span>
+</p>
               <p
                 style={{
                   fontSize: "14px",
                   color: "#333333",
-                  fontFamily: "'Lato', sans-serif",
+                  fontFamily: "'Mona Sans', sans-serif",
+                  margin: 0
                 }}
               >
                 has been donated to{" "}
@@ -850,6 +871,7 @@ const Modal5: React.FC<Modal5Props> = ({
                   style={{
                     fontWeight: 600,
                     color: "#000000",
+                    fontFamily: "'Mona Sans', sans-serif",
                   }}
                 >
                   {campaignName}
@@ -863,27 +885,32 @@ const Modal5: React.FC<Modal5Props> = ({
                   border: "1px solid #e6ecef",
                   borderRadius: "8px",
                   background: "#f9f9f9",
+                  display: "flex",
+                  flexDirection: "column",
                   ...(isMobile && { padding: "10px" }),
                 }}
               >
-                <h4
+                <div
                   style={{
                     fontSize: "16px",
                     fontWeight: 600,
                     color: "#000000",
                     fontFamily: "'Mona Sans', sans-serif",
                     marginBottom: "10px",
+                    textAlign: "left",
+
                   }}
+
                 >
                   Fee Breakdown
-                </h4>
+                </div>
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
                     fontSize: "14px",
                     color: "#333333",
-                    fontFamily: "'Lato', sans-serif",
+                    fontFamily: "'Mona Sans', sans-serif",
                     marginBottom: "5px",
                   }}
                 >
@@ -896,7 +923,7 @@ const Modal5: React.FC<Modal5Props> = ({
                     justifyContent: "space-between",
                     fontSize: "14px",
                     color: "#333333",
-                    fontFamily: "'Lato', sans-serif",
+                    fontFamily: "'Mona Sans', sans-serif",
                     marginBottom: "5px",
                   }}
                 >
@@ -910,7 +937,7 @@ const Modal5: React.FC<Modal5Props> = ({
                       justifyContent: "space-between",
                       fontSize: "14px",
                       color: "#333333",
-                      fontFamily: "'Lato', sans-serif",
+                      fontFamily: "'Mona Sans', sans-serif",
                       marginBottom: "5px",
                     }}
                   >
@@ -932,7 +959,7 @@ const Modal5: React.FC<Modal5Props> = ({
                     fontSize: "14px",
                     fontWeight: 600,
                     color: "#000000",
-                    fontFamily: "'Lato', sans-serif",
+                    fontFamily: "'Mona Sans', sans-serif",
                     marginTop: "10px",
                   }}
                 >
@@ -948,7 +975,7 @@ const Modal5: React.FC<Modal5Props> = ({
                   marginTop: "20px",
                   fontSize: "14px",
                   color: "#333333",
-                  fontFamily: "'Lato', sans-serif",
+                  fontFamily: "'Mona Sans', sans-serif",
                 }}
               >
                 <span>Txn Hash:</span>
@@ -963,6 +990,7 @@ const Modal5: React.FC<Modal5Props> = ({
                     style={{
                       color: "#000000",
                       fontWeight: 600,
+                      fontFamily: "'Mona Sans', sans-serif",
                     }}
                   >
                     {shortenHash(txHash)}

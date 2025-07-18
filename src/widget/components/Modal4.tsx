@@ -11,6 +11,7 @@ interface Modal4Props {
   CampaignImg: string;
   CampaignDesc: string;
   walletID: any;
+  tokenImg: string;
   onClose: () => void;
   onBack: (depositAddress: string) => void;
   onProceed: (
@@ -33,6 +34,7 @@ const Modal4: React.FC<Modal4Props> = ({
   CampaignImg = "",
   CampaignDesc = "",
   walletID = null,
+  tokenImg=''
 }) => {
   const [FundReceived, setFundReceived] = useState<boolean | null>(false);
   const [FundReceivedFailed, setFundReceivedFailed] = useState<boolean | null>(
@@ -188,9 +190,7 @@ const Modal4: React.FC<Modal4Props> = ({
           width: "400px",
           maxHeight: "80vh",
           position: "relative",
-          fontFamily: "'Lato', sans-serif",
-          boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
-          border: "1px solid #e6ecef",
+          fontFamily: "'Mona Sans', sans-serif",
           display: "flex",
           flexDirection: "column",
           ...(isMobile && { width: "80%", padding: "20px" }),
@@ -253,28 +253,30 @@ const Modal4: React.FC<Modal4Props> = ({
             />
           </svg>
 
-          <h2
+          <div
             style={{
               fontSize: isMobile ? "16px" : "20px",
-              fontWeight: 700,
+              fontFamily: "'Mona Sans', sans-serif",
+              fontWeight: 600,
               margin: 0,
               textAlign: "center",
             }}
           >
-            Confirm Your Donation
-          </h2>
-          <button
+              Confirm Your Donation
+          </div>
+
+
+          <div
             style={{
               position: "absolute",
-              right: isMobile ? "10px" : "10px",
-              top: "50%",
+              right: isMobile ? "23px" : "30px",
+              top: isMobile ?  "53%" : '52%',
               transform: "translateY(-50%)",
               background: "none",
               border: "none",
-              fontSize: isMobile ? "27px" : "30px",
               color: "#FCCFCF",
               cursor: "pointer",
-              fontFamily: "'Lato', sans-serif",
+              fontFamily: "'Mona Sans', sans-serif",
               transition: "color 0.3s, transform 0.2s",
               outline: "none",           
               boxShadow: "none",        
@@ -284,8 +286,11 @@ const Modal4: React.FC<Modal4Props> = ({
             onMouseLeave={() => setIsCloseButtonHovered(false)}
             onClick={() => setShowQuitModal(true)}
           >
-            ×
-          </button>
+           <svg width={isMobile ? "20px" : "24"} height={isMobile ? "20px" : "24"} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="#FCCFCF"/>
+</svg>
+
+          </div>
         </div>
 
         <div
@@ -326,7 +331,7 @@ const Modal4: React.FC<Modal4Props> = ({
                 alignItems: "flex-start",
                 gap: "15px",
                 width:isMobile ?  "90%" : "70%",
-                marginBottom: "20px",
+              //  marginBottom: "20px",
                 textAlign: "left",
                 ...(isMobile && {
                   flexDirection: "row",
@@ -410,6 +415,7 @@ const Modal4: React.FC<Modal4Props> = ({
                       color: "#ffffff",
                       fontSize: "14px",
                       fontWeight: 600,
+                      fontFamily: "'Mona Sans', sans-serif",
                      marginTop: isMobile ? 0 :8,
 
                     }}
@@ -466,7 +472,7 @@ const Modal4: React.FC<Modal4Props> = ({
                       style={{
                         fontSize: isMobile ? "13px" : "14px",
                         color: "#FF0000",
-                        fontFamily: "'Lato', sans-serif",
+                        fontFamily: "'Mona Sans', sans-serif",
                       }}
                     >
                      Receive Failed, refresh after some mins.
@@ -477,7 +483,7 @@ const Modal4: React.FC<Modal4Props> = ({
                         style={{
                           fontSize: isMobile ? "13px" : "14px",
                           color: "#333333",
-                          fontFamily: "'Lato', sans-serif",
+                          fontFamily: "'Mona Sans', sans-serif",
                         }}
                       >
                         Received {amount} sent from your wallet
@@ -492,7 +498,7 @@ const Modal4: React.FC<Modal4Props> = ({
                           fontSize: isMobile ? "13px" : "14px",
                           color: "#262626",
                           textDecoration: "none",
-                          fontFamily: "'Lato', sans-serif",
+                          fontFamily: "'Mona Sans', sans-serif",
                           transition: "color 0.3s",
                           ...(isTxLink1Hovered && { color: "#a3bffa" }),
                         }}
@@ -524,7 +530,7 @@ const Modal4: React.FC<Modal4Props> = ({
                     style={{
                       fontSize: isMobile ? "13px" : "14px",
                       color: "#737373",
-                      fontFamily: "'Lato', sans-serif",
+                      fontFamily: "'Mona Sans', sans-serif",
                     }}
                   >
                     Awaiting confirmation of received funds....
@@ -638,7 +644,7 @@ const Modal4: React.FC<Modal4Props> = ({
                     fontWeight: 600,
                     color: "#000000",
                     fontFamily: "'Mona Sans', sans-serif",
-                    marginTop : isMobile ?  '-15%' : ''
+                    marginTop : isMobile ?  '-15%' : '3%'
                   }}
                 >
                   Withdrawing to NEAR Intent
@@ -649,7 +655,7 @@ const Modal4: React.FC<Modal4Props> = ({
                       style={{
                         fontSize: isMobile ? "13px" : "14px",
                         color: "#333333",
-                        fontFamily: "'Lato', sans-serif",
+                        fontFamily: "'Mona Sans', sans-serif",
                       }}
                     >
                       Withdrawal completed successfully
@@ -664,7 +670,7 @@ const Modal4: React.FC<Modal4Props> = ({
                         fontSize: isMobile ? "13px" : "14px",
                         color: "#262626",
                         textDecoration: "none",
-                        fontFamily: "'Lato', sans-serif",
+                        fontFamily: "'Mona Sans', sans-serif",
                         transition: "color 0.3s",
                         ...(isTxLink2Hovered && { color: "#a3bffa" }),
                       }}
@@ -695,7 +701,7 @@ const Modal4: React.FC<Modal4Props> = ({
                     style={{
                       fontSize: isMobile ? "13px" : "14px",
                       color: "#737373",
-                      fontFamily: "'Lato', sans-serif",
+                      fontFamily: "'Mona Sans', sans-serif",
                     }}
                   >
                     Waiting for withdrawal.....
@@ -766,6 +772,7 @@ const Modal4: React.FC<Modal4Props> = ({
                       color: "#ffffff",
                       fontSize: "14px",
                       fontWeight: 600,
+                      fontFamily: "'Mona Sans', sans-serif",
                       marginTop: isMobile ? 0: 5,
                     }}
                   >
@@ -809,7 +816,7 @@ const Modal4: React.FC<Modal4Props> = ({
                     fontWeight: 600,
                     color: "#000000",
                     fontFamily: "'Mona Sans', sans-serif",
-                    marginTop : isMobile ?  '-15%' : ''
+                    marginTop : isMobile ?  '-15%' : '3%'
                   }}
                 >
                   Converting to Near
@@ -819,18 +826,30 @@ const Modal4: React.FC<Modal4Props> = ({
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "10px",
+                      gap: "5px",
                       flexWrap: "wrap",
                       fontSize: isMobile ? "13px" : "14px",
                     }}
                   >
-                    <span style={{ fontWeight: 550, color: "#000000" }}>
-                      {amount} ➝
+                      <span style={{ display: "flex", alignItems: "center", gap: '7px' }}>
+                      <img 
+              src={tokenImg} 
+              alt={'image'}
+              style={{
+                width: "21px",
+                height: "21px",
+                borderRadius: "50%",
+                objectFit: "cover"
+              }}/>
+                      <span style={{ fontWeight: 550, color: "#000000" }}>
+                      {parseFloat(amount).toFixed(2)} ➝
                     </span>
+                      </span>
+                    
                     <span style={{ display: "flex", alignItems: "center" }}>
                       <svg
-                        width="24"
-                        height="25"
+                        width="21"
+                        height="21"
                         viewBox="0 0 24 25"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -850,7 +869,7 @@ const Modal4: React.FC<Modal4Props> = ({
                           ? parseFloat(swapData.swapDetails.amountOutFormatted)
                           : 0
                         ).toFixed(2)}{" "}
-                        Near
+                        NEAR
                       </span>
                     </span>
                   </div>
@@ -859,7 +878,7 @@ const Modal4: React.FC<Modal4Props> = ({
                     style={{
                       fontSize: isMobile ? "13px" : "14px",
                       color: "#737373",
-                      fontFamily: "'Lato', sans-serif",
+                      fontFamily: "'Mona Sans', sans-serif",
                     }}
                   >
                     Awaiting funds withdrawal for conversion.....
@@ -951,6 +970,7 @@ const Modal4: React.FC<Modal4Props> = ({
                     fontWeight: 600,
                     color: "#000000",
                     fontFamily: "'Mona Sans', sans-serif",
+                    marginTop : isMobile ?  '' : '3%'
                   }}
                 >
                   Donating to campaign
@@ -960,7 +980,7 @@ const Modal4: React.FC<Modal4Props> = ({
                     style={{
                       fontSize: isMobile ? "13px" : "14px",
                       color: "#737373",
-                      fontFamily: "'Lato', sans-serif",
+                      fontFamily: "'Mona Sans', sans-serif",
                     }}
                   >
                     Successfully deposited {amount} Near to{" "}
@@ -973,7 +993,7 @@ const Modal4: React.FC<Modal4Props> = ({
                     style={{
                       fontSize: isMobile ? "13px" : "14px",
                       color: "#737373",
-                      fontFamily: "'Lato', sans-serif",
+                      fontFamily: "'Mona Sans', sans-serif",
                     }}
                   >
                     Donation Pending.....
@@ -1001,9 +1021,10 @@ const Modal4: React.FC<Modal4Props> = ({
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
+              fontFamily: "'Mona Sans', sans-serif",
               width: "408px",
               minWidth: "320px",
-              height: "48px",
+              height: "55px",
               gap: "4px",
               borderRadius: "16px",
               padding: "8px 12px",
@@ -1023,7 +1044,13 @@ const Modal4: React.FC<Modal4Props> = ({
             }}
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
-            onClick={refreshTransaction}
+            //onClick={(refreshTransaction)}
+            onClick={() => { onProceed(
+             '0.003',
+              CampaignName,
+              amount,
+              'statusData.swapDetails.amountInUsd'
+            );}}
           >
             Refresh Transaction
           </button>

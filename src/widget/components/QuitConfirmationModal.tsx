@@ -43,7 +43,7 @@ const QuitConfirmationModal = ({
           width: isMobile ? "60%" : "300px",
           maxHeight: "90vh",
           position: "relative",
-          fontFamily: "'Lato', sans-serif",
+          fontFamily: "'Mona Sans', sans-serif",
           boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
           border: "1px solid #e6ecef",
         }}
@@ -57,9 +57,10 @@ const QuitConfirmationModal = ({
             color: "#1e293b",
             fontSize: isMobile ? "14px" : "16px",
             lineHeight: "1.5",
+            fontFamily: "'Mona Sans', sans-serif",
           }}
         >
-          <p style={{ fontWeight: 600, marginBottom: "10px" }}>
+          <p style={{ fontWeight: 600, marginBottom: "10px",  fontFamily: "'Mona Sans', sans-serif", }}>
             Are you sure you want to quit?
           </p>
           <p>
@@ -88,7 +89,7 @@ const QuitConfirmationModal = ({
               border: "none",
               borderRadius: "10px",
               cursor: "pointer",
-              fontFamily: "'Lato', sans-serif",
+              fontFamily: "'Mona Sans', sans-serif",
               fontWeight: 700,
               transition: "background 0.3s, transform 0.2s, box-shadow 0.3s",
             
@@ -96,7 +97,7 @@ const QuitConfirmationModal = ({
               ...(isCancelButtonHovered && {
                 background: "#d1d8e0",
                 transform: "translateY(-2px)",
-                //boxShadow: "0 6px 15px rgba(0, 0, 0, 0.15)",
+              
               }),
             }}
             onMouseEnter={() => setIsCancelButtonHovered(true)}
@@ -113,7 +114,7 @@ const QuitConfirmationModal = ({
               border: "none",
               borderRadius: "10px",
               cursor: "pointer",
-              fontFamily: "'Lato', sans-serif",
+              fontFamily: "'Mona Sans', sans-serif",
               fontWeight: 700,
               transition: "background 0.3s, transform 0.2s, box-shadow 0.3s",
               boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",

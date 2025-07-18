@@ -178,9 +178,7 @@ const SelectionModal = ({ onProceed, onClose }) => {
           display: "flex",
           flexDirection: "column",
           position: "relative",
-          fontFamily: "'Lato', sans-serif",
-          boxShadow: "0 12px 35px rgba(0, 0, 0, 0.15)",
-          border: "1px solid #e6ecef",
+          fontFamily: "'Mona Sans', sans-serif",
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -196,16 +194,19 @@ const SelectionModal = ({ onProceed, onClose }) => {
             textAlign: "center",
           }}
         >
-          <h2
+
+          <div
             style={{
-              fontSize: isMobile ? "18px" : "20px",
-              fontWeight: 700,
+              fontSize: isMobile ? "16px" : "20px",
+              fontFamily: "'Mona Sans', sans-serif",
+              fontWeight: 600,
               margin: 0,
+              textAlign: "center",
             }}
           >
-            Select Donation Target
-          </h2>
-          <button
+              Select Donation Target
+          </div>
+          {/* <button
             style={{
               position: "absolute",
               right: isMobile ? "10px" : "10px",
@@ -228,7 +229,33 @@ const SelectionModal = ({ onProceed, onClose }) => {
             onClick={onClose}
           >
             ×
-          </button>
+          </button> */}
+
+          <div
+            style={{
+              position: "absolute",
+              right: isMobile ? "23px" : "30px",
+              top: isMobile ?  "53%" : '52%',
+              transform: "translateY(-50%)",
+              background: "none",
+              border: "none",
+              color: "#FCCFCF",
+              cursor: "pointer",
+              fontFamily: "'Mona Sans', sans-serif",
+              transition: "color 0.3s, transform 0.2s",
+              outline: "none",           
+              boxShadow: "none",        
+              ...(isCloseButtonHovered && { transform: "translateY(-50%) scale(1.1)" }),
+            }}
+            onMouseEnter={() => setIsCloseButtonHovered(true)}
+            onMouseLeave={() => setIsCloseButtonHovered(false)}
+            onClick={onClose}
+          >
+           <svg width={isMobile ? "20px" : "24"} height={isMobile ? "20px" : "24"} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="#FCCFCF"/>
+</svg>
+
+          </div>
         </div>
 
         {/* Content */}
@@ -239,7 +266,7 @@ const SelectionModal = ({ onProceed, onClose }) => {
             flexDirection: "column",
             gap: "20px",
             overflow: "hidden", 
-           
+            fontFamily: "'Mona Sans', sans-serif",
           }}
         >
           <input
@@ -339,7 +366,7 @@ const SelectionModal = ({ onProceed, onClose }) => {
                         style={{
                           color: "#525252",
                           fontSize: "15px",
-                          fontFamily: "sans-serif",
+                          fontFamily: "'Mona Sans', sans-serif",
                           textAlign: "left",
                         }}
                       >
@@ -355,6 +382,7 @@ const SelectionModal = ({ onProceed, onClose }) => {
                   textAlign: "center",
                   color: "#525252",
                   padding: "20px",
+                  fontFamily: "'Mona Sans', sans-serif",
                 }}
               >
                 No campaigns found.
@@ -378,10 +406,11 @@ const SelectionModal = ({ onProceed, onClose }) => {
               padding: isMobile ? "10px" : "8px 12px",
               backgroundColor: selectedCampaign ? "#000000" : "#00000044",
               color: "#ffffff",
-              fontSize: isMobile ? "15px" : "16px",
+              fontSize: isMobile ? "14px" : "15px",
               fontWeight: 500,
               cursor: selectedCampaign ? "pointer" : "not-allowed",
               border: "none",
+              fontFamily: "'Mona Sans', sans-serif",
               textAlign: "center",
               ...(isButtonHovered && selectedCampaign && { opacity: 0.9 }),
             }}
