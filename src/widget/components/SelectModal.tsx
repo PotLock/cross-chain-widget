@@ -206,30 +206,7 @@ const SelectionModal = ({ onProceed, onClose, textInfo }) => {
           >
               Select {textInfo} Target
           </div>
-          {/* <button
-            style={{
-              position: "absolute",
-              right: isMobile ? "10px" : "10px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              background: "none",
-              border: "none",
-              fontSize: isMobile ? "29px" : "35px",
-              color: "#FCCFCF",
-              cursor: "pointer",
-              fontFamily: "'Lato', sans-serif",
-              transition: "color 0.3s, transform 0.2s",
-              outline: "none",           
-              boxShadow: "none",      
-              ...(isCloseButtonHovered && { transform: "translateY(-50%) scale(1.1)" }),
-
-            }}
-            onMouseEnter={() => setIsCloseButtonHovered(true)}
-            onMouseLeave={() => setIsCloseButtonHovered(false)}
-            onClick={onClose}
-          >
-            ×
-          </button> */}
+         
 
           <div
             style={{
@@ -258,7 +235,6 @@ const SelectionModal = ({ onProceed, onClose, textInfo }) => {
           </div>
         </div>
 
-        {/* Content */}
         <div
           style={{
             flex: 1,
@@ -297,13 +273,13 @@ const SelectionModal = ({ onProceed, onClose, textInfo }) => {
             style={{
               flex: 1,
               maxHeight: "90%",
-              overflowY: "auto", // Scrollable campaigns container
+              overflowY: "auto", 
               borderRadius: "8px",
               padding: isMobile ? "10px" : "13px",
               border: "1px solid #DBDBDB",
               backgroundColor: "#ffffff",
-              scrollbarWidth: "none",      // Firefox
-              msOverflowStyle: "none",     // IE/Edge
+              scrollbarWidth: "none",    
+              msOverflowStyle: "none", 
             }}
           >
             {isLoading ? (
@@ -362,16 +338,16 @@ const SelectionModal = ({ onProceed, onClose, textInfo }) => {
                       >
                         {item.name}
                       </div>
+
                       <div
-                        style={{
-                          color: "#525252",
-                          fontSize: "15px",
-                          fontFamily: "'Mona Sans', sans-serif",
-                          textAlign: "left",
-                        }}
-                      >
-                        {item.description?.split(" ").slice(0, 30).join(" ")}
-                      </div>
+      style={{
+        color: "#525252",
+        fontSize: "15px",
+        fontFamily: "'Mona Sans', sans-serif",
+        textAlign: "left",
+      }}
+      dangerouslySetInnerHTML={{ __html: item.description }}
+    />
                     </div>
                   </div>
                 </div>

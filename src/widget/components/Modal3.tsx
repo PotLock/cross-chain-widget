@@ -51,12 +51,14 @@ const Modal3: React.FC<Modal3Props> = ({
   const [isSentFundsButtonHovered, setIsSentFundsButtonHovered] =
     useState(false);
   const [isCopyButtonHovered, setIsCopyButtonHovered] = useState(false);
+  const [isCopyButtonHovered2, setIsCopyButtonHovered2] = useState(false);
   const [showQuitModal, setShowQuitModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [isLoadingAddress, setIsLoadingAddress] = useState(!isdeposit);
   const modalRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery({ maxWidth: 640 });
   const [isCopied, setisCopied] = useState(false);
+  const [isCopied2, setisCopied2] = useState(false);
 
   function convertToUnit(amount: string | number, decimals: number): string {
     if (amount === null || amount === undefined || isNaN(Number(amount))) {
@@ -175,6 +177,16 @@ const Modal3: React.FC<Modal3Props> = ({
       fetchTokens2();
     }
   }, []);
+
+  useEffect(() => {
+    if (isCopied || isCopied2) {
+      const timer = setTimeout(() => {
+        setisCopied(false);
+        setisCopied2(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isCopied, isCopied2]);
 
   function shortenHash(hash: string): string {
     if (!hash || typeof hash !== "string") {
@@ -451,7 +463,6 @@ const Modal3: React.FC<Modal3Props> = ({
                     borderRadius: "4px",
                     transition: "background 0.3s, transform 0.2s",
                     ...(isCopyButtonHovered && {
-                      background: "#f2f2f2",
                       transform: "translateY(-2px)",
                     }),
                   }}
@@ -495,7 +506,7 @@ const Modal3: React.FC<Modal3Props> = ({
                   borderRadius: "4px",
                   transition: "background 0.3s, transform 0.2s",
                   ...(isCopyButtonHovered && {
-                    background: "#f2f2f2",
+                   
                     transform: "translateY(-2px)",
                   }),
                 }}
@@ -532,34 +543,100 @@ const Modal3: React.FC<Modal3Props> = ({
             )}
           </div>
           <div
+      style={{
+        background: "#F7F7F7",
+        padding: "15px",
+        borderRadius: "10px",
+        margin: "15px 0",
+        fontFamily: "'Mona Sans', sans-serif",
+        fontSize: "15px",
+        color: "#7B7B7B",
+        textAlign: "left",
+      }}
+    >
+      <p>
+        <span
+          style={{
+            fontWeight: 600,
+            color: "#000000",
+          }}
+        >
+          Heads up!
+        </span>
+        <br />• Send exactly <strong>{amount}</strong> {" "}
+        {isCopied2 ? (
+          <div
             style={{
-              background: "#F7F7F7",
-              padding: "15px",
-              borderRadius: "10px",
-              margin: "15px 0",
-              fontFamily: "'Mona Sans', sans-serif",
-              fontSize: "15px",
-              color: "#7B7B7B",
-              textAlign: "left",
+              display: "inline-flex",
+              alignItems: "center",
+              marginLeft: "5px",
             }}
           >
-            <p>
-              <span
-                style={{
-                  fontWeight: 600,
-                  color: "#000000",
-                }}
-              >
-                Heads up!
-              </span>
-              <br />• Send exactly {amount}
-              <br />• Only send from a wallet you control
-              <br />• This address is only valid for this specific donation
-              <br />• If this campaign doesn't meet its funding goal, your
-              donation will be redirected to POTLOCKs Community Fund instead of
-              being refunded to your original wallet.
-            </p>
+            <svg width="18" height="18" viewBox="0 0 22 22" fill="none">
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="11"
+                      strokeWidth="1"
+                      fill="none"
+                    />
+                    <path
+                      d="M9 16.17L5.12 12.29L4 13.41L9 18.5L20 7.5L18.88 6.29L9 16.17Z"
+                      fill="#292929"
+                      strokeWidth="1"
+                    />
+                  </svg>
           </div>
+        ) : (
+          <div
+            style={{
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              padding: "8px",
+              borderRadius: "4px",
+              transition: "background 0.3s, transform 0.2s",
+              ...(isCopyButtonHovered2 && {
+                
+                transform: "translateY(-2px)",
+              }),
+            }}
+            onMouseEnter={() => setIsCopyButtonHovered2(true)}
+            onMouseLeave={() => setIsCopyButtonHovered2(false)}
+            onClick={() => {
+              navigator.clipboard
+                .writeText(amount)
+                .then(() => {
+                  setisCopied2(true);
+                })
+                .catch((err) => {
+                  console.error("Failed to copy address:", err);
+                  alert("Failed to copy address. Please try again.");
+                });
+            }}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 22 22"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 14.8269C1.9 14.8269 1 13.9269 1 12.8269V2.8269C1 1.7269 1.9 0.826904 3 0.826904H13C14.1 0.826904 15 1.7269 15 2.8269M9 6.8269H19C20.1046 6.8269 21 7.72233 21 8.8269V18.8269C21 19.9315 20.1046 20.8269 19 20.8269H9C7.89543 20.8269 7 19.9315 7 18.8269V8.8269C7 7.72233 7.89543 6.8269 9 6.8269Z"
+                stroke="#292929"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+        )}
+        <br />• Only send from a wallet you control
+        <br />• This address is only valid for this specific donation
+        <br />• If this campaign doesn't meet its funding goal, your donation will be redirected to POTLOCKs Community Fund instead of being refunded to your original wallet.
+      </p>
+    </div>
         </div>
         <div
           style={{

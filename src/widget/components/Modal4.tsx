@@ -54,7 +54,7 @@ const Modal4: React.FC<Modal4Props> = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery({ maxWidth: 640 });
   const [isButtonHovered, setIsButtonHovered] = useState(false);
-
+  const [Errorinfo, setErrorinfo] = useState<string | null>('Receive Failed, refresh after some mins.');
   const refreshTransaction = async (): Promise<void> => {
     setFundReceived(false);
     setFundReceivedFailed(false);
@@ -138,7 +138,11 @@ const Modal4: React.FC<Modal4Props> = ({
           amount,
           statusData.swapDetails.amountInUsd
         );
-      } else {
+      } else if (statusData.status === "INCOMPLETE_DEPOSIT") {
+        setErrorinfo('Incomplete deposit. Send the exact amount.');
+        setFundReceived(true);
+        setFundReceivedFailed(true);
+      }else{
         setFundReceived(true);
         setFundReceivedFailed(true);
       }
@@ -477,7 +481,7 @@ const Modal4: React.FC<Modal4Props> = ({
                         fontFamily: "'Mona Sans', sans-serif",
                       }}
                     >
-                     Receive Failed, refresh after some mins.
+                     {Errorinfo}
                     </div>
                   ) : (
                     <>
