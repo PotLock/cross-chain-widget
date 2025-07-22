@@ -14,6 +14,7 @@ interface Modal5Props {
   walletID?: any;
   tokenImg: string;
   textInfo: string
+  nearAmount: string
 }
 
 const Modal5: React.FC<Modal5Props> = ({
@@ -28,7 +29,8 @@ const Modal5: React.FC<Modal5Props> = ({
   CampaignDesc = "",
   walletID = null,
   tokenImg='',
-  textInfo=''
+  textInfo='',
+  nearAmount=''
 }) => {
   const [isCloseButtonHovered, setIsCloseButtonHovered] = useState(false);
   const [isCopyButtonHovered, setIsCopyButtonHovered] = useState(false);
@@ -38,7 +40,7 @@ const Modal5: React.FC<Modal5Props> = ({
   const [amount_digit, amount_symbol] = amount.includes(" ")
     ? amount.split(" ")
     : [amount, "NEAR"];
-  console.log(amount_digit);
+
   function shortenHash(hash: string): string {
     if (!hash || hash.length < 12) return hash;
     return `${hash.slice(0, 6)}....${hash.slice(-6)}`;
@@ -50,6 +52,10 @@ const Modal5: React.FC<Modal5Props> = ({
   const referralFee = donationAmount * 0.05;
   const totalFee = protocolFee + networkFee;
 
+
+  console.log(amount_digit);
+  console.log(amount);
+  console.log(donationAmount);
   return (
     <div
       style={{
@@ -966,7 +972,7 @@ const Modal5: React.FC<Modal5Props> = ({
                   }}
                 >
                   <strong>Total (incl. fees):</strong>
-                  <strong>{(donationAmount + totalFee).toFixed(4)} NEAR</strong>
+                  <strong>{(parseFloat(nearAmount) ).toFixed(4)} NEAR</strong>
                 </div>
               </div>
               <div
@@ -1004,7 +1010,7 @@ const Modal5: React.FC<Modal5Props> = ({
                       borderRadius: "4px",
                       transition: "background 0.3s, transform 0.2s",
                       ...(isCopyButtonHovered && {
-                        background: "#f2f2f2",
+                       
                         transform: "translateY(-2px)",
                       }),
                     }}
@@ -1028,7 +1034,7 @@ const Modal5: React.FC<Modal5Props> = ({
                     >
                       <path
                         d="M3 14.8269C1.9 14.8269 1 13.9269 1 12.8269V2.8269C1 1.7269 1.9 0.826904 3 0.826904H13C14.1 0.826904 15 1.7269 15 2.8269M9 6.8269H19C20.1046 6.8269 21 7.72233 21 8.8269V18.8269C21 19.9315 20.1046 20.8269 19 20.8269H9C7.89543 20.8269 7 19.9315 7 18.8269V8.8269C7 7.72233 7.89543 6.8269 9 6.8269Z"
-                        stroke={isCopyButtonHovered ? "#a3bffa" : "#292929"}
+                        stroke={ "#292929"}
                         strokeWidth="1.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"

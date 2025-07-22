@@ -47,6 +47,7 @@ const Widget: React.FC<WidgetProps> = ({
   const [campaignName, setCampaignName] = useState<string>("");
   const [txHash, setTxHash] = useState<string>("");
   const [usdAmount, setUsdAmount] = useState<string>("");
+  const [nearAmount, setnearAmount] = useState<string>("");
     const [ tokenImg, settokenImg] = useState<string>("");
   const handleOpenModal = () => setStep(1);
   const handleCloseModal = () => setStep(0);
@@ -121,11 +122,13 @@ const Widget: React.FC<WidgetProps> = ({
     hash: string,
     name: string,
     amount: string,
-    usd: string
+    usd: string,
+    nearAmount: string
   ) => {
     setCampaignName(name);
     setTxHash(hash);
     setUsdAmount(usd);
+    setnearAmount(nearAmount)
     setStep(5);
   };
 
@@ -141,7 +144,7 @@ const Widget: React.FC<WidgetProps> = ({
           padding: "12px 24px",
           fontSize: "16px",
           fontWeight: "600",
-          fontFamily: fontType ? fontType : "",
+          fontFamily: fontType ? `'${fontType}', sans-serif` : "'Mona Sans', sans-serif",
           cursor: "pointer",
           display: "inline-flex",
           alignItems: "center",
@@ -236,6 +239,7 @@ const Widget: React.FC<WidgetProps> = ({
               walletID={walletID}
               tokenImg={tokenImg}
               textInfo={textInfo? textInfo: "Donate"}
+              nearAmount={nearAmount}
             />
           )}
         </>
@@ -307,6 +311,7 @@ const Widget: React.FC<WidgetProps> = ({
               walletID={null}
               tokenImg={tokenImg}
               textInfo={textInfo? textInfo: "Donate"}
+              nearAmount={nearAmount}
             />
           )}
         </>

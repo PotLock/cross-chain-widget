@@ -131,14 +131,16 @@ const SelectionModal = ({ onProceed, onClose, textInfo }) => {
         "https://us-central1-almond-1b205.cloudfunctions.net/potluck/fetchcampaigns",
         { method: "GET" }
       );
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       const data = await response.json();
-      setItems(data.data);
-      console.log(data.data);
+      const currentTimeMs = Date.now();
+      const ongoingItems = data.data.filter(campaign => campaign.end_ms >= currentTimeMs);
+      setItems(ongoingItems);
+
     } catch (error) {
       console.error("Failed to fetch campaigns:", error);
     } finally {

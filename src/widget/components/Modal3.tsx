@@ -3,6 +3,8 @@ import { QRCodeSVG } from "qrcode.react";
 import { useMediaQuery } from "react-responsive";
 import QuitConfirmationModal from "./QuitConfirmationModal";
 import ErrorPopupModal from "./ErrorPopupModal";
+import BackConfirmationModal from './BackConfirmationModal'
+import CommunityFundModal from './CommunityFundModal'
 
 interface Modal3Props {
   onClose: () => void;
@@ -54,6 +56,8 @@ const Modal3: React.FC<Modal3Props> = ({
   const [isCopyButtonHovered2, setIsCopyButtonHovered2] = useState(false);
   const [showQuitModal, setShowQuitModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [ShowBackModal, setShowBackModal] = useState(false);
+  const [ShowLink, setShowLink] = useState(false);
   const [isLoadingAddress, setIsLoadingAddress] = useState(!isdeposit);
   const modalRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery({ maxWidth: 640 });
@@ -120,9 +124,12 @@ const Modal3: React.FC<Modal3Props> = ({
         parseFloat(amount_digit)
       );
 
+      // const deadline =
+      //   new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split(".")[0] +
+      //   "Z";
       const deadline =
-        new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split(".")[0] +
-        "Z";
+            new Date(Date.now() + 60 * 60 * 1000).toISOString().split(".")[0] +
+            "Z";         
 
       const response = await fetch("https://1click.chaindefuser.com/v0/quote", {
         method: "POST",
@@ -204,6 +211,14 @@ const Modal3: React.FC<Modal3Props> = ({
 
   const handleCancelQuit = () => {
     setShowQuitModal(false);
+  };
+
+  const handleCancelBack = () => {
+    setShowBackModal(false);
+  };
+
+  const handleCancelLink = () => {
+    setShowLink(false);
   };
 
   return (
@@ -550,92 +565,121 @@ const Modal3: React.FC<Modal3Props> = ({
         margin: "15px 0",
         fontFamily: "'Mona Sans', sans-serif",
         fontSize: "15px",
-        color: "#7B7B7B",
+        color: "#1e293b",
         textAlign: "left",
+       
       }}
     >
-      <p>
-        <span
-          style={{
-            fontWeight: 600,
-            color: "#000000",
-          }}
+    <div>
+  <span
+    style={{
+      fontWeight: 600,
+      color: "#000000",
+      fontSize: "16px",
+    }}
+  >
+    Heads up!
+  </span>
+
+  <div style={{ marginTop: "10px", lineHeight: "1.6" }}>
+    • Sending an incorrect amount (either lower or higher) will cause the transaction to fail and be refunded.
+  </div>
+
+  <div style={{ marginTop: "10px", lineHeight: "1.6" }}>
+    • Send exactly <strong>{amount}</strong>
+    {" "}
+    {isCopied2 ? (
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          marginLeft: "5px",
+        }}
+      >
+        <svg width="18" height="18" viewBox="0 0 22 22" fill="none">
+          <circle cx="12" cy="12" r="11" strokeWidth="1" fill="none" />
+          <path
+            d="M9 16.17L5.12 12.29L4 13.41L9 18.5L20 7.5L18.88 6.29L9 16.17Z"
+            fill="#292929"
+            strokeWidth="1"
+          />
+        </svg>
+      </span>
+    ) : (
+      <span
+        style={{
+          cursor: "pointer",
+          display: "inline-flex",
+          alignItems: "center",
+          padding: "8px",
+          borderRadius: "4px",
+          transition: "background 0.3s, transform 0.2s",
+          ...(isCopyButtonHovered2 && {
+            transform: "translateY(-2px)",
+          }),
+        }}
+        onMouseEnter={() => setIsCopyButtonHovered2(true)}
+        onMouseLeave={() => setIsCopyButtonHovered2(false)}
+        onClick={() => {
+          navigator.clipboard
+            .writeText(amount)
+            .then(() => {
+              setisCopied2(true);
+            })
+            .catch((err) => {
+              console.error("Failed to copy address:", err);
+              alert("Failed to copy address. Please try again.");
+            });
+        }}
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 22 22"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          Heads up!
-        </span>
-        <br />• Send exactly <strong>{amount}</strong> {" "}
-        {isCopied2 ? (
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              marginLeft: "5px",
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 22 22" fill="none">
-                    <circle
-                      cx="12"
-                      cy="12"
-                      r="11"
-                      strokeWidth="1"
-                      fill="none"
-                    />
-                    <path
-                      d="M9 16.17L5.12 12.29L4 13.41L9 18.5L20 7.5L18.88 6.29L9 16.17Z"
-                      fill="#292929"
-                      strokeWidth="1"
-                    />
-                  </svg>
-          </div>
-        ) : (
-          <div
-            style={{
-              cursor: "pointer",
-              display: "inline-flex",
-              alignItems: "center",
-              padding: "8px",
-              borderRadius: "4px",
-              transition: "background 0.3s, transform 0.2s",
-              ...(isCopyButtonHovered2 && {
-                
-                transform: "translateY(-2px)",
-              }),
-            }}
-            onMouseEnter={() => setIsCopyButtonHovered2(true)}
-            onMouseLeave={() => setIsCopyButtonHovered2(false)}
-            onClick={() => {
-              navigator.clipboard
-                .writeText(amount)
-                .then(() => {
-                  setisCopied2(true);
-                })
-                .catch((err) => {
-                  console.error("Failed to copy address:", err);
-                  alert("Failed to copy address. Please try again.");
-                });
-            }}
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 22 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 14.8269C1.9 14.8269 1 13.9269 1 12.8269V2.8269C1 1.7269 1.9 0.826904 3 0.826904H13C14.1 0.826904 15 1.7269 15 2.8269M9 6.8269H19C20.1046 6.8269 21 7.72233 21 8.8269V18.8269C21 19.9315 20.1046 20.8269 19 20.8269H9C7.89543 20.8269 7 19.9315 7 18.8269V8.8269C7 7.72233 7.89543 6.8269 9 6.8269Z"
-                stroke="#292929"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-        )}
-        <br />• Only send from a wallet you control
-        <br />• This address is only valid for this specific donation
-        <br />• If this campaign doesn't meet its funding goal, your donation will be redirected to POTLOCKs Community Fund instead of being refunded to your original wallet.
-      </p>
+          <path
+            d="M3 14.8269C1.9 14.8269 1 13.9269 1 12.8269V2.8269C1 1.7269 1.9 0.826904 3 0.826904H13C14.1 0.826904 15 1.7269 15 2.8269M9 6.8269H19C20.1046 6.8269 21 7.72233 21 8.8269V18.8269C21 19.9315 20.1046 20.8269 19 20.8269H9C7.89543 20.8269 7 19.9315 7 18.8269V8.8269C7 7.72233 7.89543 6.8269 9 6.8269Z"
+            stroke="#292929"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
+    )}{" "}
+    with fees excluded.
+  </div>
+
+  <div style={{ marginTop: "10px", lineHeight: "1.6" }}>
+    • Only send from a wallet you control.
+  </div>
+
+  <div style={{ marginTop: "10px", lineHeight: "1.6" }}>
+    • This address is only valid for this specific donation.
+  </div>
+
+  <div style={{ marginTop: "10px", lineHeight: "1.6" }}>
+    • If this campaign doesn't meet its funding goal, your donation will be redirected to <strong
+  style={{
+    color: 'inherit',
+    cursor: 'pointer',
+  }}
+  onMouseOver={(e) => {
+    (e.currentTarget.style.color = "blueviolet");
+  }}
+  onMouseOut={(e) => {
+    (e.currentTarget.style.color = "#1e293b");
+  }}
+  onClick={() => setShowLink(true)}
+>
+  POTLOCK’s Community Fund
+</strong>{" "}
+ instead of being refunded.
+  </div>
+</div>
+
     </div>
         </div>
         <div
@@ -672,7 +716,7 @@ const Modal3: React.FC<Modal3Props> = ({
             }}
             onMouseEnter={() => setIsBackButtonHovered(true)}
             onMouseLeave={() => setIsBackButtonHovered(false)}
-            onClick={onBack}
+            onClick={() => {setShowBackModal(true)}}
           >
             Back
           </button>
@@ -728,6 +772,22 @@ const Modal3: React.FC<Modal3Props> = ({
         onCancel={handleCancelQuit}
         onConfirm={handleQuit}
       />
+
+<BackConfirmationModal
+        isOpen={ShowBackModal}
+        onCancel={handleCancelBack}
+        onConfirm={onBack}
+      />
+
+<CommunityFundModal
+        isOpen={ShowLink}
+        onClose={handleCancelLink}
+      
+      />
+
+
+
+
 
       <ErrorPopupModal isOpen={showErrorModal} onBack={onBack} />
     </div>

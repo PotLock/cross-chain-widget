@@ -61,14 +61,14 @@ const Modal2 = ({
     btc: "bc1q0fnht2ngtaeexp3gypd55k5ejfwxtgxmdmx0gh",
     zec: "t1bQtaCMoFhf1654BEZqNXTnwuFGSvQADFH",
     ton: "UQCl-Z6_RKnINhWTZIIzysIGjyZTcJsRscdaKP-Oof-PfOne",
-    Doge: "DHpEpCboQcnxNWpVknvc9dpx3Q1TeHmUH",
+    doge: "DHpEpCboQcnxNWpVknvc9dpx3Q1TeHmUH",
     sol: "BK3HqkkH9T8QSsiXDvWSdfYEojviAHrhqeCXP1zvADbU",
     near: "potlock.near",
     xrp: "rsGvT1oyqRx5Ls6qmq6Q3Tuh8GCFLZVPxM",
     sui : '0x27e5a115617a8c2c4dfb5da3f3a88d70cfae7bf59cfc739a60792db15e31656c'
   };
   const EVM_ADDRESS = "0x88B93d4D440155448fbB3Cf260208b75FC0117C0";
-  const evmChains = ["evm", "ethereum", "arb", "arbitrum", "gnosis", "base", "bera"];
+  const evmChains = ["evm", "eth", "arb", "arbitrum", "gnosis", "base", "bera", 'pol', 'tron', 'avax', 'op'];
   const isMobile = useMediaQuery({ maxWidth: 640 });
 
 
@@ -211,7 +211,7 @@ const tokenAvatars = [
   amount.trim() === "" ||
   CampaignName.trim() === ""
 
-
+// console.log(senderAddress)
 
   function capitalizeAll(str: string): string {
     if (!str) return '';
@@ -672,6 +672,7 @@ const tokenAvatars = [
             setSenderAddress(EVM_ADDRESS);
           } else {
             const address = blockchainAddresses[normalized];
+           
             if (address) {
               setSenderAddress(address);
             }

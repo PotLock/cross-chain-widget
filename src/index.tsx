@@ -35,7 +35,7 @@ function mountWidget() {
     shadowRoot.id = "widget-shadow-root";
 
     const [walletID, DonationType, color, AssetName, textColor, fontType, textInfo] = getWidgetAttributes();
-
+    const Fontype =  fontType === 'Georgia'? 'noto-sans-georgian' : fontType
     const component = (
       <Widget
         walletID={walletID}
@@ -43,7 +43,7 @@ function mountWidget() {
         color={color}
         AssetName={AssetName}
         textColor = {textColor}
-        fontType = {fontType}
+        fontType = {Fontype}
         textInfo = {textInfo}
       />
     );

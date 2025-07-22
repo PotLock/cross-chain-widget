@@ -19,7 +19,8 @@ interface Modal4Props {
     txHash: string,
     campaignName: string,
     amount: string,
-    usdAmount: string
+    usdAmount: string,
+    nearAmount: string
   ) => void;
 }
 
@@ -136,7 +137,8 @@ const Modal4: React.FC<Modal4Props> = ({
           statusData.swapDetails.nearTxHashes[1],
           CampaignName,
           amount,
-          statusData.swapDetails.amountInUsd
+          statusData.swapDetails.amountInUsd,
+          statusData.quote.amountOutFormatted
         );
       } else if (statusData.status === "INCOMPLETE_DEPOSIT") {
         setErrorinfo('Incomplete deposit. Send the exact amount.');
@@ -1051,7 +1053,7 @@ const Modal4: React.FC<Modal4Props> = ({
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
             onClick={(refreshTransaction)}
-           
+            
           >
             Refresh Transaction
           </button>
