@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useMediaQuery } from "react-responsive";
 import QuitConfirmationModal from "./QuitConfirmationModal";
 
@@ -21,7 +21,8 @@ const Modal2 = ({
     decimals: string,
     tokenId: string,
     senderAddress: string,
-    tokenImg: string
+    tokenImg: string,
+    amountDeposit: string
   ) => void;
   onClose: () => void;
   onGoBack: () => void;
@@ -51,7 +52,7 @@ const Modal2 = ({
   const [tokenID, setTokenID] = useState("");
   const [tokenImage, settokenImage] = useState('');
   const [blockchainImage, setblockchainImage] = useState('');
-  
+const [amountDeposit, setamountDeposit] =useState('');
   const [senderAddress, setSenderAddress] = useState("");
   const [showQuitModal, setShowQuitModal] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -70,7 +71,6 @@ const Modal2 = ({
   const EVM_ADDRESS = "0x88B93d4D440155448fbB3Cf260208b75FC0117C0";
   const evmChains = ["evm", "eth", "arb", "arbitrum", "gnosis", "base", "bera", 'pol', 'tron', 'avax', 'op'];
   const isMobile = useMediaQuery({ maxWidth: 640 });
-
 
 
   const fetchTokens = async () => {
@@ -101,8 +101,11 @@ const Modal2 = ({
     }
   };
 
+
+
   useEffect(() => {
     fetchTokens();
+    
   }, []);
 
   function shortenHash(hash: string): string {
@@ -139,7 +142,6 @@ const tokenAvatars = [
   { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar19.png", name: "Btc" },
   { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar20.png", name: "ton" },
   { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar21.png", name: "gnosis" },
-  // { src: "/assets/Avatar22.jpeg", name: "Blockchain" },
   { src: "https://ik.imagekit.io/zjvk6l5gp/Avatar23.jpeg", name: "Bera" },
   
 ];
@@ -160,11 +162,10 @@ const tokenAvatars = [
   const protocolFeeSelectedCurrency = (protocolFeeNear * nearPrice) / price;
   const networkFeeSelectedCurrency = (networkFeeNear * nearPrice) / price;
   const referralFeeSelectedCurrency = (referralFeeNear * nearPrice) / price;
-  const totalFeeSelectedCurrency =
-    protocolFeeSelectedCurrency + networkFeeSelectedCurrency;
+  const totalFeeSelectedCurrency = protocolFeeSelectedCurrency + networkFeeSelectedCurrency;
 
   const handleQuit = () => {
-    console.log("User confirmed quit");
+    // console.log("User confirmed quit");
     setShowQuitModal(false);
     onClose();
   };
@@ -200,7 +201,8 @@ const tokenAvatars = [
         decimals,
         tokenID,
         senderAddress,
-        tokenImage
+        tokenImage,
+        amountDeposit
       );
      
     }
@@ -209,7 +211,8 @@ const tokenAvatars = [
   const isDisabled = loading ||
   senderAddress.trim() === "" ||
   amount.trim() === "" ||
-  CampaignName.trim() === ""
+  CampaignName.trim() === "" ||
+  (price > 0 && nearPrice > 0 && (parseFloat(amount) * price / nearPrice) < 0.1)
 
 // console.log(senderAddress)
 
@@ -267,6 +270,12 @@ const tokenAvatars = [
   //     document.removeEventListener("mousedown", handleClickOutside);
   //   };
   // }, []);
+
+  const currencyFormatter = useMemo(
+    () => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }),
+    []
+  );
+  
 
   return (
     <div
@@ -757,8 +766,11 @@ const tokenAvatars = [
     />
     {filteredTokens
       .filter((token) =>
-        token.symbol.toLowerCase().includes(searchQueryToken.toLowerCase()) &&
-        token.symbol !== "wNEAR"
+        token.symbol.toLowerCase().includes(searchQueryToken.toLowerCase()) 
+        &&
+       token.symbol !== "TESTNEBULA"
+       &&
+       token.symbol !== "wNEAR"
       )
       .map((token, index) => {
         // Find token avatar or fall back to blockchain avatar
@@ -807,7 +819,7 @@ const tokenAvatars = [
                 objectFit: "cover"
               }}
             />
-            {token.symbol}
+            {token.symbol === "wNEAR" ? 'NEAR' :  token.symbol}
           </div>
         );
       })}
@@ -849,7 +861,7 @@ const tokenAvatars = [
                 alignItems: "center",
               }}
             >
-             <input
+             {/* <input
   style={{
     border: "none",
     outline: "none",
@@ -861,7 +873,11 @@ const tokenAvatars = [
   }}
   type="number"
   value={amount}
-  onChange={(e) => setAmount(e.target.value)}
+  onChange={(e) => {setAmount(e.target.value); setamountDeposit(new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(parseFloat(amount || "0") * (price || 0))
+  )}}
   onKeyDown={(e) => {
     
     if (
@@ -872,6 +888,41 @@ const tokenAvatars = [
     }
   }}
   placeholder="0.00"
+/> */}
+
+
+<input
+  style={{
+    border: "none",
+    outline: "none",
+    fontSize: isMobile ? "14px" : "16px",
+    width: "100%",
+    background: "transparent",
+    fontFamily: "'Mona Sans', sans-serif",
+    color: "#000000",
+  }}
+  type="number"
+  inputMode="decimal" // Better mobile UX
+  value={amount}
+  onChange={(e) => {
+    const value = e.target.value;
+   
+    if (/^\d*\.?\d*$/.test(value)) {
+      setAmount(value);
+      setamountDeposit(
+        currencyFormatter.format(parseFloat(value || "0") * (price || 0))
+      );
+    }
+  }}
+  onKeyDown={(e) => {
+    // Block invalid characters
+    if (["e", "E", "+", "-"].includes(e.key)) {
+      e.preventDefault();
+    }
+  }}
+  placeholder="0.00"
+  min="0" 
+  step="0.01"
 />
 
               <div
@@ -887,7 +938,9 @@ const tokenAvatars = [
                 {new Intl.NumberFormat("en-US", {
                   style: "currency",
                   currency: "USD",
-                }).format(parseFloat(amount || "0") * (price || 0))}
+                }).format(parseFloat(amount || "0") * (price || 0))
+                
+                }
               </div>
             </div>
           </div>
@@ -1001,7 +1054,7 @@ const tokenAvatars = [
                   {nearPrice > 0 && price > 0 && (
                     <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px",  }}>
                       {" "}
-                      ({(donationAmount + totalFeeNear).toFixed(4)} NEAR)
+                      {/* ({(donationAmount + totalFeeNear).toFixed(4)} NEAR) */}
                     </span>
                   )}
                 </span>

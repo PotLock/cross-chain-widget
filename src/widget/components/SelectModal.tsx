@@ -78,7 +78,7 @@ const SkeletonLoader = ({ isMobile }) => {
   );
 };
 
-const SelectionModal = ({ onProceed, onClose, textInfo }) => {
+const SelectionModal = ({ onProceed, onClose, textInfo, selectedCampaigns }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [selectedCampaignName, setSelectedCampaignName] = useState(null);
@@ -124,6 +124,31 @@ const SelectionModal = ({ onProceed, onClose, textInfo }) => {
     setSelectedCampaignDesc(desc);
   };
 
+  // const fetchCampaign = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     const response = await fetch(
+  //       "https://us-central1-almond-1b205.cloudfunctions.net/potluck/fetchcampaigns",
+  //       { method: "GET" }
+  //     );
+  
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+  
+  //     const data = await response.json();
+  //     const currentTimeMs = Date.now();
+  //     const ongoingItems = data.data.filter(campaign => campaign.end_ms >= currentTimeMs );
+  //     console.log(ongoingItems)
+  //     setItems(ongoingItems);
+
+  //   } catch (error) {
+  //     console.error("Failed to fetch campaigns:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const fetchCampaign = async () => {
     try {
       setIsLoading(true);
@@ -138,9 +163,18 @@ const SelectionModal = ({ onProceed, onClose, textInfo }) => {
   
       const data = await response.json();
       const currentTimeMs = Date.now();
-      const ongoingItems = data.data.filter(campaign => campaign.end_ms >= currentTimeMs);
-      setItems(ongoingItems);
-
+      
+      // Filter campaigns based on selectedCampaigns if available, otherwise filter by time
+      const filteredItems = data.data.filter(campaign => {
+        if (selectedCampaigns && selectedCampaigns.length > 0) {
+          return selectedCampaigns.includes(campaign.id);
+        } else {
+          return campaign.end_ms >= currentTimeMs;
+        }
+      });
+      
+      setItems(filteredItems);
+  
     } catch (error) {
       console.error("Failed to fetch campaigns:", error);
     } finally {

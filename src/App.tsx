@@ -13,6 +13,7 @@ function App() {
         textColor = {"white"}
         fontType = {null}
         textInfo = {null}
+        selectedCampaigns={null}
       />
     </>
   );

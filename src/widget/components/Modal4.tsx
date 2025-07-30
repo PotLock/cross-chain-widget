@@ -12,9 +12,13 @@ interface Modal4Props {
   CampaignDesc: string;
   walletID: any;
   tokenImg: string;
-  textInfo: string
+  textInfo: string;
+  walletbalance : string;
+  tokenID: string;
+  donateAmount: string;
+  Dollaramount: string;
   onClose: () => void;
-  onBack: (depositAddress: string) => void;
+  onBack: (depositAddress: string, walletbalance: string) => void;
   onProceed: (
     txHash: string,
     campaignName: string,
@@ -37,7 +41,11 @@ const Modal4: React.FC<Modal4Props> = ({
   CampaignDesc = "",
   walletID = null,
   tokenImg='',
-  textInfo=''
+  textInfo='',
+  walletbalance='',
+  tokenID='',
+  donateAmount='',
+  Dollaramount=''
 }) => {
   const [FundReceived, setFundReceived] = useState<boolean | null>(false);
   const [FundReceivedFailed, setFundReceivedFailed] = useState<boolean | null>(
@@ -55,7 +63,8 @@ const Modal4: React.FC<Modal4Props> = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery({ maxWidth: 640 });
   const [isButtonHovered, setIsButtonHovered] = useState(false);
-  const [Errorinfo, setErrorinfo] = useState<string | null>('Receive Failed, refresh after some mins.');
+  const [bal, setbal] = useState(null);
+  const [Errorinfo, setErrorinfo] = useState<string | null>('Receive Failed, refresh after some time.');
   const refreshTransaction = async (): Promise<void> => {
     setFundReceived(false);
     setFundReceivedFailed(false);
@@ -63,7 +72,108 @@ const Modal4: React.FC<Modal4Props> = ({
     setFundDeposited(false);
     setFundDonated(false);
     sendfunds();
+    // if (tokenID === 'nep141:wrap.near'){
+    //   fetchBalance();
+    // }else{
+    //   sendfunds();
+    // }
+
   };
+
+  function toHumanReadable(
+    amount: string,
+    tokenType: "token" | "near" = "token"
+  ): string {
+    const power = tokenType.toLowerCase() === "near" ? 24 : 18;
+    const amountStr = String(amount).padStart(power + 1, "0");
+    const integerPart = amountStr.slice(0, -power);
+    const fractionalPart = amountStr.slice(-power);
+
+    const humanReadable = `${integerPart}.${fractionalPart}`;
+    return humanReadable;
+  }
+
+
+
+  const fetchBalance = async () => {
+    if (!depositAddress) {
+      setErrorinfo("No deposit address provided.");
+      return;
+    }
+    const [amount_digit, amount_symbol] = donateAmount.includes(" ")
+    ? amount.split(" ")
+    : [amount, "NEAR"];
+
+    const dollarAmount = Dollaramount.replace("$", "");
+    try {
+      const res = await fetch("https://us-central1-almond-1b205.cloudfunctions.net/potluck/fetchbalance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accountId: depositAddress }),
+      });
+  
+      if (!res.ok) throw new Error(`Failed to fetch balance: ${res.status}`);
+      const data = await res.json();
+
+      const latestBalance = toHumanReadable(data.data.available, 'near');
+      setbal(latestBalance); 
+  
+    
+      const expectedBalance = parseFloat(walletbalance) + parseFloat(donateAmount);
+      const actualBalance = parseFloat(latestBalance);
+  
+     
+      const isCompleteDeposit = actualBalance >= expectedBalance - 0.0001; // Allow tiny difference
+  
+      if (isCompleteDeposit) {
+        setFundReceived(true);
+        setFundReceivedFailed(false);
+
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        setFundConverted(true);
+  
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        setFundDeposited(true);
+        if (CampaignImg !== "Direct") {
+          console.log(parseFloat(amount_digit) - 0.0800)
+          try {
+            const donateResponse = await fetch(
+              "https://us-central1-almond-1b205.cloudfunctions.net/potluck/donate2",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  username: `${depositAddress.slice(0, 6)}-${depositAddress.slice(-6)}`.toLowerCase(),
+                  deposit: `${parseFloat(amount_digit) - 0.0800}`,
+                  campaign_id: String(campaignID),
+                  walletID: walletID ?? null,
+                }),
+              }
+            );
+            if (!donateResponse.ok) throw new Error("Donation API failed"); setFundDonated(false);
+            setFundDonated(true);
+         await new Promise((resolve) => setTimeout(resolve, 2000));
+          onProceed('', CampaignName, amount, dollarAmount, donateAmount);
+            console.log("Donation recorded:", await donateResponse.json());
+          } catch (err) {
+            console.error("Donation error:", err);
+          }
+        }
+  
+        
+      } else {
+        const remainingAmount = expectedBalance - actualBalance;
+        setErrorinfo(`Incomplete deposit. Send ${remainingAmount.toFixed(4)} more NEAR.`);
+        setFundReceived(true);
+        setFundReceivedFailed(true);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setErrorinfo("Failed to check balance. Try again.");
+      setFundReceivedFailed(true);
+    }
+  };
+
 
   const sendfunds = async (): Promise<void> => {
     try {
@@ -72,6 +182,8 @@ const Modal4: React.FC<Modal4Props> = ({
             -6
           )}`.toLowerCase()
         : "";
+
+
 
       const statusResponse = await fetch(
         `https://1click.chaindefuser.com/v0/status?depositAddress=${depositAddress}`,
@@ -162,6 +274,12 @@ const Modal4: React.FC<Modal4Props> = ({
   };
 
   useEffect(() => {
+    // if (tokenID === 'nep141:wrap.near' && CampaignImg !== "Direct"){
+    //   fetchBalance();
+    // }else{
+    //   sendfunds();
+    // }
+
     sendfunds();
   }, []);
 
@@ -242,13 +360,13 @@ const Modal4: React.FC<Modal4Props> = ({
             onClick={(e) => {
               e.stopPropagation();
               console.log("Back button clicked in Modal4");
-              onBack(depositAddress);
+              onBack(depositAddress, walletbalance);
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.stopPropagation();
                 console.log("Back button activated via keyboard in Modal4");
-                onBack(depositAddress);
+                onBack(depositAddress, walletbalance);
               }
             }}
             aria-label="Back"

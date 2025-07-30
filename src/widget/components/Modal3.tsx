@@ -12,7 +12,8 @@ interface Modal3Props {
   onSentFunds: (
     amount: string,
     depositAddress: string,
-    campaignID: number
+    campaignID: number,
+    walletbalance: string
   ) => void;
   campaignID?: number;
   amount?: string;
@@ -26,7 +27,8 @@ interface Modal3Props {
   CampaignImg: string;
   CampaignDesc: string;
   tokenImg: string;
-  textInfo: string
+  textInfo: string;
+  walletbalance: string;
 }
 
 const Modal3: React.FC<Modal3Props> = ({
@@ -45,7 +47,8 @@ const Modal3: React.FC<Modal3Props> = ({
   CampaignImg = "",
   CampaignDesc = "",
   tokenImg='',
-  textInfo =''
+  textInfo ='',
+  walletbalance=''
 }) => {
   const [pool, setPool] = useState<any | null>(null);
   const [isCloseButtonHovered, setIsCloseButtonHovered] = useState(false);
@@ -63,7 +66,9 @@ const Modal3: React.FC<Modal3Props> = ({
   const isMobile = useMediaQuery({ maxWidth: 640 });
   const [isCopied, setisCopied] = useState(false);
   const [isCopied2, setisCopied2] = useState(false);
-
+  const [bal, setbal] = useState(null);
+  const [depositAddress, setdepositAddress] = useState(null);
+  
   function convertToUnit(amount: string | number, decimals: number): string {
     if (amount === null || amount === undefined || isNaN(Number(amount))) {
       throw new Error(
@@ -124,9 +129,6 @@ const Modal3: React.FC<Modal3Props> = ({
         parseFloat(amount_digit)
       );
 
-      // const deadline =
-      //   new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split(".")[0] +
-      //   "Z";
       const deadline =
             new Date(Date.now() + 60 * 60 * 1000).toISOString().split(".")[0] +
             "Z";         
@@ -163,13 +165,11 @@ const Modal3: React.FC<Modal3Props> = ({
       });
 
       if (!response.ok) {
-       // const data2 = await response.json();
-      //  console.log(data2)
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
- 
+      setdepositAddress(data?.quote?.depositAddress)
       setPool(data);
     } catch (error) {
       console.error("Fetch error:", error);
@@ -179,11 +179,64 @@ const Modal3: React.FC<Modal3Props> = ({
     }
   };
 
+  function toHumanReadable(
+    amount: string,
+    tokenType: "token" | "near" = "token"
+  ): string {
+    const power = tokenType.toLowerCase() === "near" ? 24 : 18;
+    const amountStr = String(amount).padStart(power + 1, "0");
+    const integerPart = amountStr.slice(0, -power);
+    const fractionalPart = amountStr.slice(-power);
+
+    const humanReadable = `${integerPart}.${fractionalPart}`;
+    return humanReadable;
+  }
+
+  const fetchBalance = async () => {
+    try {
+      const res = await fetch("https://us-central1-almond-1b205.cloudfunctions.net/potluck/fetchbalance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          accountId : "87496ab7b20deb700a431abbd3fc642400a7d168d9f36fcffeeb291eefa5783c"
+        }),
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const data = await res.json();
+      setbal(toHumanReadable(data.data.available, 'near'))
+      setdepositAddress("87496ab7b20deb700a431abbd3fc642400a7d168d9f36fcffeeb291eefa5783c")
+    //  console.log(data.data.available)
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setPool([]);
+    } finally {
+      setIsLoadingAddress(false);
+    }
+  };
+ // console.log(bal)
+
   useEffect(() => {
+    // if (tokenID === 'nep141:wrap.near' && CampaignImg !== "Direct" ){
+    //   if (!walletbalance){
+    //     fetchBalance()
+    //   }
+    // }else{
+    //   if (!isdeposit) {
+    //     fetchTokens2();
+    //   }
+    // }
+
     if (!isdeposit) {
       fetchTokens2();
     }
+   
   }, []);
+
+
 
   useEffect(() => {
     if (isCopied || isCopied2) {
@@ -373,7 +426,7 @@ const Modal3: React.FC<Modal3Props> = ({
           >
          
             <QRCodeSVG
-  value={pool?.quote?.depositAddress || isdeposit || "placeholder"}
+  value={depositAddress || isdeposit || "placeholder"}
   size={290}
   level="H" 
   imageSettings={{
@@ -458,7 +511,7 @@ const Modal3: React.FC<Modal3Props> = ({
               }}
             >
               <div style={{fontWeight: 600}}>Deposit Address ({capitalizeFirstLetter(blockchain)})</div>
-              <div>{shortenHash(pool?.quote?.depositAddress || isdeposit)}</div>
+              <div>{shortenHash(depositAddress || isdeposit)}</div>
             </div>
 
             {isCopied ? (
@@ -485,7 +538,7 @@ const Modal3: React.FC<Modal3Props> = ({
                   onMouseLeave={() => setIsCopyButtonHovered(false)}
                   onClick={() => {
                     navigator.clipboard
-                      .writeText(pool?.quote?.depositAddress || "")
+                      .writeText(depositAddress || "")
                       .then(() => {
                         setisCopied(true);
                       })
@@ -529,7 +582,7 @@ const Modal3: React.FC<Modal3Props> = ({
                 onMouseLeave={() => setIsCopyButtonHovered(false)}
                 onClick={() => {
                   navigator.clipboard
-                    .writeText(pool?.quote?.depositAddress || isdeposit)
+                    .writeText(depositAddress || isdeposit)
                     .then(() => {
                       setisCopied(true);
                     })
@@ -739,7 +792,7 @@ const Modal3: React.FC<Modal3Props> = ({
                 transform: "translateY(-2px)",
                 boxShadow: "0 8px 10px #F1F5F9",
               }),
-              ...(!pool?.quote?.depositAddress &&
+              ...(!depositAddress &&
                 !isdeposit && {
                   background: "#00000044",
                   cursor: "not-allowed",
@@ -756,11 +809,12 @@ const Modal3: React.FC<Modal3Props> = ({
             onClick={() =>
               onSentFunds(
                 amount,
-                pool?.quote?.depositAddress || isdeposit,
-                campaignID
+                depositAddress || isdeposit,
+                campaignID,
+                bal || walletbalance
               )
             }
-            disabled={!pool?.quote?.depositAddress && !isdeposit}
+            disabled={!depositAddress && !isdeposit}
           >
             I've sent the funds
           </button>
