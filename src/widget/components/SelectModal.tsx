@@ -97,7 +97,7 @@ const SelectionModal = ({ onProceed, onClose, textInfo, selectedCampaigns }) => 
     const itemID = `${item.id}`;
     const matchesSearch =
       item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.owner?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.owner.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       itemID?.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
@@ -153,7 +153,8 @@ const SelectionModal = ({ onProceed, onClose, textInfo, selectedCampaigns }) => 
     try {
       setIsLoading(true);
       const response = await fetch(
-        "https://us-central1-almond-1b205.cloudfunctions.net/potluck/fetchcampaigns",
+        // "https://us-central1-almond-1b205.cloudfunctions.net/potluck/fetchcampaigns",
+       'https://dev.potlock.io/api/v1/campaigns',
         { method: "GET" }
       );
   
@@ -163,15 +164,25 @@ const SelectionModal = ({ onProceed, onClose, textInfo, selectedCampaigns }) => 
   
       const data = await response.json();
       const currentTimeMs = Date.now();
-      
-      // Filter campaigns based on selectedCampaigns if available, otherwise filter by time
-      const filteredItems = data.data.filter(campaign => {
+
+      // // Filter campaigns based on selectedCampaigns if available, otherwise filter by time
+      // const filteredItems = data.data.filter(campaign => {
+      //   if (selectedCampaigns && selectedCampaigns.length > 0) {
+      //     return selectedCampaigns.includes(campaign.id);
+      //   } else {
+      //     return campaign.end_ms >= currentTimeMs;
+      //   }
+      // });
+
+      const filteredItems = data.results.filter(campaign => {
         if (selectedCampaigns && selectedCampaigns.length > 0) {
           return selectedCampaigns.includes(campaign.id);
         } else {
-          return campaign.end_ms >= currentTimeMs;
+          return campaign.is_active == true;
         }
       });
+
+      console.log(filteredItems)
       
       setItems(filteredItems);
   
@@ -323,7 +334,7 @@ const SelectionModal = ({ onProceed, onClose, textInfo, selectedCampaigns }) => 
             ) : displayedItems.length > 0 ? (
               displayedItems.map((item) => (
                 <div
-                  key={item.id}
+                  key={item.on_chain_id}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -332,12 +343,12 @@ const SelectionModal = ({ onProceed, onClose, textInfo, selectedCampaigns }) => 
                     cursor: "pointer",
                     transition: "background 0.2s ease",
                     marginBottom: "15px",
-                    ...(selectedCampaign === item.id && {
+                    ...(selectedCampaign === item.on_chain_id && {
                       backgroundColor: "#F5F5F5",
                     }),
                   }}
                   onClick={() =>
-                    handleSelect(item.id, item.name, item.cover_image_url, item.recipient)
+                    handleSelect(item.on_chain_id, item.name, item.cover_image_url, item.recipient.id)
                   }
                 >
                   <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
