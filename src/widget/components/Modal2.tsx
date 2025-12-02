@@ -60,7 +60,7 @@ const [amountDeposit, setamountDeposit] =useState('');
   const tokenDropdownRef = useRef<HTMLDivElement>(null);
   const blockchainAddresses = {
     btc: "bc1q0fnht2ngtaeexp3gypd55k5ejfwxtgxmdmx0gh",
-    zec: "t1bQtaCMoFhf1654BEZqNXTnwuFGSvQADFH",
+    zec: "u1emhhzu6ddmfay5sxx7qj6ptty6vxwdmg54865d547syghnl22k8zeptj9jhuz64p9kshqe6s7jn8gdpatn96wtdwrgcvsaljtv6tqt7g",
     ton: "UQCl-Z6_RKnINhWTZIIzysIGjyZTcJsRscdaKP-Oof-PfOne",
     doge: "DHpEpCboQcnxNWpVknvc9dpx3Q1TeHmUH",
     sol: "BK3HqkkH9T8QSsiXDvWSdfYEojviAHrhqeCXP1zvADbU",
@@ -207,6 +207,18 @@ const tokenAvatars = [
      
     }
   };
+
+console.log(CampaignName)
+
+  // console.log(  campaignID,
+  //       `${(donationAmount + totalFeeSelectedCurrency).toFixed(4)} ${selectedToken || "USDC"}`,
+  //       networkFeeSelectedCurrency.toFixed(4),
+  //       selectedBlockchain,
+  //       decimals,
+  //       tokenID,
+  //       senderAddress,
+  //       tokenImage,
+  //       amountDeposit)
 
   const isDisabled = loading ||
   senderAddress.trim() === "" ||
@@ -902,7 +914,7 @@ const tokenAvatars = [
     color: "#000000",
   }}
   type="number"
-  inputMode="decimal" // Better mobile UX
+  inputMode="decimal" 
   value={amount}
   onChange={(e) => {
     const value = e.target.value;
@@ -1054,7 +1066,7 @@ const tokenAvatars = [
                   {nearPrice > 0 && price > 0 && (
                     <span style={{ color: "#64748B", fontSize: isMobile ? "11px" : "12px",  }}>
                       {" "}
-                      {/* ({(donationAmount + totalFeeNear).toFixed(4)} NEAR) */}
+                     
                     </span>
                   )}
                 </span>

@@ -177,7 +177,9 @@ const Widget: React.FC<WidgetProps> = ({
         ❤️ {textInfo? textInfo: "Donate"}
       </button>
 
-      {DonationType === "POTLOCK Campaigns" ? (
+      {
+      DonationType === "POTLOCK Campaigns" 
+      ? (
         <>
           {step === 1 && (
             <SelectionModal

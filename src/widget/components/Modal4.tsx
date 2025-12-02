@@ -129,7 +129,7 @@ const Modal4: React.FC<Modal4Props> = ({
         setFundReceived(true);
         setFundReceivedFailed(false);
 
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        
         setFundConverted(true);
   
         await new Promise((resolve) => setTimeout(resolve, 1500));

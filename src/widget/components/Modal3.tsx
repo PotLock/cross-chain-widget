@@ -115,6 +115,8 @@ const Modal3: React.FC<Modal3Props> = ({
     return Math.round(basisPoints);
   }
 
+
+
   const fetchTokens2 = async (): Promise<void> => {
     try {
       setIsLoadingAddress(true);
@@ -133,6 +135,32 @@ const Modal3: React.FC<Modal3Props> = ({
             new Date(Date.now() + 60 * 60 * 1000).toISOString().split(".")[0] +
             "Z";         
 
+
+            console.log({
+          dry: false,
+          swapType: "FLEX_INPUT",
+          slippageTolerance: 100,
+          originAsset: tokenID,
+          depositType: "ORIGIN_CHAIN",
+          destinationAsset:
+            CampaignImg === "Direct" ? CampaignDesc : "nep141:wrap.near",
+          amount: mainAmount,
+          refundTo: senderaddress,
+          refundType: "ORIGIN_CHAIN",
+          recipient:
+            CampaignImg === "Direct" ? CampaignName : "potluck_intents.near",
+          recipientType: "DESTINATION_CHAIN",
+          deadline: deadline,
+          referral: "referral",
+          quoteWaitingTimeMs: 3000,
+          appFees: [
+            {
+              recipient: "potluck_intents.near",
+              fee: feeAmount,
+            },
+          ],
+        })
+      
       const response = await fetch("https://1click.chaindefuser.com/v0/quote", {
         method: "POST",
         headers: {
@@ -140,7 +168,7 @@ const Modal3: React.FC<Modal3Props> = ({
         },
         body: JSON.stringify({
           dry: false,
-          swapType: "EXACT_INPUT",
+          swapType: "FLEX_INPUT",
           slippageTolerance: 100,
           originAsset: tokenID,
           depositType: "ORIGIN_CHAIN",
@@ -610,6 +638,8 @@ const Modal3: React.FC<Modal3Props> = ({
               </div>
             )}
           </div>
+          
+          
           <div
       style={{
         background: "#F7F7F7",

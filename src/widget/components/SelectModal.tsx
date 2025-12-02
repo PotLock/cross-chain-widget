@@ -124,37 +124,11 @@ const SelectionModal = ({ onProceed, onClose, textInfo, selectedCampaigns }) => 
     setSelectedCampaignDesc(desc);
   };
 
-  // const fetchCampaign = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     const response = await fetch(
-  //       "https://us-central1-almond-1b205.cloudfunctions.net/potluck/fetchcampaigns",
-  //       { method: "GET" }
-  //     );
-  
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`);
-  //     }
-  
-  //     const data = await response.json();
-  //     const currentTimeMs = Date.now();
-  //     const ongoingItems = data.data.filter(campaign => campaign.end_ms >= currentTimeMs );
-  //     console.log(ongoingItems)
-  //     setItems(ongoingItems);
-
-  //   } catch (error) {
-  //     console.error("Failed to fetch campaigns:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const fetchCampaign = async () => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        // "https://us-central1-almond-1b205.cloudfunctions.net/potluck/fetchcampaigns",
-       'https://dev.potlock.io/api/v1/campaigns',
+        "https://us-central1-almond-1b205.cloudfunctions.net/potluck/fetchcampaigns",
         { method: "GET" }
       );
   
@@ -164,34 +138,60 @@ const SelectionModal = ({ onProceed, onClose, textInfo, selectedCampaigns }) => 
   
       const data = await response.json();
       const currentTimeMs = Date.now();
+      const ongoingItems = data.data.filter(campaign => campaign.end_ms >= currentTimeMs );
+      console.log(ongoingItems)
+      setItems(ongoingItems);
 
-      // // Filter campaigns based on selectedCampaigns if available, otherwise filter by time
-      // const filteredItems = data.data.filter(campaign => {
-      //   if (selectedCampaigns && selectedCampaigns.length > 0) {
-      //     return selectedCampaigns.includes(campaign.id);
-      //   } else {
-      //     return campaign.end_ms >= currentTimeMs;
-      //   }
-      // });
-
-      const filteredItems = data.results.filter(campaign => {
-        if (selectedCampaigns && selectedCampaigns.length > 0) {
-          return selectedCampaigns.includes(campaign.id);
-        } else {
-          return campaign.is_active == true;
-        }
-      });
-
-      console.log(filteredItems)
-      
-      setItems(filteredItems);
-  
     } catch (error) {
       console.error("Failed to fetch campaigns:", error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  // const fetchCampaign = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     const response = await fetch(
+  //       // "https://us-central1-almond-1b205.cloudfunctions.net/potluck/fetchcampaigns",
+  //      'https://dev.potlock.io/api/v1/campaigns',
+  //       { method: "GET" }
+  //     );
+  
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+  
+  //     const data = await response.json();
+  //     const currentTimeMs = Date.now();
+
+  //     // // Filter campaigns based on selectedCampaigns if available, otherwise filter by time
+  //     // const filteredItems = data.data.filter(campaign => {
+  //     //   if (selectedCampaigns && selectedCampaigns.length > 0) {
+  //     //     return selectedCampaigns.includes(campaign.id);
+  //     //   } else {
+  //     //     return campaign.end_ms >= currentTimeMs;
+  //     //   }
+  //     // });
+
+  //     const filteredItems = data.results.filter(campaign => {
+  //       if (selectedCampaigns && selectedCampaigns.length > 0) {
+  //         return selectedCampaigns.includes(campaign.id);
+  //       } else {
+  //         return campaign.is_active == true;
+  //       }
+  //     });
+
+  //     console.log(filteredItems)
+      
+  //     setItems(filteredItems);
+  
+  //   } catch (error) {
+  //     console.error("Failed to fetch campaigns:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     injectKeyframes();
@@ -327,6 +327,7 @@ const SelectionModal = ({ onProceed, onClose, textInfo, selectedCampaigns }) => 
               backgroundColor: "#ffffff",
               scrollbarWidth: "none",    
               msOverflowStyle: "none", 
+            
             }}
           >
             {isLoading ? (
@@ -334,21 +335,25 @@ const SelectionModal = ({ onProceed, onClose, textInfo, selectedCampaigns }) => 
             ) : displayedItems.length > 0 ? (
               displayedItems.map((item) => (
                 <div
-                  key={item.on_chain_id}
+                  // key={item.on_chain_id}
+                  key={item.id}
                   style={{
                     display: "flex",
+                  
                     alignItems: "center",
                     padding: isMobile ? "8px" : "10px",
                     borderRadius: "10px",
                     cursor: "pointer",
                     transition: "background 0.2s ease",
                     marginBottom: "15px",
-                    ...(selectedCampaign === item.on_chain_id && {
+                    // ...(selectedCampaign === item.on_chain_id && {
+                      ...(selectedCampaign === item.id && {
                       backgroundColor: "#F5F5F5",
                     }),
                   }}
                   onClick={() =>
-                    handleSelect(item.on_chain_id, item.name, item.cover_image_url, item.recipient.id)
+                    // handleSelect(item.on_chain_id, item.name, item.cover_image_url, item.recipient.id)
+                    handleSelect(item.id, item.name, item.cover_image_url, item.recipient)
                   }
                 >
                   <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
